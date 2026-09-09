@@ -1,0 +1,15 @@
+{
+  "id": "ag-reviewer",
+  "name": "Reviewer",
+  "role": "code review & approval gate",
+  "description": "Reviews the diff for correctness, style and risk, then routes to the human approval gate before any deploy.",
+  "model": { "kind": "any", "capability": "code" },
+  "permissions": ["fs.read"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["reports/review.md"],
+  "team": "autonomous-dev",
+  "handoff": "human-approval",
+  "temperature": 0.2,
+  "maxSteps": 8
+}

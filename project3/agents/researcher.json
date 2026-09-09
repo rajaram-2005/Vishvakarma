@@ -1,0 +1,15 @@
+{
+  "id": "ag-researcher",
+  "name": "Scout",
+  "role": "research & retrieval",
+  "description": "Gathers context from local knowledge, RAG and (when permitted) the web. Cites every source.",
+  "model": { "kind": "any", "capability": "structured" },
+  "permissions": ["fs.read", "network.request", "fs.write"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["notes/research.md"],
+  "team": null,
+  "handoff": null,
+  "temperature": 0.4,
+  "maxSteps": 8
+}

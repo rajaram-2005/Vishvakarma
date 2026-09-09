@@ -1,0 +1,15 @@
+{
+  "id": "ag-planner",
+  "name": "Planner",
+  "role": "task decomposition",
+  "description": "Turns an architecture into an ordered, checkable plan with acceptance criteria per task.",
+  "model": { "kind": "any", "capability": "structured" },
+  "permissions": ["fs.read", "fs.write"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["docs/PLAN.md"],
+  "team": "autonomous-dev",
+  "handoff": "ag-coder",
+  "temperature": 0.2,
+  "maxSteps": 8
+}

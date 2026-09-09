@@ -1,0 +1,19 @@
+{
+  "id": "skill-incident-response",
+  "name": "Incident Response",
+  "version": "0.7.0",
+  "author": "SUTRA",
+  "license": "MIT",
+  "kind": "skill",
+  "description": "Triage → contain → mitigate → postmortem, with an on-call digest at the end.",
+  "scopes": ["fs.read", "network.request"],
+  "inputs": [ { "name": "incidentId", "type": "string", "required": true } ],
+  "steps": [
+    { "title": "Triage", "detail": "Classify severity P0–P3 from blast radius. P0/P1 page the on-call." },
+    { "title": "Contain", "detail": "Stop the bleeding: disable the bad deploy, rate-limit, or flip the feature flag. Do not fix yet." },
+    { "title": "Mitigate", "detail": "Apply the minimal safe fix; every destructive command goes through the security gateway." },
+    { "title": "Postmortem", "detail": "Timeline, root cause, what worked, what didn't, actions with owners. Blameless." }
+  ],
+  "definitionOfDone": "incident resolved, postmortem published, on-call digest posted after human review.",
+  "entry": "index.md"
+}

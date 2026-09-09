@@ -1,0 +1,16 @@
+{
+  "id": "vault-secrets",
+  "name": "Vault Secrets Bridge",
+  "version": "0.2.0",
+  "author": "sutra-community",
+  "license": "MIT",
+  "kind": "plugin",
+  "description": "Read-only bridge to a local secrets file. Every secret read is a critical, human-approved action; values are masked in logs and traces.",
+  "scopes": ["secrets", "fs.read"],
+  "entry": "index.ts",
+  "minSutra": "0.1.0",
+  "permissions": {
+    "secrets": "read-only, per-key, approval required",
+    "fs.read": "manifest path only"
+  }
+}
