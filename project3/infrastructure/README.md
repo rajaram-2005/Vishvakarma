@@ -3,6 +3,11 @@
 Kubernetes, Docker and observability for the SUTRA stack. **Everything here is
 optional** — the web app runs fully local with zero containers.
 
+> CI lives at the **repository root** (`.github/workflows/sutra-ci.yml`) —
+> GitHub Actions only reads workflows from the repo root. The copy in
+> `project3/.github/workflows/ci.yml` is kept for repo-split portability and
+> is ignored by GitHub while `project3/` is a subdirectory.
+
 ## Layout
 
 | Path | Purpose |
