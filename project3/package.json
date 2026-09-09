@@ -1,0 +1,28 @@
+{
+  "name": "sutra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SUTRA — Project 3. The open AI ecosystem workspace. Local-first, provider-neutral, cinematic.",
+  "license": "MIT",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @sutra/web",
+    "build": "npm run build --workspace @sutra/web",
+    "start": "npm run start --workspace @sutra/web",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "api:dev": "cd services/api && python3 -m uvicorn app.main:app --reload --port 8000"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

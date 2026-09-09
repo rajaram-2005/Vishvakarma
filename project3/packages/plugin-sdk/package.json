@@ -1,0 +1,12 @@
+{
+  "name": "@sutra/plugin-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SUTRA plugin manifest format, validation and permission model.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
