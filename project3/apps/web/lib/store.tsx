@@ -42,9 +42,21 @@ function loadInitial(): AppState {
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return seed;
-    const saved = JSON.parse(raw) as AppState;
-    if (!saved.version || saved.version !== SEED_VERSION) return seed;
-    return { ...seed, ...saved, settings: { ...seed.settings, ...saved.settings } };
+    const saved = JSON.parse(raw) as Partial<AppState>;
+    // localStorage is user-editable and older builds may have persisted a
+    // partially written state. Never let one bad field bring down the whole
+    // client tree: only hydrate states with the collections the UI relies on.
+    const collections: Array<keyof AppState> = [
+      'models', 'projects', 'conversations', 'agents', 'teams', 'skills', 'tools',
+      'workflows', 'approvals', 'activity', 'traces', 'mcp', 'memory', 'knowledge',
+      'chunks', 'deployments', 'installed', 'sessionAllowed',
+    ];
+    if (
+      saved.version !== SEED_VERSION ||
+      !saved.settings ||
+      collections.some((key) => !Array.isArray(saved[key]))
+    ) return seed;
+    return { ...seed, ...saved, settings: { ...seed.settings, ...saved.settings } } as AppState;
   } catch {
     return seed;
   }
