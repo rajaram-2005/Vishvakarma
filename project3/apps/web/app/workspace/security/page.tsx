@@ -1,11 +1,12 @@
 'use client';
 // SUTRA — Security: policy matrix, live approvals, secret scan, audit.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ShieldCheck, Trash2 } from 'lucide-react';
 import { useSutra } from '@/lib/store';
 import { GlassPanel, SectionTitle, RiskBadge } from '@/components/ui';
 import { ApprovalQueue } from '@/components/workspace/IDE';
+import { server, serverUsable, serverUrl } from '@/lib/server';
 import { DEFAULT_POLICY, scanForSecrets, assess } from '@sutra/shared';
 
 const SAMPLE_SCAN = `const key = "sk-1234567890abcdefgh1234";
@@ -18,6 +19,48 @@ export default function SecurityPage() {
   const [scanOut, setScanOut] = useState<Array<{ line: number; kind: string }>>([]);
   const [cmd, setCmd] = useState('');
   const [cmdRisk, setCmdRisk] = useState<ReturnType<typeof assess> | null>(null);
+  const [via, setVia] = useState({ cmd: false, scan: false });
+
+  const srvOn = serverUsable(s.settings);
+
+  // When the SUTRA API is configured (non-local mode), refresh the local
+  // baseline with the service's verdict — identical contract, server-side copy.
+  useEffect(() => {
+    if (!cmd.trim() || !srvOn) return;
+    const b = serverUrl(s.settings);
+    if (!b) return;
+    const t = setTimeout(() => {
+      server
+        .assess(b, 'terminal.exec', cmd)
+        .then((r) => {
+          setCmdRisk(r);
+          setVia((x) => ({ ...x, cmd: true }));
+        })
+        .catch(() => {
+          /* keep the local verdict */
+        });
+    }, 250);
+    return () => clearTimeout(t);
+  }, [cmd, srvOn, s.settings]);
+
+  const runScan = () => {
+    if (!scan.trim()) return;
+    setScanOut(scanForSecrets(scan).map((f) => ({ line: f.line, kind: f.kind })));
+    setVia((x) => ({ ...x, scan: false }));
+    if (srvOn) {
+      const b = serverUrl(s.settings);
+      if (!b) return;
+      server
+        .scan(b, scan)
+        .then((r) => {
+          setScanOut(r.findings.map((f) => ({ line: f.line, kind: f.kind })));
+          setVia((x) => ({ ...x, scan: true }));
+        })
+        .catch(() => {
+          /* keep the local findings */
+        });
+    }
+  };
 
   const pending = s.approvals.filter((a) => a.status === 'pending');
   const session = s.sessionAllowed;
@@ -57,7 +100,14 @@ export default function SecurityPage() {
 
         <div className="space-y-4">
           <GlassPanel className="p-5">
-            <div className="font-mono text-[10px] tracking-widest mb-3" style={{ color: 'var(--acc2)' }}>COMMAND RISK SCAN</div>
+            <div className="font-mono text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--acc2)' }}>
+              COMMAND RISK SCAN
+              {via.cmd && (
+                <span className="chip !text-[8px]" style={{ color: 'var(--ok)' }}>
+                  via SUTRA API
+                </span>
+              )}
+            </div>
             <input
               value={cmd}
               onChange={(e) => {
@@ -87,11 +137,18 @@ export default function SecurityPage() {
           </GlassPanel>
 
           <GlassPanel className="p-5">
-            <div className="font-mono text-[10px] tracking-widest mb-3" style={{ color: 'var(--acc2)' }}>SECRET SCAN</div>
+            <div className="font-mono text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--acc2)' }}>
+              SECRET SCAN
+              {via.scan && (
+                <span className="chip !text-[8px]" style={{ color: 'var(--ok)' }}>
+                  via SUTRA API
+                </span>
+              )}
+            </div>
             <div className="flex gap-2 mb-2">
               <button onClick={() => setScan(SAMPLE_SCAN)} className="btn-ghost !py-1.5 !px-3 text-[10px]">load sample</button>
               <button
-                onClick={() => setScanOut(scanForSecrets(scan).map((f) => ({ line: f.line, kind: f.kind })))}
+                onClick={runScan}
                 disabled={!scan.trim()}
                 className="btn-primary !py-1.5 !px-3 text-[10px]"
                 style={{ opacity: scan.trim() ? 1 : 0.4 }}

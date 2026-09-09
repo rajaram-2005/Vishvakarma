@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  // standalone output is only for container images (Dockerfile.web sets
+  // SUTRA_STANDALONE=1); local `next start` requires the default output.
+  ...(process.env.SUTRA_STANDALONE ? { output: 'standalone' } : {}),
   transpilePackages: [
     '@sutra/shared',
     '@sutra/model-adapters',

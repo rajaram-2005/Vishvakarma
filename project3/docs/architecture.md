@@ -38,6 +38,7 @@
 │ SERVICE BOUNDARY (Python/FastAPI) — optional, same contracts     │
 │  api · auth · router · agent · registry · discovery ·            │
 │  evaluation · memory · rag · security · deployment · marketplace │
+│  ⇄ wired to web via apps/web/lib/server.ts (Settings → SUTRA API)│
 ├──────────────────────────────────────────────────────────────────┤
 │ RUNTIMES & DATA (yours)                                          │
 │  Ollama · llama.cpp · vLLM · SGLang · any /chat/completions      │

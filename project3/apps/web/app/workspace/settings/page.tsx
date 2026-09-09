@@ -2,21 +2,41 @@
 // SUTRA — Settings: appearance, privacy, providers, Puter, data, about.
 
 import React, { useRef, useState } from 'react';
-import { ExternalLink, Trash2, Upload } from 'lucide-react';
+import { ExternalLink, Server, Trash2, Upload } from 'lucide-react';
 import { useSutra } from '@/lib/store';
 import { GlassPanel, SectionTitle, Toggle } from '@/components/ui';
 import { usePuter } from '@/lib/puter';
 import { providerFor } from '@/lib/providers';
+import { normalizeBaseUrl, server, serverStatus, ServerError } from '@/lib/server';
 import { PUTER_DOC_URL } from '@sutra/puter-adapter';
 import { download } from '@sutra/shared';
 import type { PrivacyMode, SyncScope, Theme } from '@sutra/shared';
 
 export default function SettingsPage() {
-  const { s, setSettings, exportAll, importAll, resetAll } = useSutra();
+  const { s, setSettings, exportAll, importAll, resetAll, act } = useSutra();
   const puter = usePuter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [connMsg, setConnMsg] = useState('');
+  const [apiMsg, setApiMsg] = useState('');
   const p = s.settings.providers;
+  const apiStatus = serverStatus(s.settings);
+
+  const testServer = async () => {
+    const url = normalizeBaseUrl(s.settings.server?.baseUrl);
+    if (!url) {
+      setApiMsg('set a base URL first (e.g. http://localhost:8000)');
+      return;
+    }
+    setApiMsg('probing…');
+    try {
+      const h = await server.health(url);
+      setApiMsg(`reachable · ${h.service} v${h.version} · mode ${h.privacyMode} · backends: ${h.backends.join(', ') || 'none'}`);
+      act('settings', 'SUTRA API reachable', `${url} · ${h.privacyMode}`, undefined);
+    } catch (e) {
+      setApiMsg(`unreachable · ${e instanceof ServerError ? e.message : String(e)}`);
+      act('settings', 'SUTRA API unreachable', `${url} · ${e instanceof ServerError ? e.message : String(e)}`, undefined);
+    }
+  };
 
   const testOllama = async () => {
     setConnMsg('probing…');
@@ -181,6 +201,49 @@ export default function SettingsPage() {
             placeholder="http://localhost:4318/v1/traces"
           />
         </Field>
+      </GlassPanel>
+
+      <GlassPanel className="p-5 space-y-4">
+        <div className="font-mono text-[10px] tracking-widest flex items-center gap-2" style={{ color: 'var(--acc2)' }}>
+          <Server size={12} /> SUTRA API (OPTIONAL SERVICE LAYER)
+        </div>
+        <Field label="service api base url (services/api · uvicorn app.main:app)">
+          <div className="flex gap-2">
+            <input
+              value={s.settings.server?.baseUrl ?? ''}
+              onChange={(e) => {
+                setSettings({ server: { baseUrl: e.target.value } });
+                setApiMsg('');
+              }}
+              className="glass-2 flex-1 px-3 py-2 text-sm font-mono outline-none"
+              style={{ color: 'var(--ink)' }}
+              placeholder="http://localhost:8000"
+            />
+            <button onClick={() => void testServer()} className="btn-ghost !py-2 !px-3 text-xs">test</button>
+          </div>
+        </Field>
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className="chip !text-[9px]"
+            style={{
+              color: apiStatus.state === 'on' ? 'var(--ok)' : apiStatus.state === 'blocked' ? 'var(--warn)' : 'var(--dim)',
+              borderColor: apiStatus.state === 'on' ? 'var(--ok)' : apiStatus.state === 'blocked' ? 'var(--warn)' : 'var(--line)',
+            }}
+          >
+            {apiStatus.state === 'on' ? 'ACTIVE — chat routes via API' : apiStatus.state === 'blocked' ? 'BLOCKED by local mode' : 'OFF — local core only'}
+          </span>
+          {apiMsg && (
+            <span className="font-mono text-[10px]" style={{ color: apiMsg.startsWith('reachable') ? 'var(--ok)' : 'var(--warn)' }}>
+              {apiMsg}
+            </span>
+          )}
+        </div>
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--dim)' }}>
+          When active, chat, routing, security scans, workflow validation and n8n export can be served by the Python
+          service layer (same contracts as the local core). Every call is recorded in Activity, and any failure falls
+          back to the local core automatically. In <b>local mode the API is ignored</b> — the workspace is fully
+          offline by contract. Start it with <span className="font-mono">cd services/api && uvicorn app.main:app --port 8000</span>.
+        </p>
       </GlassPanel>
 
       <GlassPanel className="p-5 space-y-3">

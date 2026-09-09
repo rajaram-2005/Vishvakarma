@@ -5,6 +5,7 @@ import type { ChatMessage, MemoryEntry, ModelInfo, Settings } from '@sutra/share
 import { uid } from '@sutra/shared';
 import { route } from '@sutra/model-adapters';
 import { providerFor, reachableModels } from './providers';
+import { server, serverUsable, serverUrl } from './server';
 import type { Tracer } from './store';
 
 export interface ChatSendArgs {
@@ -25,8 +26,83 @@ export interface ChatResult {
   memory?: MemoryEntry;
 }
 
+function buildMessages(
+  history: ChatMessage[],
+  text: string,
+): Array<{ role: 'system' | 'user' | 'assistant'; content: string }> {
+  const sys = history.filter((m) => m.role === 'system').map((m) => m.content).join('\n');
+  const msgs: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
+  if (sys) msgs.push({ role: 'system', content: sys });
+  for (const m of history.slice(-10)) msgs.push({ role: m.role, content: m.content });
+  msgs.push({ role: 'user', content: text });
+  return msgs;
+}
+
+function extractMemory(text: string): MemoryEntry | undefined {
+  const rem = text.match(/remember\s+(?:that\s+)?(.+)/i);
+  if (!rem) return undefined;
+  return {
+    id: uid('mem'),
+    kind: 'fact',
+    text: rem[1].trim().slice(0, 300),
+    source: 'chat',
+    ts: new Date().toISOString(),
+  };
+}
+
 export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
   const { text, models, settings, forceModel, history, trace } = args;
+
+  // ── Optional service layer ─────────────────────────────────────────────
+  // Configured + non-local privacy mode → route through the SUTRA API.
+  // Any failure (unreachable, HTTP, timeout) falls back to the local core
+  // transparently, with an honest trace span. Local mode never reaches here.
+  const baseUrl = serverUrl(settings);
+  if (serverUsable(settings) && baseUrl) {
+    const tSrv = Date.now();
+    try {
+      const out = await server.chat(baseUrl, {
+        messages: buildMessages(history, text),
+        modelId: forceModel,
+        requireLocal: settings.privacyMode === 'hybrid',
+        maxTokens: 1400,
+      });
+      trace.span('server.chat', Date.now() - tSrv, { model: out.model || 'sutra-local', via: baseUrl });
+      const memory = extractMemory(text);
+      trace.span('memory.extract', 1, { stored: memory ? 'yes' : 'no' });
+      if (out.error) {
+        return {
+          content: `The SUTRA API stream returned an error: **${out.error}**\n\nCheck the service (Settings → SUTRA API). Nothing else was sent anywhere.`,
+          modelId: out.model || 'sutra-local',
+          modelName: out.model ? `${out.model} · via SUTRA API` : 'via SUTRA API',
+          route: {
+            analysis: `via SUTRA API${out.runtime ? ` (${out.runtime})` : ''}`,
+            chosen: out.model || 'sutra-local',
+            chosenName: out.model || 'sutra-local',
+            reasons: out.reasons.length ? out.reasons : ['server routing'],
+          },
+          usedFallback: false,
+          memory,
+        };
+      }
+      return {
+        content: out.content || '(empty response from the SUTRA API)',
+        modelId: out.model || 'sutra-local',
+        modelName: out.model ? `${out.model} · via SUTRA API` : 'via SUTRA API',
+        route: {
+          analysis: `via SUTRA API${out.runtime ? ` (${out.runtime})` : ''}`,
+          chosen: out.model || 'sutra-local',
+          chosenName: out.model || 'sutra-local',
+          reasons: out.reasons.length ? out.reasons : ['server routing'],
+        },
+        usedFallback: false,
+        memory,
+      };
+    } catch (e) {
+      trace.span('server.chat', Date.now() - tSrv, { error: String(e).slice(0, 120) }, 'error');
+      // fall through → local core (transparent, but traced)
+    }
+  }
 
   const tRoute = Date.now();
   const pool = reachableModels(models, settings);
@@ -51,14 +127,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
     modelName = 'Sutra Local (fallback)';
   }
 
-  const sys = history
-    .filter((m) => m.role === 'system')
-    .map((m) => m.content)
-    .join('\n');
-  const msgs: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
-  if (sys) msgs.push({ role: 'system', content: sys });
-  for (const m of history.slice(-10)) msgs.push({ role: m.role, content: m.content });
-  msgs.push({ role: 'user', content: text });
+  const msgs = buildMessages(history, text);
 
   const tModel = Date.now();
   let content = '';
@@ -75,17 +144,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
   }
 
   const tMem = Date.now();
-  let memory: MemoryEntry | undefined;
-  const rem = text.match(/remember\s+(?:that\s+)?(.+)/i);
-  if (rem) {
-    memory = {
-      id: uid('mem'),
-      kind: 'fact',
-      text: rem[1].trim().slice(0, 300),
-      source: 'chat',
-      ts: new Date().toISOString(),
-    };
-  }
+  const memory = extractMemory(text);
   trace.span('memory.extract', Date.now() - tMem, { stored: memory ? 'yes' : 'no' });
 
   const tFmt = Date.now();

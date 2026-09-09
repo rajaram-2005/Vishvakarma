@@ -198,12 +198,12 @@ function buildLocalReply(req: ChatRequest): string {
   if (rem) return `Stored to long-term memory: "${rem[1].trim()}"\n\nI will recall this in future sessions (Memory → facts).`;
 
   // safety refusal
-  if (/(break into|pick a lock|hack (a|the|my|someone)|steal|bypass (security|auth)|exploit)/i.test(lower) && !/how to stay safe|security research|defend/i.test(lower)) {
+  if (/(break(?:ing)? into|pick a lock|hack (a|the|my|someone)|steal|bypass (security|auth)|exploit)/i.test(lower) && !/how to stay safe|security research|defend/i.test(lower)) {
     return 'I won\'t help with that. If it\'s a legitimate security question — defending a system, authorized testing, incident response — rephrase with that context and I\'ll dig in.';
   }
 
   // hallucination probe: unknown-person pattern
-  const person = text.match(/who (was|is) the ([^?]+?)\??/i);
+  const person = text.match(/who (was|is) the ([^?]+)\??/i);
   if (person && /(vexworth|quellborn|astramind|zephyria)/i.test(person[2])) {
     return `I have no record of ${person[2].trim()}. That name does not appear in my knowledge or in the workspace. I'd rather tell you that plainly than invent a biography.`;
   }

@@ -67,6 +67,7 @@ export const DEFAULT_SETTINGS: Settings = {
     openaiModel: '',
     otlpEndpoint: '',
   },
+  server: { baseUrl: '' },
 };
 
 const now = () => new Date().toISOString();

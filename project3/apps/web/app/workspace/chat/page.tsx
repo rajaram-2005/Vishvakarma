@@ -8,6 +8,7 @@ import { useSutra } from '@/lib/store';
 import { GlassPanel, SectionTitle } from '@/components/ui';
 import { sendChat } from '@/lib/chat';
 import { reachableModels } from '@/lib/providers';
+import { serverUsable } from '@/lib/server';
 import { uid, timeAgo } from '@sutra/shared';
 
 const SUGGESTIONS = [
@@ -214,7 +215,11 @@ export default function ChatPage() {
             </button>
           </div>
           <div className="mt-2 font-mono text-[9px] tracking-wider" style={{ color: 'var(--dim)' }}>
-            router: {s.settings.privacyMode === 'local' ? 'local-only pool' : 'all reachable'} · every answer is traced · “remember X” stores to memory
+            router: {s.settings.privacyMode === 'local' ? 'local-only pool' : 'all reachable'} · core:{' '}
+            <span style={{ color: serverUsable(s.settings) ? 'var(--acc2)' : 'var(--dim)' }}>
+              {serverUsable(s.settings) ? 'SUTRA API' : 'local'}
+            </span>{' '}
+            · every answer is traced · “remember X” stores to memory
           </div>
         </div>
       </GlassPanel>

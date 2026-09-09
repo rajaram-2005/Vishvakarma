@@ -23,6 +23,12 @@ export interface Settings {
     openaiModel: string;
     otlpEndpoint: string;
   };
+  /**
+   * Optional SUTRA service API (services/api). Empty/unset = the workspace
+   * runs entirely on the local core. In local privacy mode this is IGNORED
+   * and enforced offline — the contract, not a recommendation.
+   */
+  server?: { baseUrl: string };
 }
 
 export interface SutraTask {

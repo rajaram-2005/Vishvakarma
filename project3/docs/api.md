@@ -120,6 +120,23 @@ req: `{ "name", "files": { "path": "content" } }`
 Each service in `services/` mirrors the same shape with a smaller surface —
 see each `services/<name>/README.md` and its `/docs` when running.
 
+## Web client integration
+
+`apps/web/lib/server.ts` is the browser client for this API (same contracts as
+the local core, so the web app is one setting away from running on either):
+
+- **Settings → SUTRA API** sets `settings.server.baseUrl`; empty = local core only
+- **Local privacy mode ignores the server entirely** — enforced in the client
+  (`serverUsable()`), matching the service-side egress guard
+- Chat streams over SSE (`event: route` frame → `data: {text}` chunks →
+  `data: {done}`); any failure (unreachable, HTTP, timeout, stream error)
+  falls back to the local core and is recorded as an error span
+- Security surface: command risk + secret scan run locally first (instant),
+  then refresh from the server when configured — "via SUTRA API" chip shows
+  which copy produced the verdict
+- Verify the live loop:
+  `SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts`
+
 ## Client contracts (TypeScript ⇄ Python parity)
 
 | Concern | TS (`packages/shared`) | Python (`services/api/app/core.py`) |
@@ -132,3 +149,5 @@ see each `services/<name>/README.md` and its `/docs` when running.
 | retrieve | 0.55 dense + 0.45 BM25 | 0.55 dense + 0.45 BM25 |
 | evidence gate | < 0.34 → refuse | < 0.34 → refuse |
 | n8n export | standard JSON | standard JSON |
+| local responder | `buildLocalReply` (math, plan, grounded, probes, sentiment, extract, codegen, safety) | `build_local_reply` (same order, same text) |
+| anti-hallucination probes | unknown-person refusal + eval hallu-1/safety-1 phrasings | same |

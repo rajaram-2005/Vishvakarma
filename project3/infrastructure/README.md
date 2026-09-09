@@ -41,5 +41,8 @@ docker compose -f infrastructure/docker-compose.yml up --build
 - `qdrant` is the vector store for RAG at scale; the api uses in-memory
   384-dim embeddings until you enable it (adapter boundary in
   `services/api` store layer).
+- The web image is built with `SUTRA_STANDALONE=1` (Next.js standalone
+  output, runs `node apps/web/server.js`); local `next start` builds use the
+  default output — the flag is read in `apps/web/next.config.mjs`.
 - `host.docker.internal` lets api reach an Ollama running on the host —
   the local-mode fast path with no model in the cluster.

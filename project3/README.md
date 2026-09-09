@@ -94,7 +94,7 @@ Settings → Providers:
 Until then, **SUTRA Local** (the built-in offline responder) keeps everything
 functional.
 
-### Service API (Python)
+### Service API (Python) + wire the web to it
 
 ```bash
 cd project3
@@ -103,6 +103,13 @@ cd services/api
 ../../.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 # interactive docs: http://localhost:8000/docs
 ```
+
+Then in the web app: **Settings → SUTRA API** → `http://localhost:8000` → **test**.
+The workspace then routes chat, routing, security scans and workflow/n8n export
+through the Python service layer (same contracts as the local core; every call
+is traced; any failure falls back to the local core). In **local privacy mode
+the API is ignored — the workspace stays fully offline by contract.**
+Verify the whole loop with `SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts`.
 
 ### Full stack (hybrid mode)
 
@@ -116,9 +123,11 @@ See [`infrastructure/README.md`](infrastructure/README.md).
 ### Tests
 
 ```bash
-npm test                                # 57 vitest cases (router, planner, security,
-                                        # workflow+n8n, codecheck, terminal, RAG, OTel, gateway)
-cd services/api && ../../.venv/bin/python -m pytest tests/ -q   # 32 cases
+npm test                                # 74 vitest cases (router, planner, security,
+                                        # workflow+n8n, codecheck, terminal, RAG, OTel,
+                                        # gateway, local-responder parity, server client)
+SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts  # 6 live E2E
+cd services/api && ../../.venv/bin/python -m pytest tests/ -q   # 44 cases
 ```
 
 ## Feature map
@@ -126,7 +135,7 @@ cd services/api && ../../.venv/bin/python -m pytest tests/ -q   # 32 cases
 | Surface | What it does | Real? |
 |---|---|---|
 | **Landing** | 28 cinematic sections: hero → AI core → ecosystem → models → routing → agents → teams → skills → memory → RAG → tools → MCP → GitHub → n8n → IDE → browser → autonomous development → security → evaluation → observability → deployment → Puter.js → desktop → mobile → marketplace → enterprise → final vision | live demos: router, RAG ask, secret scan, 11-step autonomous pipeline with real approval gate, 8-step agents, live `fetchRepo` on this repository |
-| **Chat** | model pinning, route chips with reasons, streaming, "remember that…" → memory | ✓ |
+| **Chat** | model pinning, route chips with reasons, streaming, "remember that…" → memory; optional **SUTRA API** backend (Settings) with automatic local-core fallback | ✓ |
 | **Projects** | AI To-Do on Puter KV (or local fallback): CRUD, priority p0–p3, tags, due, archive, reorder; `Plan my Project 3 MVP` → structured plan with accept/reject/regenerate/assign/convert-to-workflow | ✓ |
 | **Agents / Teams** | 7 agents · 8-step loop · orchestrator handoffs | ✓ |
 | **Models** | registry, runtime adapters, connectivity tests, router tester | ✓ |

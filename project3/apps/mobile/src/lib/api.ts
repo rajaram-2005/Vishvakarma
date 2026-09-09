@@ -1,5 +1,6 @@
 // SUTRA mobile API client — talks to the service API on your LAN.
 // Base URL is set in Settings (default http://192.168.1.100:8000 for Expo Go).
+import 'text-encoding'; // TextDecoder for SSE streams on React Native
 const DEFAULT_BASE = 'http://192.168.1.100:8000';
 
 let base = DEFAULT_BASE;
