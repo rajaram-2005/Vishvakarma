@@ -1,0 +1,52 @@
+name: SUTRA CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'project3/**'
+  pull_request:
+    paths:
+      - 'project3/**'
+
+concurrency:
+  group: sutra-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: web · typecheck + tests + build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: project3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: project3/package-lock.json
+      - name: install
+        run: npm ci --no-audit --no-fund
+      - name: typecheck
+        run: cd apps/web && npx tsc --noEmit
+      - name: unit tests
+        run: npx vitest run
+      - name: production build
+        run: cd apps/web && npm run build
+
+  api:
+    name: service api · pytest (44)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: install
+        run: |
+          python -m venv .venv
+          ./.venv/bin/pip install --quiet -r project3/services/api/requirements.txt pytest
+      - name: pytest
+        run: ./.venv/bin/python -m pytest project3/services/api/tests -q

@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "allowJs": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@sutra/shared": ["../../packages/shared/src/index.ts"],
+      "@sutra/model-adapters": ["../../packages/model-adapters/src/index.ts"],
+      "@sutra/tool-adapters": ["../../packages/tool-adapters/src/index.ts"],
+      "@sutra/puter-adapter": ["../../packages/puter-adapter/src/index.ts"],
+      "@sutra/workflow-sdk": ["../../packages/workflow-sdk/src/index.ts"],
+      "@sutra/evaluation-sdk": ["../../packages/evaluation-sdk/src/index.ts"],
+      "@sutra/plugin-sdk": ["../../packages/plugin-sdk/src/index.ts"],
+      "@sutra/sdk": ["../../packages/sdk/src/index.ts"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

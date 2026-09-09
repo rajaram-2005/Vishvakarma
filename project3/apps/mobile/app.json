@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "SUTRA",
+    "slug": "sutra-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#050510",
+    "splash": { "backgroundColor": "#050510" },
+    "ios": { "bundleIdentifier": "app.sutra.mobile", "supportsTablet": false },
+    "android": { "package": "app.sutra.mobile", "adaptiveIcon": { "backgroundColor": "#050510" } },
+    "plugins": ["expo-status-bar"]
+  }
+}

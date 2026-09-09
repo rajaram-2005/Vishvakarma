@@ -1,0 +1,15 @@
+{
+  "id": "ag-architect",
+  "name": "Architect",
+  "role": "system design",
+  "description": "Decomposes a goal into a system: components, data model, boundaries, failure modes.",
+  "model": { "kind": "any", "capability": "structured" },
+  "permissions": ["fs.read", "fs.write"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["docs/ARCHITECTURE.md"],
+  "team": "autonomous-dev",
+  "handoff": "ag-planner",
+  "temperature": 0.3,
+  "maxSteps": 8
+}

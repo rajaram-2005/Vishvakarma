@@ -1,0 +1,16 @@
+{
+  "id": "ag-security",
+  "name": "Sentinel",
+  "role": "security review",
+  "description": "Scans for secrets, dangerous signatures and policy violations. A finding halts the pipeline — it is never waived.",
+  "model": { "kind": "any", "capability": "code" },
+  "permissions": ["fs.read", "terminal.exec"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["reports/security-scan.md"],
+  "team": "autonomous-dev",
+  "handoff": "ag-reviewer",
+  "temperature": 0.0,
+  "maxSteps": 8,
+  "blocking": true
+}

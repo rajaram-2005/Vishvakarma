@@ -1,0 +1,24 @@
+{
+  "id": "wf-autonomous-dev",
+  "name": "Autonomous Development",
+  "description": "Goal → Architect → Planner → Coder → Terminal → Browser → Tester → Security → Reviewer → Approval → Deploy. The full IDE pipeline as an auditable workflow. Deploy is ALWAYS a human approval.",
+  "trigger": "manual",
+  "nodes": [
+    { "id": "goal", "type": "trigger", "label": "Goal", "config": { "description": "start when a goal is given" } },
+    { "id": "arch", "type": "ai", "label": "Architect", "config": { "prompt": "Produce docs/ARCHITECTURE.md for the goal: components, data model, boundaries, failure modes." } },
+    { "id": "plan", "type": "ai", "label": "Planner", "config": { "prompt": "Produce docs/PLAN.md: ordered tasks with acceptance criteria." } },
+    { "id": "code", "type": "ai", "label": "Coder", "config": { "prompt": "Implement the plan in src/ with tests in tests/. Keep imports resolvable." } },
+    { "id": "term", "type": "shell", "label": "Terminal", "config": { "command": "npm test" } },
+    { "id": "browser", "type": "http", "label": "Browser", "config": { "url": "http://localhost:3000/", "method": "GET" } },
+    { "id": "test", "type": "shell", "label": "Tester", "config": { "command": "npm run build" } },
+    { "id": "sec", "type": "shell", "label": "Security", "config": { "command": "grep -RInE 'sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}' src tests || echo clean" } },
+    { "id": "review", "type": "ai", "label": "Reviewer", "config": { "prompt": "Review the diff: correctness, style, risk. Flag anything you would not merge." } },
+    { "id": "approve", "type": "approval", "label": "Approval", "config": { "reason": "deploy is critical — human decision required (Allow Once / Session / Inspect)" } },
+    { "id": "deploy", "type": "http", "label": "Deploy", "config": { "url": "http://localhost:8000/api/v1/deploy/local", "method": "POST", "body": "${workspace.bundle}" } }
+  ],
+  "edges": [
+    ["goal", "arch"], ["arch", "plan"], ["plan", "code"], ["code", "term"],
+    ["term", "browser"], ["browser", "test"], ["test", "sec"], ["sec", "review"],
+    ["review", "approve"], ["approve", "deploy"]
+  ]
+}

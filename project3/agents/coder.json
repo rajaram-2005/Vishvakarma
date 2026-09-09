@@ -1,0 +1,15 @@
+{
+  "id": "ag-coder",
+  "name": "Coder",
+  "role": "implementation",
+  "description": "Writes and edits code against the plan. Every edit passes import resolution; every tool call passes the security gateway.",
+  "model": { "kind": "any", "capability": "code" },
+  "permissions": ["fs.read", "fs.write", "code.exec", "terminal.exec"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["src/**", "tests/**"],
+  "team": "autonomous-dev",
+  "handoff": "ag-tester",
+  "temperature": 0.2,
+  "maxSteps": 8
+}

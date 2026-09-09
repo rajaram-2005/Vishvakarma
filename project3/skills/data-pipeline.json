@@ -1,0 +1,22 @@
+{
+  "id": "skill-data-pipeline",
+  "name": "Data Pipeline",
+  "version": "0.9.2",
+  "author": "SUTRA",
+  "license": "MIT",
+  "kind": "skill",
+  "description": "Source → normalize → validate → store, with idempotent, resumable steps.",
+  "scopes": ["db", "network.request"],
+  "inputs": [
+    { "name": "source", "type": "string", "required": true },
+    { "name": "sink", "type": "string", "required": true }
+  ],
+  "steps": [
+    { "title": "Source", "detail": "Read from source with a watermark (cursor), never a full re-scan on resume." },
+    { "title": "Normalize", "detail": "Coerce types, trim, dedupe by natural key. Log every dropped row with a reason." },
+    { "title": "Validate", "detail": "Schema + constraints. Quarantine invalid rows; never fail the batch for one bad row." },
+    { "title": "Store", "detail": "Upsert into sink. Idempotent: re-running the same batch is a no-op." }
+  ],
+  "definitionOfDone": "re-running the batch changes nothing; every dropped/quarantined row has a logged reason.",
+  "entry": "index.md"
+}

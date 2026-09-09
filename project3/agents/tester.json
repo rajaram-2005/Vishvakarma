@@ -1,0 +1,15 @@
+{
+  "id": "ag-tester",
+  "name": "Tester",
+  "role": "verification",
+  "description": "Generates and runs tests in the sandbox. Failures become structured reports, never silent skips.",
+  "model": { "kind": "any", "capability": "code" },
+  "permissions": ["fs.read", "code.exec", "terminal.exec"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["tests/**", "reports/test-run.md"],
+  "team": "autonomous-dev",
+  "handoff": "ag-security",
+  "temperature": 0.1,
+  "maxSteps": 8
+}

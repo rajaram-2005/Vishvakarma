@@ -1,0 +1,18 @@
+{
+  "benchmark": "bench-sutra-smoke",
+  "model": "sutra-local (heuristic scorer)",
+  "date": "2026-09-09",
+  "runs": 2,
+  "metrics": {
+    "accuracy": 1.0,
+    "factuality": 1.0,
+    "hallucinationRate": 0.0,
+    "completionRate": 1.0,
+    "avgLatencyMs": 4,
+    "p95LatencyMs": 5,
+    "totalTokens": 28,
+    "estimatedCostUsd": 0,
+    "reproducibility": 1.0
+  },
+  "note": "Baseline from the deterministic local scorer. Re-run per model with POST /run on services/evaluation to compare real backends against this floor: the floor proves the harness, the probes prove the model."
+}

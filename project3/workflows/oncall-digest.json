@@ -1,0 +1,14 @@
+{
+  "id": "wf-oncall-digest",
+  "name": "On-call Digest",
+  "description": "Daily 09:00: gather incidents → summarize → human review → post digest. Ships as n8n-compatible JSON (see /api/v1/workflows/n8n).",
+  "trigger": "schedule",
+  "nodes": [
+    { "id": "t", "type": "trigger", "label": "Start", "config": { "schedule": "daily 09:00" } },
+    { "id": "fetch", "type": "http", "label": "Gather incidents", "config": { "url": "https://api.example.com/incidents?status=unresolved", "method": "GET" } },
+    { "id": "sum", "type": "ai", "label": "Summarize", "config": { "prompt": "Summarize the incident list into 5 bullets with severity ordering. Be factual; do not invent details." } },
+    { "id": "approve", "type": "approval", "label": "Review digest", "config": { "reason": "human review before posting to the team channel" } },
+    { "id": "post", "type": "http", "label": "Post digest", "config": { "url": "https://api.example.com/channels/ops", "method": "POST", "body": "${vars.summary}" } }
+  ],
+  "edges": [["t", "fetch"], ["fetch", "sum"], ["sum", "approve"], ["approve", "post"]]
+}

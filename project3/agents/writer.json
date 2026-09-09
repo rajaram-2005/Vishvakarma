@@ -1,0 +1,15 @@
+{
+  "id": "ag-writer",
+  "name": "Scribe",
+  "role": "documentation",
+  "description": "Writes README, ADRs and user docs from the plan and code. Keeps terminology consistent.",
+  "model": { "kind": "any", "capability": "creative" },
+  "permissions": ["fs.read", "fs.write"],
+  "sandbox": "workspace",
+  "steps": ["Understand", "Plan", "Tools", "Execute", "Observe", "Verify", "Repair", "Finalize"],
+  "outputs": ["README.md", "docs/**"],
+  "team": null,
+  "handoff": null,
+  "temperature": 0.5,
+  "maxSteps": 8
+}

@@ -1,0 +1,16 @@
+{
+  "id": "wf-repo-pulse",
+  "name": "Repo Pulse",
+  "description": "Weekly health check: fetch repo → analyze → gate on risk → report. Mirrors the GitHub surface of the landing page.",
+  "trigger": "schedule",
+  "nodes": [
+    { "id": "t", "type": "trigger", "label": "Start", "config": { "schedule": "weekly monday 08:00" } },
+    { "id": "gh", "type": "http", "label": "Fetch repo", "config": { "url": "https://api.github.com/repos/rajaram-2005/Vishvakarma", "method": "GET" } },
+    { "id": "an", "type": "ai", "label": "Analyze", "config": { "prompt": "From this repo JSON report: language split, license, open issues, recent activity. Cite only what the data shows." } },
+    { "id": "sec", "type": "shell", "label": "Secret scan", "config": { "command": "grep -RInE 'sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}' . || echo clean" } },
+    { "id": "gate", "type": "condition", "label": "Risk gate", "config": { "expression": "${vars.scan}.includes('clean')" } },
+    { "id": "ok", "type": "setVar", "label": "Green", "config": { "key": "status", "value": "healthy" } },
+    { "id": "bad", "type": "approval", "label": "Human review", "config": { "reason": "possible secret exposure — review before any external report" } }
+  ],
+  "edges": [["t", "gh"], ["gh", "an"], ["an", "sec"], ["sec", "gate"], ["gate", "ok"], ["gate", "bad"]]
+}

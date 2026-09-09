@@ -1,0 +1,23 @@
+{
+  "id": "skill-rag-tuning",
+  "name": "RAG Tuning",
+  "version": "1.0.0",
+  "author": "SUTRA",
+  "license": "MIT",
+  "kind": "skill",
+  "description": "Tune chunk size, overlap, rerank blend and citation format to maximize grounded-answer quality.",
+  "scopes": ["fs.read"],
+  "inputs": [
+    { "name": "corpusPath", "type": "string", "required": true },
+    { "name": "sampleQueries", "type": "array", "required": true }
+  ],
+  "steps": [
+    { "title": "Baseline", "detail": "Run the default 420/90 chunk + 0.55/0.45 blend on the sample queries; record recall@5 and grounded-rate." },
+    { "title": "Chunk sweep", "detail": "Sweep chunk size {280, 420, 560} and overlap {60, 90, 120}; keep the config with the best grounded-rate." },
+    { "title": "Rerank blend", "detail": "Sweep dense weight {0.4..0.7 step .05}; prefer recall on multi-hop questions." },
+    { "title": "Citations", "detail": "Verify every answer cites [n] with the chunk visible on hover; fix any dangling citation." },
+    { "title": "Gate check", "detail": "Re-run refusal probes — the evidence gate (overlap<0.34) must still refuse non-supported questions." }
+  ],
+  "definitionOfDone": "grounded-rate ≥ baseline, refusal probes still refuse, every answer has resolvable citations.",
+  "entry": "index.md"
+}
