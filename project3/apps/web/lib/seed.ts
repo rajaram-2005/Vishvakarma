@@ -70,7 +70,12 @@ export const DEFAULT_SETTINGS: Settings = {
   server: { baseUrl: '' },
 };
 
-const now = () => new Date().toISOString();
+// Fixed anchor for every seed timestamp. The seed must be byte-identical on the
+// server and client render passes — wall-clock values (`Date.now()`) change in
+// the gap between SSR and hydration and break React hydration.
+export const SEED_NOW_MS = Date.parse('2026-09-01T09:00:00.000Z');
+
+const now = () => new Date(SEED_NOW_MS).toISOString();
 
 export const SEED_MODELS: ModelInfo[] = [
   {
@@ -630,7 +635,7 @@ export const SEED_GIT: GitState = {
       hash: 'a1f0c9d',
       message: 'init: SUTRA MVP scaffold',
       files: Object.keys(SEED_FS),
-      ts: new Date(Date.now() - 3600e3).toISOString(),
+      ts: new Date(SEED_NOW_MS - 3600e3).toISOString(),
       branch: 'main',
     },
   ],
@@ -644,7 +649,7 @@ export const SEED_KNOWLEDGE: KnowledgeDoc[] = [
     title: 'SUTRA Design Principles',
     source: 'bundled document',
     kind: 'text',
-    createdAt: new Date(Date.now() - 7200e3).toISOString(),
+    createdAt: new Date(SEED_NOW_MS - 7200e3).toISOString(),
     chars: SAMPLE_DOC_TEXT.length,
     chunkCount: 0,
   },

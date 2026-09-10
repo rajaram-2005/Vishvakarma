@@ -33,7 +33,11 @@ try {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark">
+    // data-theme is rewritten by the boot script above (and by the store's
+    // theme effect) to the user's saved theme. The server always renders
+    // 'dark', so allow that one attribute to be patched pre-hydration without
+    // a hydration warning.
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
       </head>

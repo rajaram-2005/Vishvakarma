@@ -37,11 +37,20 @@ function reducer(s: AppState, a: Action): AppState {
 }
 
 function loadInitial(): AppState {
-  const seed = seedState();
-  if (typeof window === 'undefined') return seed;
+  // Deterministic initial render. The server render (and the client's first
+  // render, which must match it for hydration) always uses the seed; state
+  // persisted in localStorage is applied afterwards, in a mount effect. Reading
+  // localStorage here would make the client's first render diverge from the
+  // server's HTML and blow up hydration.
+  return seedState();
+}
+
+/** Reads and validates state persisted in localStorage (client-only). */
+function readPersistedState(): AppState | null {
+  if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return seed;
+    if (!raw) return null;
     const saved = JSON.parse(raw) as Partial<AppState>;
     // localStorage is user-editable and older builds may have persisted a
     // partially written state. Never let one bad field bring down the whole
@@ -55,10 +64,11 @@ function loadInitial(): AppState {
       saved.version !== SEED_VERSION ||
       !saved.settings ||
       collections.some((key) => !Array.isArray(saved[key]))
-    ) return seed;
+    ) return null;
+    const seed = seedState();
     return { ...seed, ...saved, settings: { ...seed.settings, ...saved.settings } } as AppState;
   } catch {
-    return seed;
+    return null;
   }
 }
 
@@ -90,6 +100,16 @@ export function SutraProvider({ children }: { children: React.ReactNode }) {
   const [s, dispatch] = useReducer(reducer, undefined, loadInitial);
   const [reducedMotion, setReducedMotion] = useState(false);
   const saveTimer = useRef<number | null>(null);
+
+  // Hydrate persisted state after the first paint. The seed rendered by the
+  // server (and by the client during hydration) is replaced with the state the
+  // user actually had in localStorage. Skipping the dispatch entirely when
+  // nothing was persisted avoids a pointless re-render.
+  useEffect(() => {
+    const persisted = readPersistedState();
+    if (!persisted) return;
+    dispatch({ type: 'patch', patch: persisted });
+  }, []);
 
   // persist (debounced)
   useEffect(() => {
