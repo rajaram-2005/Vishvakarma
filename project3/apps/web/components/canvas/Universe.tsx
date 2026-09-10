@@ -100,8 +100,12 @@ export function UniverseCanvas({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
+    // ResizeObserver is absent in a few embedded/webview environments. The
+    // canvas is decorative, so fall back to a window resize listener instead
+    // of turning an otherwise usable page into a client-side exception.
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resize) : null;
+    if (ro) ro.observe(canvas);
+    else window.addEventListener('resize', resize);
 
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -356,11 +360,13 @@ export function UniverseCanvas({
           window.removeEventListener('mousemove', onMove);
           window.removeEventListener('scroll', onScroll);
         }
-        ro.disconnect();
+        ro?.disconnect();
+        if (!ro) window.removeEventListener('resize', resize);
       };
     }
     return () => {
-      ro.disconnect();
+      ro?.disconnect();
+      if (!ro) window.removeEventListener('resize', resize);
       if (parallax) {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('scroll', onScroll);
