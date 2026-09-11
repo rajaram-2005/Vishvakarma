@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Puter status hook. Puter is an OPTIONAL layer:
+// Lumen — Puter status hook. Puter is an OPTIONAL layer:
 // the app works fully in local mode; connecting is the user's choice.
 // All failure modes (script blocked, popup blocked, storage blocked in
 // embedded views) are surfaced as human-readable errors instead of

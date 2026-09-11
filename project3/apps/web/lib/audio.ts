@@ -1,4 +1,4 @@
-// Aetherion — optional ambient soundscape, synthesized live with WebAudio.
+// Lumen — optional ambient soundscape, synthesized live with WebAudio.
 // A slow evolving pad: two detuned low voices, a shimmer layer, gentle noise
 // air. OFF by default; no audio assets are shipped.
 

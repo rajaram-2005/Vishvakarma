@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Chat. ChatGPT-inspired surface + Claude-style artifacts:
+// Lumen Chat — the universal front door: one chat, every model and capability.
 // conversation search, a model-picker pill above the composer, gradient
 // bubbles, code blocks rendered as Artifact cards (copy · language · lines)
 // and per-message actions.
@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import { useSutra } from '@/lib/store';
 import { sendChat, ownModelInfos } from '@/lib/chat';
+import { BRAND } from '@/lib/brand';
+import { parseSchedule } from '@/lib/schedule-nl';
+import { planProject } from '@/lib/coder/engine';
 import { reachableModels } from '@/lib/providers';
 import { serverUsable } from '@/lib/server';
 import { uid, timeAgo } from '@sutra/shared';
@@ -30,9 +33,9 @@ const OWN_ICONS: Record<string, React.ComponentType<{ size?: number | string }>>
 
 const SUGGESTIONS = [
   { icon: Sparkles, title: 'Meet the own models', text: 'What can you do?' },
-  { icon: Calculator, title: 'Aetherion Math', text: 'What is 17 × 23 + 5?' },
-  { icon: Code2, title: 'Aetherion Coder', text: 'Explain: function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); } }' },
-  { icon: Brain, title: 'Aetherion Writer', text: 'Write a story about a lonely space station' },
+  { icon: Calculator, title: 'Lumen Math', text: 'What is 17 × 23 + 5?' },
+  { icon: Code2, title: 'Coder', text: 'Explain: function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); } }' },
+  { icon: Brain, title: 'Writer', text: 'Write a story about a lonely space station' },
 ];
 
 // ── Claude-style artifact renderer ────────────────────────────────────────────
@@ -211,6 +214,11 @@ export default function ChatPage() {
   const [convSearch, setConvSearch] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [streamText, setStreamText] = useState('');
+  const [activeBot, setActiveBot] = useState<{ id: string; name: string; emoji: string; systemPrompt: string; model: string } | null>(null);
+  const [bots, setBots] = useState<Array<{ id: string; name: string; description: string; emoji: string; systemPrompt: string; model: string }>>([]);
+  useEffect(() => {
+    try { setBots(JSON.parse(localStorage.getItem('lumen:bots:v1') ?? '[]') as typeof bots); } catch { setBots([]); }
+  }, []);
   const endRef = useRef<HTMLDivElement>(null);
 
   const conv = s.conversations.find((c) => c.id === convId);
@@ -280,12 +288,64 @@ export default function ChatPage() {
     setStreaming(true);
     setStreamText('');
 
-    const history = [...(s.conversations.find((c) => c.id === cid)?.messages ?? []), userMsg];
+    // ── capability routing: Chat reaches across the whole studio ──────────
+    // 1 · schedule intent → create a real schedule through the core
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const parsed = parseSchedule(content, tz);
+    if (parsed && !activeBot) {
+      try {
+        const res = await fetch('/api/schedules', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ name: parsed.name, cron: parsed.cron, tz, enabled: true, deliver: [], task: { kind: 'agent', agent: 'prime', prompt: parsed.taskPrompt } }),
+        });
+        const j = await res.json();
+        if (res.ok) {
+          const done = {
+            id: uid('m'), role: 'assistant' as const,
+            content: `Scheduled ✓ — **${j.schedule.name}** runs ${j.schedule.human} (${tz}).\n\nOpen **Schedules** to see it, pause it, or edit the task.`,
+            ts: new Date().toISOString(), model: 'Schedule engine', route: { analysis: 'schedule intent', chosen: 'schedules', chosenName: 'Schedules', reasons: ['natural-language schedule'] },
+          };
+          mutate((st) => ({ ...st, conversations: st.conversations.map((c) => (c.id === cid ? { ...c, messages: [...c.messages, done] } : c)) }));
+          act('chat', 'chat → schedule created', parsed.human, tr.id);
+          setStreaming(false);
+          return;
+        }
+      } catch { /* fall through to the model answer */ }
+    }
+    // 2 · coder intent → scaffold a project and open Coder
+    if (/^(build|create|make|generate)\b/.test(content.toLowerCase()) && /\b(app|website|site|api|script)\b/.test(content.toLowerCase())) {
+      const plan = planProject(content);
+      if (plan.kind !== 'unknown') {
+        const project = { id: uid('proj'), name: plan.name, createdAt: new Date().toISOString(), files: plan.files, request: content };
+        const key = 'lumen:coder:v1';
+        const existing = (() => { try { return JSON.parse(localStorage.getItem(key) ?? '[]'); } catch { return []; } })() as unknown[];
+        localStorage.setItem(key, JSON.stringify([project, ...existing].slice(0, 50)));
+        const filesList = plan.files.map((f) => `- \`${f.path}\``).join('\n');
+        const done = {
+          id: uid('m'), role: 'assistant' as const,
+          content: `Planned and scaffolded **${plan.name}** (${plan.kind.replace('-', ' ')}) → saved to the Library.\n\n${filesList}\n\nIt is now open in **Coder** — edit, lint, run and ship it there.`,
+          ts: new Date().toISOString(), model: 'Coder', route: { analysis: 'coder intent', chosen: 'coder', chosenName: 'Coder', reasons: [plan.summary.slice(0, 60)] },
+        };
+        mutate((st) => ({ ...st, conversations: st.conversations.map((c) => (c.id === cid ? { ...c, messages: [...c.messages, done] } : c)) }));
+        act('coder', 'chat → project scaffolded', plan.name, tr.id);
+        setStreaming(false);
+        setTimeout(() => {
+          if (window.location.pathname.includes('/workspace/chat')) window.location.href = '/workspace/coder';
+        }, 1400);
+        return;
+      }
+    }
+
+    const history = [
+      ...(activeBot?.systemPrompt ? [{ id: uid('m'), role: 'system' as const, content: activeBot.systemPrompt, ts: new Date().toISOString() }] : []),
+      ...(s.conversations.find((c) => c.id === cid)?.messages ?? []),
+      userMsg,
+    ];
     const result = await sendChat({
       text: content,
       models: allModels,
       settings: s.settings,
-      forceModel: pin || undefined,
+      forceModel: activeBot?.model || pin || undefined,
       history,
       trace: tr,
     });
@@ -307,7 +367,7 @@ export default function ChatPage() {
       if (result.memory) ns = { ...ns, memory: [result.memory!, ...ns.memory] };
       return ns;
     });
-    act('chat', `chat · ${result.modelName}`, `routed: ${result.route.analysis} · ${result.content.length} chars`, live);
+    act('chat', `chat · ${activeBot ? activeBot.name : result.modelName}`, `routed: ${result.route.analysis} · ${result.content.length} chars`, live);
   };
 
   const filteredConvs = useMemo(() => {
@@ -389,6 +449,38 @@ export default function ChatPage() {
             Tap to pin. Deterministic, on-device — nothing leaves the machine.
           </div>
         </div>
+
+        {/* Bots */}
+        <div className="glass p-3">
+          <div className="font-mono text-[9px] tracking-widest mb-2 flex items-center justify-between">
+            <span style={{ color: 'var(--dim)' }}>BOTS · {bots.length}</span>
+            <a href="/workspace/bots" className="text-[9px]" style={{ color: 'var(--acc2)' }}>create ↗</a>
+          </div>
+          <div className="space-y-1.5">
+            {bots.slice(0, 6).map((b) => {
+              const active = activeBot?.id === b.id;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => setActiveBot(active ? null : b)}
+                  className="model-card w-full !p-2.5 !flex-row items-center gap-2.5"
+                  style={active ? { borderColor: 'color-mix(in srgb, var(--acc) 70%, var(--line))', background: 'color-mix(in srgb, var(--acc) 12%, var(--panel))' } : undefined}
+                >
+                  <span className="text-base shrink-0">{b.emoji}</span>
+                  <span className="min-w-0">
+                    <span className="block text-[11px] font-semibold truncate" style={{ color: 'var(--ink)' }}>{b.name}</span>
+                    <span className="block text-[9px] truncate opacity-70" style={{ color: 'var(--dim)' }}>{b.description}</span>
+                  </span>
+                </button>
+              );
+            })}
+            {bots.length === 0 && (
+              <div className="text-[10px] leading-relaxed" style={{ color: 'var(--dim)' }}>
+                Build a personal AI in <a href="/workspace/bots" style={{ color: 'var(--acc2)' }}>Bots</a> — it will appear here and answer with its own instructions and model.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ── Conversation ─────────────────────────────────────────── */}
@@ -401,11 +493,11 @@ export default function ChatPage() {
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-display font-semibold tracking-wide text-sm" style={{ color: 'var(--ink)' }}>Aetherion</span>
+              <span className="font-display font-semibold tracking-wide text-sm" style={{ color: 'var(--ink)' }}>{BRAND.name}</span>
               <span className="dot-online" />
             </div>
             <div className="text-[10px] font-mono truncate" style={{ color: 'var(--dim)' }}>
-              own models + {puterAi.models ? `${puterAi.models.length} Puter` : 'Puter gateway'} + local runtimes
+              one chat → every model, Coder, Studio, Library and Schedules
             </div>
           </div>
         </div>
@@ -420,6 +512,8 @@ export default function ChatPage() {
               {m.role === 'assistant' && (
                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                   <span className="chip !text-[9px]" style={{ color: 'var(--acc2)' }}>routed: {m.route?.chosenName ?? m.model}</span>
+                  {m.model === 'Coder' && <span className="chip !text-[9px]" style={{ color: 'var(--acc3)' }}>opened in Coder</span>}
+                  {m.model === 'Schedule engine' && <span className="chip !text-[9px]" style={{ color: 'var(--acc3)' }}>saved to Schedules</span>}
                   {m.route?.analysis && <span className="chip !text-[9px]">{m.route.analysis}</span>}
                   {m.route?.reasons.slice(0, 2).map((r) => (
                     <span key={r} className="chip !text-[9px]" style={{ color: 'var(--dim)' }}>{r}</span>
@@ -443,9 +537,9 @@ export default function ChatPage() {
           )}
           {!conv?.messages.length && !streaming && (
             <div className="h-full flex flex-col items-center justify-center text-center py-6">
-              <div className="display-2 mb-1.5">Aetherion is online<span className="text-grad">.</span></div>
+              <div className="display-2 mb-1.5">{BRAND.name} is online<span className="text-grad">.</span></div>
               <div className="text-sm mb-6 max-w-md" style={{ color: 'var(--dim)' }}>
-                Six own models run right here — math, code, summaries, data, stories — zero keys, zero network. Pick a model in the pill below, or let the router decide.
+                Ask anything — questions, research, code, images, documents, plans. {BRAND.name} routes it to the right model and capability: “every morning at 8 am…” creates a Schedule, “build a website…” opens Coder, and the own models answer everything offline.
               </div>
               <div className="grid sm:grid-cols-2 gap-2.5 w-full max-w-lg">
                 {SUGGESTIONS.map((sg) => (
@@ -470,7 +564,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && void send()}
-              placeholder="message Aetherion…"
+              placeholder="message Lumen…"
               disabled={streaming}
             />
             <button
@@ -483,11 +577,11 @@ export default function ChatPage() {
             </button>
           </div>
           <div className="flex items-center justify-between font-mono text-[9px] tracking-wider" style={{ color: 'var(--dim)' }}>
-            <span>own models: {OWN_MODELS.length} on-device · every answer is traced</span>
+            <span>own models: {OWN_MODELS.length} on-device · schedules & coder live in the same chat · every answer is traced</span>
             <span>
               core:{' '}
               <span style={{ color: serverUsable(s.settings) ? 'var(--acc2)' : 'var(--dim)' }}>
-                {serverUsable(s.settings) ? 'Aetherion API' : 'local'}
+                {serverUsable(s.settings) ? 'core API' : 'local'}
               </span>
             </span>
           </div>

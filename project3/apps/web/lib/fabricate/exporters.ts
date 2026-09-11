@@ -1,4 +1,4 @@
-// Aetherion Fabricate — mesh exporters. Pure functions: OBJ (text) and GLTF 2.0
+// Lumen Fabricate — mesh exporters. Pure functions: OBJ (text) and GLTF 2.0
 // (JSON with an embedded base64 buffer). Both open in Blender, Three.js,
 // Windows 3D Viewer, Babylon.js sandbox, etc.
 
@@ -6,7 +6,7 @@ import type { Mesh } from './geometry';
 
 export function meshToObj(mesh: Mesh, name = 'sutra_object'): string {
   const { positions, indices } = mesh;
-  const lines: string[] = [`# Aetherion Fabricate — ${name}`, `o ${name}`];
+  const lines: string[] = [`# Lumen Fabricate — ${name}`, `o ${name}`];
   for (let i = 0; i < positions.length; i += 3) {
     lines.push(
       `v ${positions[i].toFixed(6)} ${positions[i + 1].toFixed(6)} ${positions[i + 2].toFixed(6)}`,
@@ -51,7 +51,7 @@ export function meshToGltf(mesh: Mesh, name = 'sutra_object'): string {
   }
 
   const gltf = {
-    asset: { version: '2.0', generator: 'Aetherion Fabricate' },
+    asset: { version: '2.0', generator: 'Lumen Fabricate' },
     scene: 0,
     scenes: [{ name, nodes: [0] }],
     nodes: [{ name: `${name}_mesh`, mesh: 0 }],

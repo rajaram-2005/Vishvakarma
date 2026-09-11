@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Security: policy matrix, live approvals, secret scan, audit.
+// Lumen — Security: policy matrix, live approvals, secret scan, audit.
 
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck, Trash2 } from 'lucide-react';
@@ -23,7 +23,7 @@ export default function SecurityPage() {
 
   const srvOn = serverUsable(s.settings);
 
-  // When the Aetherion API is configured (non-local mode), refresh the local
+  // When the Lumen API is configured (non-local mode), refresh the local
   // baseline with the service's verdict — identical contract, server-side copy.
   useEffect(() => {
     if (!cmd.trim() || !srvOn) return;
@@ -104,7 +104,7 @@ export default function SecurityPage() {
               COMMAND RISK SCAN
               {via.cmd && (
                 <span className="chip !text-[8px]" style={{ color: 'var(--ok)' }}>
-                  via Aetherion API
+                  via Lumen API
                 </span>
               )}
             </div>
@@ -141,7 +141,7 @@ export default function SecurityPage() {
               SECRET SCAN
               {via.scan && (
                 <span className="chip !text-[8px]" style={{ color: 'var(--ok)' }}>
-                  via Aetherion API
+                  via Lumen API
                 </span>
               )}
             </div>

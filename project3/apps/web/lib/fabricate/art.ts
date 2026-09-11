@@ -1,4 +1,4 @@
-// Aetherion Fabricate — local generative art.
+// Lumen Fabricate — local generative art.
 // Deterministic, offline image synthesis from a prompt: layered nebula
 // gradients, orbits, glyph scatter and grain. Runs entirely on-device (no
 // model needed). Puter's txt2img covers photorealistic generation when the

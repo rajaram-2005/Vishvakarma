@@ -1,5 +1,5 @@
 /**
- * Aetherion own-model family — registry, dispatch and streaming.
+ * Lumen own-model family — registry, dispatch and streaming.
  * Six models that run entirely on-device (browser or server), no keys,
  * no network, deterministic output. This module is isomorphic: the chat
  * page runs it client-side, the /api/localmodels routes run it server-side.
@@ -26,7 +26,7 @@ export interface OwnModel {
 export const OWN_MODELS: OwnModel[] = [
   {
     id: 'aetherion-local',
-    name: 'Aetherion Local',
+    name: 'Lumen Local',
     engine: 'aetherion-own',
     tagline: 'the general own-model',
     description: 'Offline assistant with intent routing: small talk, identity, help — and it hands math, code, summaries, data and stories to the specialist own-models automatically.',
@@ -36,7 +36,7 @@ export const OWN_MODELS: OwnModel[] = [
   },
   {
     id: 'aetherion-math',
-    name: 'Aetherion Math',
+    name: 'Lumen Math',
     engine: 'aetherion-own',
     tagline: 'computational model',
     description: 'A real shunting-yard expression evaluator plus a bisection/linear equation solver, statistics, primality, factorization, gcd/lcm, percentages and unit conversions.',
@@ -46,7 +46,7 @@ export const OWN_MODELS: OwnModel[] = [
   },
   {
     id: 'aetherion-coder',
-    name: 'Aetherion Coder',
+    name: 'Lumen Coder',
     engine: 'aetherion-own',
     tagline: 'code-intelligence model',
     description: 'Structural code analysis (depth, TODOs, exports, imports), line-by-line walkthroughs and a deterministic snippet library — fizzbuzz, debounce, retry, flatten, binary search.',
@@ -56,17 +56,17 @@ export const OWN_MODELS: OwnModel[] = [
   },
   {
     id: 'aetherion-summarizer',
-    name: 'Aetherion Summarizer',
+    name: 'Lumen Summarizer',
     engine: 'aetherion-own',
     tagline: 'extractive summarization',
     description: 'Frequency-weighted sentence scoring with stopword filtering — keeps the highest-ranked sentences in original order, as bullets or a paragraph, and reports the compression ratio.',
     strengths: ['summaries', 'key points', 'extractive', 'offline'],
-    sample: 'Summarize: Aetherion is a local-first AI workspace fused with the embedded Aetheris intelligence core. It runs models, agents, tools, knowledge and workflows in one place. Nothing requires a cloud account. The Aetheris core brings 393 capabilities on the same origin. Own models run fully offline.',
+    sample: 'Summarize: Lumen is a local-first AI workspace fused with the embedded Aetheris intelligence core. It runs models, agents, tools, knowledge and workflows in one place. Nothing requires a cloud account. The Aetheris core brings 393 capabilities on the same origin. Own models run fully offline.',
     answer: summarizerAnswer,
   },
   {
     id: 'aetherion-analyst',
-    name: 'Aetherion Analyst',
+    name: 'Lumen Analyst',
     engine: 'aetherion-own',
     tagline: 'tabular data analysis',
     description: 'Parses CSV/TSV/whitespace tables and number series — per-column mean/min/max, linear trend detection, mode frequency — and prints insights. Data never leaves the machine.',
@@ -76,7 +76,7 @@ export const OWN_MODELS: OwnModel[] = [
   },
   {
     id: 'aetherion-writer',
-    name: 'Aetherion Writer',
+    name: 'Lumen Writer',
     engine: 'aetherion-own',
     tagline: 'seeded creative model',
     description: 'Deterministic short fiction and haiku: FNV-1a-seeded generation over sci-fi, fantasy and noir banks — the same prompt always produces the same piece.',

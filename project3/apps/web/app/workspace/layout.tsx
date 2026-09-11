@@ -1,10 +1,9 @@
 'use client';
-// Aetherion workspace shell — spatial glass navigation.
-// Home · Chat · Projects · Agents · Teams · Models · Tools · Skills ·
-// Knowledge · Memory · Workflows · MCP · Plugins · Evaluation · Security ·
-// Activity · Deployments · Marketplace · Settings
+// Lumen Studio — the unified workspace shell.
+// Six primary areas: Chat · Studio · Coder · Library · Plugins · Schedules.
+// Everything else lives behind "More" — one studio, not a dashboard farm.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -15,12 +14,14 @@ import {
   ChevronDown,
   Cpu,
   Database,
+  FileCode2,
   FolderKanban,
   Gauge,
-  Home,
+  Library,
   MessageSquare,
   Orbit,
   Package,
+  Palette,
   Plug,
   Puzzle,
   Rocket,
@@ -36,36 +37,41 @@ import {
 } from 'lucide-react';
 import { useSutra } from '@/lib/store';
 import { usePuter } from '@/lib/puter';
+import { BRAND } from '@/lib/brand';
+import { CommandBar } from '@/components/CommandBar';
+import { Onboarding } from '@/components/Onboarding';
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ size?: number | string; className?: string; style?: React.CSSProperties }> };
 
-// The six major things: Chat · Schedule · Models · Plugins · Generate · Memory.
+// The six primary areas — the whole product.
 const MAJOR: NavItem[] = [
-  { href: '/workspace', label: 'Home', icon: Home },
   { href: '/workspace/chat', label: 'Chat', icon: MessageSquare },
-  { href: '/workspace/schedule', label: 'Schedule', icon: Calendar },
-  { href: '/workspace/models', label: 'Models', icon: Cpu },
+  { href: '/workspace/studio', label: 'Studio', icon: Palette },
+  { href: '/workspace/coder', label: 'Coder', icon: FileCode2 },
+  { href: '/workspace/library', label: 'Library', icon: Library },
   { href: '/workspace/plugins', label: 'Plugins', icon: Package },
-  { href: '/workspace/generate', label: 'Generate', icon: Sparkles },
-  { href: '/workspace/memory', label: 'Memory', icon: Brain },
+  { href: '/workspace/schedule', label: 'Schedules', icon: Calendar },
 ];
 
-// Everything else stays one click away.
+// Contextual and power areas — one click away, not top-level noise.
 const MORE: NavItem[] = [
-  { href: '/workspace/aetheris', label: 'Aetheris Core', icon: Orbit },
+  { href: '/workspace/models', label: 'Models', icon: Cpu },
+  { href: '/workspace/bots', label: 'Bots', icon: Bot },
+  { href: '/workspace/marketplace', label: 'Marketplace', icon: Store },
+  { href: '/workspace/memory', label: 'Memory', icon: Brain },
+  { href: '/workspace/knowledge', label: 'Knowledge', icon: Database },
+  { href: '/workspace/aetheris', label: 'Core', icon: Orbit },
   { href: '/workspace/projects', label: 'Projects', icon: FolderKanban },
   { href: '/workspace/agents', label: 'Agents', icon: Bot },
   { href: '/workspace/teams', label: 'Teams', icon: Users },
   { href: '/workspace/tools', label: 'Tools', icon: Wrench },
   { href: '/workspace/skills', label: 'Skills', icon: Puzzle },
-  { href: '/workspace/knowledge', label: 'Knowledge', icon: Database },
   { href: '/workspace/workflows', label: 'Workflows', icon: Workflow },
   { href: '/workspace/mcp', label: 'MCP', icon: Plug },
   { href: '/workspace/evaluation', label: 'Evaluation', icon: Gauge },
   { href: '/workspace/security', label: 'Security', icon: ShieldCheck },
   { href: '/workspace/activity', label: 'Activity', icon: Activity },
   { href: '/workspace/deployments', label: 'Deployments', icon: Rocket },
-  { href: '/workspace/marketplace', label: 'Marketplace', icon: Store },
   { href: '/workspace/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -109,6 +115,22 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const pathname = usePathname() ?? '/workspace';
   const { s, setSettings } = useSutra();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [online, setOnline] = useState(true);
+
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine !== false);
+    update();
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    const iv = window.setInterval(() => {
+      fetch('/api/status', { cache: 'no-store' }).then((r) => setOnline(r.ok)).catch(() => setOnline(false));
+    }, 30000);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+      window.clearInterval(iv);
+    };
+  }, []);
   const puter = usePuter();
   const pending = s.approvals.filter((a) => a.status === 'pending').length;
   const themes: Array<'dark' | 'light' | 'aurora'> = ['dark', 'light', 'aurora'];
@@ -141,7 +163,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
               </linearGradient>
             </defs>
           </svg>
-          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">Aetherion</span>
+          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">{BRAND.name}</span>
         </Link>
         <nav className="flex flex-col gap-0.5">
           {MAJOR.map((n) => (
@@ -180,6 +202,13 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           </span>
           <span
             className="chip hidden sm:inline-flex"
+            style={{ color: online ? 'var(--ok)' : 'var(--warn)' }}
+            title={online ? 'online — full platform' : 'offline — Chat and local advice remain available; Studio, cloud models and marketplace need a connection'}
+          >
+            {online ? '● online · full platform' : '○ offline · limited'}
+          </span>
+          <span
+            className="chip hidden sm:inline-flex"
             style={{ color: puter.signedIn ? 'var(--ok)' : puter.scriptFailed ? 'var(--warn)' : 'var(--dim)' }}
             title={puter.error ?? undefined}
           >
@@ -199,6 +228,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           >
             {s.settings.ambientSound ? <Volume2 size={15} /> : <VolumeX size={15} />}
           </button>
+          <CommandBar />
           <button
             onClick={() => {
               const i = themes.indexOf(s.settings.theme);
@@ -241,6 +271,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
 
         <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1400px] w-full mx-auto">{children}</main>
       </div>
+      <Onboarding />
     </div>
   );
 }

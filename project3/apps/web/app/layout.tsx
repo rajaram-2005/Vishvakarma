@@ -5,13 +5,13 @@ import { AmbientController } from '@/lib/AmbientController';
 import { PuterScript } from '@/lib/puter';
 
 export const metadata: Metadata = {
-  title: 'Aetherion — The Open AI Ecosystem',
+  title: 'Lumen — One Studio. Every Model.',
   description:
-    'Models. Agents. Tools. Knowledge. Workflows. Local AI. One workspace to build, automate, evaluate, and deploy AI systems. Local-first, provider-neutral, cinematic.',
-  keywords: ['AI workspace', 'local-first', 'agents', 'models', 'RAG', 'MCP', 'n8n', 'Aetherion'],
+    'Lumen Studio — the unified AI studio. One chat for every model, agents, coding, image/video/audio/document generation, plugins, MCP, schedules and a personal library. Online-first, provider-neutral, honest about limits.',
+  keywords: ['Lumen', 'AI studio', 'multi-model chat', 'AI coder', 'AI image generation', 'plugins', 'MCP', 'schedules', 'library'],
   openGraph: {
-    title: 'Aetherion — Build the Open AI Ecosystem',
-    description: 'One workspace to build, automate, evaluate, and deploy AI systems.',
+    title: 'Lumen — One Studio. Every Model.',
+    description: 'Chat, create, build and automate with every model in one workspace.',
   },
 };
 

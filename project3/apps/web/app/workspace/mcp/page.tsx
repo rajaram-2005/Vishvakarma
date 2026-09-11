@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — MCP servers: discovery, install, permissions, health, audit.
+// Lumen — MCP servers: discovery, install, permissions, health, audit.
 
 import React, { useState } from 'react';
 import { Plug, RefreshCw } from 'lucide-react';

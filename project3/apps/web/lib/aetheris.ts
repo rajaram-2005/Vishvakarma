@@ -1,7 +1,7 @@
-// Aetherion ⇄ Aetheris One bridge.
+// Lumen ⇄ Aetheris One bridge.
 // Aetheris (github.com/rajaram-2005/Aetheris) is a local Intelligence OS
 // exposing a typed HTTP API: /api/health, /api/capabilities, and an SSE
-// streaming /api/chat. Aetherion treats it as an optional connected brain —
+// streaming /api/chat. Lumen treats it as an optional connected brain —
 // every call is best-effort, local mode never requires it.
 
 export interface AetherisHealth {

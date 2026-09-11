@@ -1,4 +1,4 @@
-// Aetherion — workspace seed data. Everything the app ships with, offline.
+// Lumen — workspace seed data. Everything the app ships with, offline.
 
 import type {
   ActivityEvent,
@@ -84,8 +84,8 @@ const now = () => new Date(SEED_NOW_MS).toISOString();
 export const SEED_MODELS: ModelInfo[] = [
   {
     id: 'sutra-local',
-    name: 'Aetherion Local',
-    provider: 'Aetherion built-in',
+    name: 'Lumen Local',
+    provider: 'Lumen built-in',
     runtime: 'sutra-local',
     contextWindow: 128000,
     costIn: 0,
@@ -347,7 +347,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to review: diff-first, risk-prioritized, style second. Produces findings with severity.',
     version: '1.2.0',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['fs.read'],
     installed: true,
     builtin: true,
@@ -359,7 +359,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to test: property lists → cases → red/green loop with real assertions.',
     version: '1.0.3',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['terminal'],
     installed: true,
     builtin: true,
@@ -371,7 +371,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to branch: trunk-based with short-lived feature branches and atomic commits.',
     version: '1.1.0',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['git'],
     installed: true,
     builtin: true,
@@ -383,7 +383,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to prompt: role, context, format, examples, constraints — in that order.',
     version: '1.0.0',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: [],
     installed: true,
     builtin: true,
@@ -395,7 +395,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to respond: detect, contain, communicate, fix, post-mortem without blame.',
     version: '1.0.1',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['terminal', 'db'],
     installed: true,
     builtin: true,
@@ -407,7 +407,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to pipe: source → normalize → validate → store, with idempotent steps.',
     version: '0.9.2',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['db', 'network'],
     installed: false,
     builtin: true,
@@ -419,7 +419,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to tune retrieval: chunk sizes, overlap, rerank blends, citation formats.',
     version: '1.0.0',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['fs.read'],
     installed: false,
     builtin: true,
@@ -431,7 +431,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to ship: env check, secrets scan, canary, health probes, rollback plan.',
     version: '1.1.1',
     license: 'MIT',
-    author: 'Aetherion',
+    author: 'Lumen',
     scopes: ['deploy'],
     installed: true,
     builtin: true,
@@ -514,9 +514,9 @@ export const SEED_MCP: McpServer[] = [
   },
 ];
 
-export const SAMPLE_DOC_TEXT = `# Aetherion Design Principles
+export const SAMPLE_DOC_TEXT = `# Lumen Design Principles
 
-Aetherion is a local-first AI operating workspace fused with the embedded Aetheris intelligence core — one shared field where your models, agents, tools, knowledge and workflows connect into a single system.
+Lumen is a local-first AI operating workspace fused with the embedded Aetheris intelligence core — one shared field where your models, agents, tools, knowledge and workflows connect into a single system.
 
 ## Principle 1 — Local by default
 
@@ -547,7 +547,7 @@ Local mode keeps everything on-device. Hybrid mode allows selected cloud calls w
 React, Next.js, TypeScript and Tailwind for the web surface; Tauri for desktop; React Native for mobile; Python FastAPI for services; PostgreSQL, Redis and a vector store for persistence; Prometheus and Grafana for metrics; OpenTelemetry for traces.`;
 
 export const SEED_FS: Record<string, string> = {
-  'README.md': `# Project 3 — Aetherion MVP
+  'README.md': `# Project 3 — Lumen MVP
 
 Local-first AI operating workspace.
 
@@ -571,25 +571,25 @@ See docs/ for architecture.`,
     "moduleResolution": "Bundler"
   }
 }`,
-  'src/app.tsx': `import { AetherionCore } from './core';
+  'src/app.tsx': `import { LumenCore } from './core';
 
 export default function App() {
-  const core = new AetherionCore({ mode: 'local' });
+  const core = new LumenCore({ mode: 'local' });
   core.connect();
   return (
     <main className="sutra">
-      <h1>Aetherion</h1>
+      <h1>Lumen</h1>
       <p>{core.status}</p>
     </main>
   );
 }`,
-  'src/core.ts': `export interface AetherionOptions {
+  'src/core.ts': `export interface LumenOptions {
   mode: 'local' | 'hybrid' | 'cloud';
 }
 
-export class AetherionCore {
+export class LumenCore {
   status = 'idle';
-  constructor(private opts: AetherionOptions) {}
+  constructor(private opts: LumenOptions) {}
 
   connect(): void {
     this.status = this.opts.mode === 'local' ? 'online (local)' : 'online (' + this.opts.mode + ')';
@@ -610,12 +610,12 @@ export function classify(text: string): TaskKind {
 }
 `,
   'tests/app.test.ts': `import { describe, it, expect } from 'vitest';
-import { AetherionCore } from '../src/core';
+import { LumenCore } from '../src/core';
 import { classify } from '../src/router';
 
-describe('Aetherion core', () => {
+describe('Lumen core', () => {
   it('connects in local mode', () => {
-    const core = new AetherionCore({ mode: 'local' });
+    const core = new LumenCore({ mode: 'local' });
     core.connect();
     expect(core.status).toContain('local');
   });
@@ -637,7 +637,7 @@ export const SEED_GIT: GitState = {
   log: [
     {
       hash: 'a1f0c9d',
-      message: 'init: Aetherion MVP scaffold',
+      message: 'init: Lumen MVP scaffold',
       files: Object.keys(SEED_FS),
       ts: new Date(SEED_NOW_MS - 3600e3).toISOString(),
       branch: 'main',
@@ -650,7 +650,7 @@ export const SEED_GIT: GitState = {
 export const SEED_KNOWLEDGE: KnowledgeDoc[] = [
   {
     id: 'doc-design',
-    title: 'Aetherion Design Principles',
+    title: 'Lumen Design Principles',
     source: 'bundled document',
     kind: 'text',
     createdAt: new Date(SEED_NOW_MS - 7200e3).toISOString(),
@@ -668,7 +668,7 @@ export const seedState = (): AppStateSeed => {
     projects: [
       {
         id: 'prj-3',
-        name: 'Project 3 — Aetherion MVP',
+        name: 'Project 3 — Lumen MVP',
         description: 'The open AI ecosystem: models, agents, tools, knowledge, workflows — one workspace.',
         template: 'mvp',
         color: '#8b5cf6',
@@ -678,14 +678,14 @@ export const seedState = (): AppStateSeed => {
     conversations: [
       {
         id: 'conv-welcome',
-        title: 'Welcome to Aetherion',
+        title: 'Welcome to Lumen',
         createdAt: now(),
         messages: [
           {
             id: 'm-welcome',
             role: 'assistant',
             content:
-              'Welcome to Aetherion — your AI operating workspace. Everything here runs locally first.\n\nTry:\n• "Plan my Project 3 MVP." — I\'ll structure it into tasks\n• "What are Aetherion\'s design principles?" — answered from your Knowledge base with citations\n• "What is 17 × 23 + 5?" — computed on-device\n\nConnect Ollama in Settings → Providers and real local models join the router.',
+              'Welcome to Lumen — your AI operating workspace. Everything here runs locally first.\n\nTry:\n• "Plan my Project 3 MVP." — I\'ll structure it into tasks\n• "What are Lumen\'s design principles?" — answered from your Knowledge base with citations\n• "What is 17 × 23 + 5?" — computed on-device\n\nConnect Ollama in Settings → Providers and real local models join the router.',
             ts: now(),
             model: 'sutra-local',
           },
@@ -739,7 +739,7 @@ export const seedState = (): AppStateSeed => {
     ] as Workflow[],
     mcp: SEED_MCP.map((m) => ({ ...m })),
     memory: [
-      { id: 'mem-1', kind: 'fact', text: 'Project 3 is codenamed Aetherion — the open AI ecosystem workspace.', source: 'system', ts: now() },
+      { id: 'mem-1', kind: 'fact', text: 'Project 3 is codenamed Lumen — the open AI ecosystem workspace.', source: 'system', ts: now() },
       { id: 'mem-2', kind: 'preference', text: 'Local-first: no data leaves the machine without an explicit opt-in.', source: 'system', ts: now() },
     ] as MemoryEntry[],
     knowledge: SEED_KNOWLEDGE.map((d) => ({ ...d, chunkCount: chunks.length })),
@@ -755,7 +755,7 @@ export const seedState = (): AppStateSeed => {
         ts: now(),
         kind: 'system',
         title: 'Workspace initialized',
-        detail: 'Aetherion core online · privacy mode: Local · sync: none',
+        detail: 'Lumen core online · privacy mode: Local · sync: none',
       },
     ],
     installed: [] as string[],

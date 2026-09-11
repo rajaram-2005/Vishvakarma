@@ -1,5 +1,5 @@
 'use client';
-// Aetherion landing — Security · Evaluation · Observability · Deployment ·
+// Lumen landing — Security · Evaluation · Observability · Deployment ·
 // Puter · Desktop · Mobile · Marketplace · Enterprise · Privacy · Final.
 
 import React, { useState } from 'react';
@@ -109,7 +109,7 @@ export function EvaluationSection() {
       </div>
       <div className="mt-5 glass p-5 flex flex-wrap items-center gap-4">
         <Stat label="smoke suite" value="7 tasks" sub="math · sentiment · extraction · code · JSON · hallucination probe · refusal" tone="acc2" />
-        <Stat label="last local run" value="1.000" sub="accuracy · Aetherion Local · 0.4s · $0.00" tone="ok" />
+        <Stat label="last local run" value="1.000" sub="accuracy · Lumen Local · 0.4s · $0.00" tone="ok" />
         <Stat label="reproducibility" value="100%" sub="deterministic two-run stability" tone="acc" />
         <div className="flex-1 min-w-[200px] text-xs self-center" style={{ color: 'var(--dim)' }}>
           → the workspace runs these for real: pick a provider, press run, inspect per-task verdicts, export the report.
@@ -192,7 +192,7 @@ export function PuterSection() {
           Powered, optionally, by <span className="text-grad-cyan">Puter.</span>
         </>
       }
-      sub="Aetherion is local-first. Puter.js is an optional layer for authentication, KV persistence, cloud filesystem, AI, hosting and task management — used only where it helps, and never required. Local mode never forces Puter authentication."
+      sub="Lumen is local-first. Puter.js is an optional layer for authentication, KV persistence, cloud filesystem, AI, hosting and task management — used only where it helps, and never required. Local mode never forces Puter authentication."
     >
       <div className="glass p-6 md:p-8">
         <div className="grid md:grid-cols-2 gap-6 items-center">
@@ -270,7 +270,7 @@ export function MobileSection() {
       sub="Not a shrunken desktop. Mobile is for commanding: approve requests, run a goal, check agent status, query the knowledge base, and watch traces land. iOS and Android from one React Native surface."
     >
       <div className="glass-2 p-5 max-w-md mx-auto">
-        <div className="font-mono text-[10px] tracking-widest mb-3" style={{ color: 'var(--dim)' }}>Aetherion · CONTROL CENTER</div>
+        <div className="font-mono text-[10px] tracking-widest mb-3" style={{ color: 'var(--dim)' }}>Lumen · CONTROL CENTER</div>
         <div className="space-y-2.5">
           <div className="flex items-center justify-between glass-2 px-3 py-2.5">
             <span className="text-xs">MVP Squad running</span>
@@ -453,7 +453,7 @@ export function Footer() {
             <polygon points="13,2 23,8 23,18 13,24 3,18 3,8" fill="none" stroke="var(--acc)" strokeWidth="1.6" />
             <circle cx="13" cy="13" r="3" fill="var(--acc2)" />
           </svg>
-          <span className="font-mono text-xs tracking-[0.3em]" style={{ color: 'var(--dim)' }}>Aetherion · PROJECT 3</span>
+          <span className="font-mono text-xs tracking-[0.3em]" style={{ color: 'var(--dim)' }}>Lumen · PROJECT 3</span>
         </div>
         <div className="text-xs text-center" style={{ color: 'var(--dim)' }}>
           local-first · provider-neutral · <span style={{ color: 'var(--ok)' }}>no data leaves without your say</span>

@@ -1,4 +1,4 @@
-// Aetherion Fabricate — presentation export.
+// Lumen Fabricate — presentation export.
 // Builds a valid PowerPoint .pptx (OOXML) with no dependencies: slides carry
 // a title + bullet body. STORE-only ZIP keeps the writer tiny and portable;
 // PowerPoint, LibreOffice and Google Slides all open it.
@@ -48,7 +48,7 @@ const PRESENTATION = (slideCount: number): string => `${XML_HEAD}
 
 const MASTER = `${XML_HEAD}
 <p:sldMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
-<p:cSld name="Aetherion"><p:bg><p:bgPr><a:solidFill><a:srgbClr val="0B0E1A"/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree></p:cSld>
+<p:cSld name="Lumen"><p:bg><p:bgPr><a:solidFill><a:srgbClr val="0B0E1A"/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree></p:cSld>
 <p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>
 <p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId1"/></p:sldLayoutIdLst>
 </p:sldMaster>`;
@@ -71,16 +71,16 @@ const LAYOUT_RELS = `${XML_HEAD}
 </Relationships>`;
 
 const THEME = `${XML_HEAD}
-<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Aetherion"><a:themeElements>
-<a:clrScheme name="Aetherion"><a:dk1><a:srgbClr val="DCE1FF"/></a:dk1><a:lt1><a:srgbClr val="0B0E1A"/></a:lt1>
+<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Lumen"><a:themeElements>
+<a:clrScheme name="Lumen"><a:dk1><a:srgbClr val="DCE1FF"/></a:dk1><a:lt1><a:srgbClr val="0B0E1A"/></a:lt1>
 <a:dk2><a:srgbClr val="8B5CF6"/></a:dk2><a:lt2><a:srgbClr val="22D3EE"/></a:lt2>
 <a:accent1><a:srgbClr val="8B5CF6"/></a:accent1><a:accent2><a:srgbClr val="22D3EE"/></a:accent2>
 <a:accent3><a:srgbClr val="E879F9"/></a:accent3><a:accent4><a:srgbClr val="60A5FA"/></a:accent4>
 <a:accent5><a:srgbClr val="34D399"/></a:accent5><a:accent6><a:srgbClr val="FBBF24"/></a:accent6>
 <a:hlink><a:srgbClr val="22D3EE"/></a:hlink><a:folHlink><a:srgbClr val="8B5CF6"/></a:folHlink>
 </a:clrScheme>
-<a:fontScheme name="Aetherion"><a:majorFont><a:latin typeface="Segoe UI"/></a:majorFont><a:minorFont><a:latin typeface="Segoe UI"/></a:minorFont></a:fontScheme>
-<a:fmtScheme name="Aetherion"><a:fillStyleLst/><a:lnStyleLst/><a:effectStyleLst/><a:bgFillStyleLst/></a:fmtScheme>
+<a:fontScheme name="Lumen"><a:majorFont><a:latin typeface="Segoe UI"/></a:majorFont><a:minorFont><a:latin typeface="Segoe UI"/></a:minorFont></a:fontScheme>
+<a:fmtScheme name="Lumen"><a:fillStyleLst/><a:lnStyleLst/><a:effectStyleLst/><a:bgFillStyleLst/></a:fmtScheme>
 </a:themeElements></a:theme>`;
 
 function slideXml(i: number, slide: Slide): string {

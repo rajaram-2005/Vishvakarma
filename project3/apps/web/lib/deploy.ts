@@ -1,4 +1,4 @@
-// Aetherion — deployment pipeline with real artifacts and honest status.
+// Lumen — deployment pipeline with real artifacts and honest status.
 // local: bundle written to the workspace records
 // docker: Dockerfile + compose generated
 // puter: real Puter cloud FS write when signed in (optional layer)

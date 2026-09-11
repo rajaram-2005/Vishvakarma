@@ -1,5 +1,5 @@
 'use client';
-// Aetherion Generate — the fabrication studio.
+// Lumen Generate — the fabrication studio.
 // Image · Deck (PPTX) · 3D models. Puter AI gateway when signed in
 // (photoreal images, AI outlines); deterministic on-device fabrication
 // otherwise. Everything exports to open formats.
@@ -171,7 +171,7 @@ function ImageStudio(props: {
 /* ────────────────────────────── deck ────────────────────────────── */
 
 function DeckStudio(props: { chat: ((msgs: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, opts?: object) => Promise<{ content: string } | null>) | null }) {
-  const [topic, setTopic] = useState('Project 3 — Aetherion: the open AI ecosystem');
+  const [topic, setTopic] = useState('Project 3 — Lumen: the open AI ecosystem');
   const [busy, setBusy] = useState(false);
   const [deck, setDeck] = useState<{ title: string; slides: Slide[]; via: 'puter' | 'local' } | null>(null);
 

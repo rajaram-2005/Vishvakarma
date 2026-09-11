@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Tools: registry, enable/disable, sandbox levels, live gateway samples.
+// Lumen — Tools: registry, enable/disable, sandbox levels, live gateway samples.
 
 import React, { useState } from 'react';
 import { useSutra } from '@/lib/store';

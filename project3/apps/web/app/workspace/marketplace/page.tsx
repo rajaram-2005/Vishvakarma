@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Marketplace: skills, plugins, workflows, MCP servers, model presets.
+// Lumen — Marketplace: skills, plugins, workflows, MCP servers, model presets.
 
 import React, { useMemo, useState } from 'react';
 import { Store } from 'lucide-react';

@@ -1,9 +1,9 @@
 'use client';
-// Aetherion ⇄ Aetheris core — embedded. Aetheris One (an Intelligence OS by the
-// same author, github.com/rajaram-2005/Aetheris) is vendored into this app:
+// Lumen Core — the embedded intelligence engine (vendored, MIT, by the same
+// author) runs inside this app:
 // its capability registry, agent core and SSE chat stream run right here on
 // this server under /api/*. One app, one launch, one intelligence layer.
-// An external Aetheris instance can still be targeted (advanced) instead.
+// An external engine instance can still be targeted (advanced) instead.
 
 import React, { useEffect, useState } from 'react';
 import { Bot, ExternalLink, RefreshCw, SendHorizonal } from 'lucide-react';
@@ -71,10 +71,10 @@ export default function AetherisPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="overline mb-2">aetheris</div>
+        <div className="overline mb-2">core</div>
         <div className="display-1">The intelligence core<span className="text-grad">.</span></div>
         <div className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: 'var(--dim)' }}>
-          Aetheris One lives inside this app — capability registry, agent core (Prime planner → Hermes specialists → Metis verifier) and knowledge fabric, all served by this same server.
+          The intelligence core lives inside this app — a capability registry, an agent pipeline (planner → specialists → verifier) and a knowledge fabric, all served by this same server.
         </div>
       </div>
 
@@ -83,7 +83,7 @@ export default function AetherisPage() {
           <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>CORE</span>
           <span className="chip" style={{ color: health ? 'var(--ok)' : error ? 'var(--warn)' : 'var(--dim)' }}>
             {health
-              ? `online · aetheris-one v${health.version} · embedded${health.uptime_s ? ` · up ${Math.round(health.uptime_s / 60)}m` : ''}`
+              ? `online · core v${health.version} · embedded${health.uptime_s ? ` · up ${Math.round(health.uptime_s / 60)}m` : ''}`
               : probing
                 ? 'probing…'
                 : 'unreachable'}
@@ -104,7 +104,7 @@ export default function AetherisPage() {
         <div className="text-xs leading-relaxed" style={{ color: 'var(--dim)' }}>
           The core is vendored from{' '}
           <a href="https://github.com/rajaram-2005/Aetheris" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1" style={{ color: 'var(--acc2)' }}>
-            github.com/rajaram-2005/Aetheris <ExternalLink size={11} />
+            engine source (MIT) <ExternalLink size={11} />
           </a>{' '}
           and served by this app — nothing to install, no second server. Model-provider keys stay optional: the core
           answers from its deterministic offline engine when no provider is configured, and uses any configured local
@@ -129,7 +129,7 @@ export default function AetherisPage() {
             rows={2}
             className="glass-2 flex-1 px-4 py-3 text-sm outline-none resize-y"
             style={{ color: 'var(--ink)' }}
-            placeholder="e.g. Research Aetherion-style agent routing and propose a 3-step evaluation plan."
+            placeholder="e.g. Research agent routing designs and propose a 3-step evaluation plan."
           />
           <button onClick={() => void delegate()} disabled={busy || !prompt.trim()} className="btn-primary self-start disabled:opacity-50">
             <SendHorizonal size={13} /> {busy ? 'delegating…' : 'delegate'}

@@ -54,5 +54,5 @@ export function summarizerAnswer(prompt: string): string {
     ? scored.map((x) => `• ${x.s}`).join('\n')
     : scored.map((x) => x.s).join(' ');
   const ratio = Math.round((body.length / src.length) * 100);
-  return `**Summary** (${scored.length} sentences · ${ratio}% of source)\n\n${body}\n\nExtractive and deterministic — Aetherion Summarizer scored every sentence by term frequency and kept the highest-ranked, in original order.`;
+  return `**Summary** (${scored.length} sentences · ${ratio}% of source)\n\n${body}\n\nExtractive and deterministic — Lumen Summarizer scored every sentence by term frequency and kept the highest-ranked, in original order.`;
 }

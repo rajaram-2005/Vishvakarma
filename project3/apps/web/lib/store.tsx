@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — workspace store. Local-first persistence (localStorage),
+// Lumen — workspace store. Local-first persistence (localStorage),
 // trace recording (OpenTelemetry-shaped), approvals and activity.
 
 import React, {

@@ -1,4 +1,4 @@
-// Aetherion — chat orchestration:
+// Lumen — chat orchestration:
 // Request → Router → Provider → Result (+ memory extraction, traces, activity)
 
 import type { ChatMessage, MemoryEntry, ModelInfo, Settings } from '@sutra/shared';
@@ -81,7 +81,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
   const { text, models, settings, forceModel, history, trace } = args;
 
   // ── Optional service layer ─────────────────────────────────────────────
-  // Configured + non-local privacy mode → route through the Aetherion API.
+  // Configured + non-local privacy mode → route through the Lumen API.
   // Any failure (unreachable, HTTP, timeout) falls back to the local core
   // transparently, with an honest trace span. Local mode never reaches here.
   const baseUrl = serverUrl(settings);
@@ -99,11 +99,11 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
       trace.span('memory.extract', 1, { stored: memory ? 'yes' : 'no' });
       if (out.error) {
         return {
-          content: `The Aetherion API stream returned an error: **${out.error}**\n\nCheck the service (Settings → Aetherion API). Nothing else was sent anywhere.`,
+          content: `The Lumen API stream returned an error: **${out.error}**\n\nCheck the service (Settings → Lumen API). Nothing else was sent anywhere.`,
           modelId: out.model || 'sutra-local',
-          modelName: out.model ? `${out.model} · via Aetherion API` : 'via Aetherion API',
+          modelName: out.model ? `${out.model} · via Lumen API` : 'via Lumen API',
           route: {
-            analysis: `via Aetherion API${out.runtime ? ` (${out.runtime})` : ''}`,
+            analysis: `via Lumen API${out.runtime ? ` (${out.runtime})` : ''}`,
             chosen: out.model || 'sutra-local',
             chosenName: out.model || 'sutra-local',
             reasons: out.reasons.length ? out.reasons : ['server routing'],
@@ -113,11 +113,11 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
         };
       }
       return {
-        content: out.content || '(empty response from the Aetherion API)',
+        content: out.content || '(empty response from the Lumen API)',
         modelId: out.model || 'sutra-local',
-        modelName: out.model ? `${out.model} · via Aetherion API` : 'via Aetherion API',
+        modelName: out.model ? `${out.model} · via Lumen API` : 'via Lumen API',
         route: {
-          analysis: `via Aetherion API${out.runtime ? ` (${out.runtime})` : ''}`,
+          analysis: `via Lumen API${out.runtime ? ` (${out.runtime})` : ''}`,
           chosen: out.model || 'sutra-local',
           chosenName: out.model || 'sutra-local',
           reasons: out.reasons.length ? out.reasons : ['server routing'],
@@ -148,7 +148,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
   let provider = decision.chosen ? providerFor(decision.chosen, settings) : null;
   let usedFallback = false;
   let modelId = decision.chosen?.id ?? 'sutra-local';
-  let modelName = decision.chosen?.name ?? 'Aetherion Local';
+  let modelName = decision.chosen?.name ?? 'Lumen Local';
 
   // Puter AI gateway models are served by Puter directly, not by a browser
   // adapter. Requires the user to be signed in to Puter.
@@ -160,7 +160,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
     provider = new (await import('@sutra/model-adapters')).SutraLocalProvider();
     usedFallback = true;
     modelId = 'sutra-local';
-    modelName = 'Aetherion Local (fallback)';
+    modelName = 'Lumen Local (fallback)';
   }
 
   const msgs = buildMessages(history, text);
@@ -207,7 +207,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
     } catch (e) {
       const err = String((e as Error)?.message ?? e);
       trace.span(`model.${p.id}`, Date.now() - tModel, { error: err }, 'error');
-      content = `The model endpoint responded with an error: **${err}**\n\nI stayed safe: no partial data was sent anywhere else. If this is a local runtime, check that it is running; otherwise I can answer with Aetherion Local (Settings → Providers).`;
+      content = `The model endpoint responded with an error: **${err}**\n\nI stayed safe: no partial data was sent anywhere else. If this is a local runtime, check that it is running; otherwise I can answer with Lumen Local (Settings → Providers).`;
       usedFallback = true;
     }
   }
@@ -218,7 +218,7 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
 
   const tFmt = Date.now();
   const finalContent = usedFallback && decision.chosen && decision.chosen.id !== 'sutra-local'
-    ? `> ⚠️ ${decision.chosen.name} is not reachable from this surface right now — answered with Aetherion Local instead.\n\n${content}`
+    ? `> ⚠️ ${decision.chosen.name} is not reachable from this surface right now — answered with Lumen Local instead.\n\n${content}`
     : content;
   trace.span('response.format', Date.now() - tFmt, { chars: String(finalContent.length) });
 

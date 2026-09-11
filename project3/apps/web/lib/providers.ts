@@ -1,4 +1,4 @@
-// Aetherion — which models are actually reachable from this surface,
+// Lumen — which models are actually reachable from this surface,
 // and which adapter serves them.
 
 import type { ModelInfo, Settings } from '@sutra/shared';
@@ -26,7 +26,7 @@ export function modelReachable(m: ModelInfo, settings: Settings): boolean {
       return !!settings.providers.openaiBaseUrl.trim() && !!settings.providers.openaiApiKey.trim();
     default:
       // vLLM / SGLang / llama.cpp / Transformers / MLX / ONNX / TensorRT-LLM
-      // run as local runtimes addressed through the Aetherion API service
+      // run as local runtimes addressed through the Lumen API service
       // (services/api) or a direct adapter — not directly from the browser.
       return false;
   }

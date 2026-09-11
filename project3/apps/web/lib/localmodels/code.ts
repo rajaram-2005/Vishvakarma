@@ -1,5 +1,5 @@
 /**
- * Aetherion Coder — an own, offline code-intelligence model.
+ * Lumen Coder — an own, offline code-intelligence model.
  * Deterministic structure analysis, honest review notes and snippet
  * generation. Runs entirely on-device.
  */
@@ -50,7 +50,7 @@ function analyze(code: string): string {
     `• ${funcs.length} function${funcs.length === 1 ? '' : 's'}, ${classes.length} type${classes.length === 1 ? '' : 's'}/class${classes.length === 1 ? '' : 'es'}, ${imports.length} import${imports.length === 1 ? '' : 's'}, ${exported.length} export${exported.length === 1 ? '' : 's'}`,
     `• max nesting depth: ${maxDepth} · long lines: ${lines.filter((l) => l.trim().length > 120).length}`,
     ...notes.map((n) => `• ${n}`),
-    `\nHonest note: this is structural analysis only — Aetherion Coder does not run your code. For execution semantics, paste into the Tools → Tester agent.`,
+    `\nHonest note: this is structural analysis only — Lumen Coder does not run your code. For execution semantics, paste into the Tools → Tester agent.`,
   ].join('\n');
 }
 

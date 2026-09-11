@@ -1,5 +1,5 @@
 /**
- * Aetherion Writer — an own, offline creative model.
+ * Lumen Writer — an own, offline creative model.
  * Seeded template storytelling + haiku, fully deterministic: the same
  * prompt always produces the same piece.
  */
@@ -60,7 +60,7 @@ function story(text: string): string {
   const place = pick(r, genre.place);
   return [
     `**${pick(r, genre.title)}**`,
-    `*A short piece by Aetherion Writer — seeded from your prompt (deterministic: the same prompt always returns this story).*`,
+    `*A short piece by Lumen Writer — seeded from your prompt (deterministic: the same prompt always returns this story).*`,
     '',
     pick(r, genre.opening),
     '',
@@ -86,7 +86,7 @@ function haiku(text: string): string {
   const r = rng(seed);
   const h = HAIKU[Math.floor(r() * HAIKU.length) % HAIKU.length];
   return [
-    '**Haiku** — Aetherion Writer (5-7-5, deterministic)',
+    '**Haiku** — Lumen Writer (5-7-5, deterministic)',
     '',
     h.l1 + ',',
     h.l2 + ',',

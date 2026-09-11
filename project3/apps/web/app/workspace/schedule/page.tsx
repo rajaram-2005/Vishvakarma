@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Schedule. One of the six major things: recurring tasks that
+// Lumen — Schedule. One of the six major things: recurring tasks that
 // run through the embedded Aetheris core (agent prompts or workflows),
 // with cron presets, timezones, run history and email/webhook delivery.
 
@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AlarmClock, CalendarDays, Clock, Play, Plus, Power, RefreshCw, Trash2, Zap } from 'lucide-react';
 import { GlassPanel } from '@/components/ui';
 import { useSutra } from '@/lib/store';
+import { parseSchedule, SCHEDULE_NL_EXAMPLES } from '@/lib/schedule-nl';
 
 interface ScheduleItem {
   id: string; name: string; enabled: boolean; cron: string; tz: string;
@@ -39,12 +40,16 @@ export default function SchedulePage() {
 
   const [name, setName] = useState('');
   const [cron, setCron] = useState('0 8 * * *');
-  const [tz, setTz] = useState(typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC');
+  const [tz, setTz] = useState('');
+  useEffect(() => {
+    setTz((v) => v || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC');
+  }, []);
   const [taskKind, setTaskKind] = useState<'agent' | 'workflow'>('agent');
   const [agent, setAgent] = useState('prime');
   const [prompt, setPrompt] = useState('');
   const [workflowId, setWorkflowId] = useState('');
   const [workflowInput, setWorkflowInput] = useState('');
+  const [nl, setNl] = useState('');
 
   const load = useCallback(async () => {
     try {
@@ -89,6 +94,31 @@ export default function SchedulePage() {
       if (!res.ok) throw new Error(j.error ?? `HTTP ${res.status}`);
       setName(''); setPrompt(''); setWorkflowInput('');
       act('schedule', 'schedule created', `${j.schedule.name} · ${j.schedule.human}`, undefined);
+      await load();
+    } catch (e) {
+      setError(String((e as Error).message ?? e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const createFromNaturalLanguage = async () => {
+    if (!nl.trim()) return;
+    const parsed = parseSchedule(nl, tz);
+    if (!parsed) { setError('Could not parse that. Try: “every morning at 8 am summarize AI news” or “every monday at 9:00 prepare my report”.'); return; }
+    setBusy(true);
+    try {
+      const res = await fetch('/api/schedules', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          name: parsed.name, cron: parsed.cron, tz: parsed.tz, enabled: true, deliver: [],
+          task: { kind: 'agent', agent: 'prime', prompt: parsed.taskPrompt },
+        }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.error ?? `HTTP ${res.status}`);
+      setNl('');
+      act('schedule', 'schedule from language', `${parsed.human} → ${parsed.taskPrompt.slice(0, 60)}`, undefined);
       await load();
     } catch (e) {
       setError(String((e as Error).message ?? e));
@@ -231,7 +261,26 @@ export default function SchedulePage() {
 
         {/* create */}
         <GlassPanel className="p-5 h-fit lg:sticky lg:top-16 space-y-4">
-          <div className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>NEW SCHEDULE</div>
+          <div className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>SAY IT IN PLAIN LANGUAGE</div>
+          <div className="pill-input">
+            <Zap size={13} style={{ color: 'var(--dim)' }} />
+            <input
+              value={nl}
+              onChange={(e) => setNl(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && void createFromNaturalLanguage()}
+              placeholder="every morning at 8 am summarize AI news"
+            />
+            <button onClick={() => void createFromNaturalLanguage()} disabled={busy || !nl.trim()} className="btn-primary !px-3 !py-2" style={{ opacity: busy || !nl.trim() ? 0.5 : 1 }}>
+              <Plus size={13} /> create
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {SCHEDULE_NL_EXAMPLES.map((ex) => (
+              <button key={ex} onClick={() => setNl(ex)} className="chip hover:opacity-100 !text-[9px]">{ex.slice(0, 46)}{ex.length > 46 ? '…' : ''}</button>
+            ))}
+          </div>
+
+          <div className="font-mono text-[10px] tracking-widest pt-1" style={{ color: 'var(--acc2)' }}>OR BUILD IT MANUALLY</div>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="name (e.g. Morning digest)" className="glass-2 w-full px-3 py-2.5 text-sm outline-none" style={{ color: 'var(--ink)' }} />
 
           <div>

@@ -1,5 +1,5 @@
 /**
- * Aetherion Analyst — an own, offline data-analysis model.
+ * Lumen Analyst — an own, offline data-analysis model.
  * Parses CSV / TSV / whitespace tables and number lists, computes stats
  * and detects trends. Deterministic, no network.
  */
@@ -56,7 +56,7 @@ export function analystAnswer(prompt: string): string {
       }
     }
     out.push(`\nInsights:\n${insights.length ? insights.map((i) => `• ${i}`).join('\n') : '• numeric columns analyzed — paste rows with numbers for stats'}`);
-    out.push(`\nComputed on-device by Aetherion Analyst — no data left the machine.`);
+    out.push(`\nComputed on-device by Lumen Analyst — no data left the machine.`);
     return out.join('\n');
   }
 
@@ -67,7 +67,7 @@ export function analystAnswer(prompt: string): string {
       `**Number series** — ${nums.length} values`,
       `mean ${m.toFixed(2)} · min ${Math.min(...nums)} · max ${Math.max(...nums)}`,
       `trend: ${trend(nums)}`,
-      `\nOn-device by Aetherion Analyst.`,
+      `\nOn-device by Lumen Analyst.`,
     ].join('\n');
   }
   return '';

@@ -1,4 +1,4 @@
-// Aetherion — a representative trace for the landing demo:
+// Lumen — a representative trace for the landing demo:
 // Request → Router → Model → Agent → Tool → Workflow → Database → Response.
 
 import type { Trace } from '@sutra/shared';

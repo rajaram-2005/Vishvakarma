@@ -1,4 +1,4 @@
-// Aetherion — service API client (services/api, FastAPI).
+// Lumen — service API client (services/api, FastAPI).
 // Optional layer: when a base URL is configured AND privacy mode is not
 // local, chat/routing/security/workflow/RAG can route through the service
 // layer. In local mode the workspace is fully offline — the client refuses
@@ -230,7 +230,7 @@ export interface ScanOut {
   note?: string;
 }
 
-/** Web Workflow → Aetherion service JSON (same fields, no client-only extras). */
+/** Web Workflow → Lumen service JSON (same fields, no client-only extras). */
 export function mapWorkflow(wf: Workflow) {
   return {
     id: wf.id,

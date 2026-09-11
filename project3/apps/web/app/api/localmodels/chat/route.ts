@@ -4,7 +4,7 @@ import { streamLocalModel, runLocalModel } from '@/lib/localmodels/registry';
 export const dynamic = 'force-dynamic';
 
 /**
- * Streaming chat with Aetherion's own on-device models.
+ * Streaming chat with Lumen's own on-device models.
  * Accepts the same message envelope as /api/chat (Aetheris core) so the
  * bridge can point at either backend unchanged:
  *   { model: 'aetherion-math', messages: [{ role: 'user', content: '…' }] }

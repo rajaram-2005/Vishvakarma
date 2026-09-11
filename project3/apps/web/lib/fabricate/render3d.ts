@@ -1,4 +1,4 @@
-// Aetherion Fabricate — canvas 3D preview. Painter's-algorithm flat shading,
+// Lumen Fabricate — canvas 3D preview. Painter's-algorithm flat shading,
 // no dependencies. Purely visual; the exported OBJ/GLTF carry the real mesh.
 
 import type { Mesh } from './geometry';

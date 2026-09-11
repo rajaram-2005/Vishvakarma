@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Deployments: local · docker · puter cloud, with real artifacts.
+// Lumen — Deployments: local · docker · puter cloud, with real artifacts.
 
 import React, { useState } from 'react';
 import { Container, Globe, Rocket } from 'lucide-react';

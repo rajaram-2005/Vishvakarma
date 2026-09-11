@@ -1,5 +1,5 @@
 /**
- * Aetherion Math — an own, offline computational model.
+ * Lumen Math — an own, offline computational model.
  * A real tokenizer + shunting-yard expression evaluator with an equation
  * solver, statistics, primes and unit conversions. No network, no keys.
  */
@@ -224,14 +224,14 @@ export function mathAnswer(prompt: string): string {
   const t = prompt.trim();
   const lower = t.toLowerCase();
   try {
-    if (/=/.test(t) && /[a-z]/i.test(t) && (/\d/.test(t))) { const sol = solveEquation(t); if (sol) return `${sol}\n\nSolved on-device by Aetherion Math (bisection + linear solver).`; }
+    if (/=/.test(t) && /[a-z]/i.test(t) && (/\d/.test(t))) { const sol = solveEquation(t); if (sol) return `${sol}\n\nSolved on-device by Lumen Math (bisection + linear solver).`; }
     if (/factor|gcd|lcm|prime/.test(lower)) { const p = primes(t); if (p) return p; }
     if (/\b(to|in|into|as)\b/.test(lower) && /\d/.test(t)) { const c = convert(t); if (c) return c; }
     if (/percent\s+of|%\s+of/.test(lower)) { const p = percent(t); if (p) return p; }
-    if (/mean|median|mode|average|std|stats|deviation/.test(lower)) { const s = stats(t); if (s) return `${s}\n\nComputed on-device by Aetherion Math.`; }
+    if (/mean|median|mode|average|std|stats|deviation/.test(lower)) { const s = stats(t); if (s) return `${s}\n\nComputed on-device by Lumen Math.`; }
     const expr = t.replace(/[?=!.,;]+$/g, '').replace(/^(what is|whats|calculate|compute|evaluate|solve|how much is)\s+/i, '');
     const v = evalExpr(expr);
-    if (v !== null) return `**${expr.trim()} = ${fmt(v)}**\n\nComputed on-device by Aetherion Math (shunting-yard evaluator).`;
+    if (v !== null) return `**${expr.trim()} = ${fmt(v)}**\n\nComputed on-device by Lumen Math (shunting-yard evaluator).`;
   } catch {
     /* fall through */
   }

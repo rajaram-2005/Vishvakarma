@@ -1,5 +1,5 @@
 /**
- * Aetherion Local — the general own-model. Offline assistant that
+ * Lumen Local — the general own-model. Offline assistant that
  * answers small talk, lists the family's capabilities, and routes
  * specialist intents (math / code / summary / data / story) to the
  * matching own-model. Honest about its limits.
@@ -12,13 +12,13 @@ import { analystAnswer } from './analyst';
 import { writerAnswer } from './writer';
 
 const FAMILY_LINES = [
-  '**Aetherion Local** is my general model. The full on-device family:',
-  '• **Aetherion Math** — real expression evaluation, equation solving, stats, primes, unit conversions',
-  '• **Aetherion Coder** — code structure analysis, walkthroughs and deterministic snippets',
-  '• **Aetherion Summarizer** — extractive, frequency-scored summaries of any pasted text',
-  '• **Aetherion Analyst** — CSV/table stats and trend detection',
-  '• **Aetherion Writer** — seeded stories and haiku',
-  '• **Aetherion Core** (embedded) — the full Prime → Hermes → Metis agent pipeline, needs an internet connection for its provider mesh',
+  '**Lumen Local** is my general model. The full on-device family:',
+  '• **Lumen Math** — real expression evaluation, equation solving, stats, primes, unit conversions',
+  '• **Lumen Coder** — code structure analysis, walkthroughs and deterministic snippets',
+  '• **Lumen Summarizer** — extractive, frequency-scored summaries of any pasted text',
+  '• **Lumen Analyst** — CSV/table stats and trend detection',
+  '• **Lumen Writer** — seeded stories and haiku',
+  '• **Lumen Core** (embedded) — the full Prime → Hermes → Metis agent pipeline, needs an internet connection for its provider mesh',
   'Pin any of them in the Chat sidebar, or call them via `/api/localmodels/chat`.',
 ];
 
@@ -28,10 +28,10 @@ export function generalAnswer(prompt: string): string {
 
   // greetings / identity
   if (/^(hi|hello|hey|yo|good (morning|afternoon|evening))\b/.test(lower) && t.length < 40) {
-    return 'Hello! I am **Aetherion Local** — the app’s own offline model, running entirely on your machine. Ask me to do math, analyze code, summarize text, crunch data, or tell a story. No API keys, no network.';
+    return 'Hello! I am **Lumen Local** — the app’s own offline model, running entirely on your machine. Ask me to do math, analyze code, summarize text, crunch data, or tell a story. No API keys, no network.';
   }
   if (/(who are you|what are you|your name|introduce yourself)/.test(lower)) {
-    return 'I am **Aetherion Local**, one of Aetherion’s own models. I run on-device with zero network calls — deterministic by design. My siblings (Math, Coder, Summarizer, Analyst, Writer) are one pin away in the chat sidebar.';
+    return 'I am **Lumen Local**, one of Lumen’s own models. I run on-device with zero network calls — deterministic by design. My siblings (Math, Coder, Summarizer, Analyst, Writer) are one pin away in the chat sidebar.';
   }
   if (/(what can you do|capabilities|help\b)/.test(lower)) {
     return FAMILY_LINES.join('\n');
@@ -56,7 +56,7 @@ export function generalAnswer(prompt: string): string {
   return [
     `**${t.slice(0, 90)}${t.length > 90 ? '…' : ''}**`,
     '',
-    'I am Aetherion Local — a deterministic on-device model. I am genuinely good at math, code structure, summaries, tables and short fiction, but this prompt is beyond my local skill set.',
+    'I am Lumen Local — a deterministic on-device model. I am genuinely good at math, code structure, summaries, tables and short fiction, but this prompt is beyond my local skill set.',
     '',
     'For a real LLM answer:',
     '• **Workspace → Aetheris** — delegate to the embedded core (Prime → Hermes → Metis) when the machine has internet access',

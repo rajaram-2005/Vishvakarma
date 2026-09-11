@@ -1,4 +1,4 @@
-// Aetherion — sandboxed virtual terminal.
+// Lumen — sandboxed virtual terminal.
 // Commands run against the workspace virtual FS. Anything exec-class or
 // destructive passes the Tool Gateway (risk policy + approvals).
 
@@ -20,7 +20,7 @@ export interface TermResult {
   gitNote?: string;
 }
 
-const HELP = `Aetherion sandbox terminal
+const HELP = `Lumen sandbox terminal
   ls [path]        list files
   cd <path>        change directory
   pwd              print working directory

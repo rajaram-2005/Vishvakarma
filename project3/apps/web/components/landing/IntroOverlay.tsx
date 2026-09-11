@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — cinematic intro. Skipped entirely under reduced motion.
+// Lumen — cinematic intro. Skipped entirely under reduced motion.
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -61,7 +61,7 @@ export function IntroOverlay() {
             animate={{ opacity: 1, letterSpacing: '0.35em' }}
             transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
           >
-            <span className="text-grad">Aetherion</span>
+            <span className="text-grad">Lumen</span>
           </motion.div>
           <motion.div
             className="overline mt-4"

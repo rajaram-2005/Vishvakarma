@@ -1,4 +1,4 @@
-// Aetherion — RAG pipeline:
+// Lumen — RAG pipeline:
 // Ingest → Parse → Chunk → Embed → Retrieve → Rerank → Context → Generate → Cite
 
 import type { Chunk, KnowledgeDoc, Settings } from '@sutra/shared';
@@ -61,7 +61,7 @@ export interface RAGAnswer {
   model: string;
 }
 
-/** Context → Generate → Cite. Uses a reachable model; Aetherion Local grounds offline. */
+/** Context → Generate → Cite. Uses a reachable model; Lumen Local grounds offline. */
 export async function generate(
   chunks: Chunk[],
   query: string,

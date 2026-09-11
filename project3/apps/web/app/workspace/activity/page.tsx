@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Activity: unified timeline + trace waterfall drill-down.
+// Lumen — Activity: unified timeline + trace waterfall drill-down.
 
 import React, { useMemo, useState } from 'react';
 import { useSutra } from '@/lib/store';

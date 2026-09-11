@@ -1,4 +1,4 @@
-// Aetherion — deterministic code checks (the "Tests" tab and Tester agent).
+// Lumen — deterministic code checks (the "Tests" tab and Tester agent).
 // Real computation over the virtual FS: balance, structure, imports, TODOs.
 
 export interface CheckResult {

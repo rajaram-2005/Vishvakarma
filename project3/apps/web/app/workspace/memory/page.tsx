@@ -1,5 +1,5 @@
 'use client';
-// Aetherion — Memory: the WHAT. Local, searchable, deletable.
+// Lumen — Memory: the WHAT. Local, searchable, deletable.
 
 import React, { useMemo, useState } from 'react';
 import { Brain, Plus, Trash2 } from 'lucide-react';
