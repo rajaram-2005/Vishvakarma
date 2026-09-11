@@ -1,7 +1,7 @@
 def test_deploy_clean_bundle(client):
     r = client.post(
         "/api/v1/deploy/local",
-        json={"name": "workspace", "files": {"README.md": "# SUTRA", "src/app.ts": "export const a = 1;\n"}},
+        json={"name": "workspace", "files": {"README.md": "# Aetherion", "src/app.ts": "export const a = 1;\n"}},
     )
     assert r.status_code == 201
     m = r.json()

@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   // standalone output is only for container images (Dockerfile.web sets
-  // SUTRA_STANDALONE=1); local `next start` requires the default output.
-  ...(process.env.SUTRA_STANDALONE ? { output: 'standalone' } : {}),
+  // Aetherion_STANDALONE=1); local `next start` requires the default output.
+  ...(process.env.Aetherion_STANDALONE ? { output: 'standalone' } : {}),
   transpilePackages: [
     '@sutra/shared',
     '@sutra/model-adapters',

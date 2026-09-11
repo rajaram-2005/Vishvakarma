@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# One-command production preview for SUTRA web.
+# One-command production preview for Aetherion web.
 # Self-heals after sandbox resets: installs deps and rebuilds when the
 # (ephemeral) node_modules/.next are missing, then serves on 0.0.0.0:3000
 # so the app is reachable through the live-preview proxy.

@@ -1,21 +1,21 @@
-# SUTRA — Prometheus: scrapes the OTel collector's prometheus exporter + services
+# Aetherion — Prometheus: scrapes the OTel collector's prometheus exporter + services
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: sutra-otel
+  - job_name: aetherion-otel
     static_configs:
       - targets: ["otel-collector:8889"]
         labels:
           service: sutra
 
-  - job_name: sutra-api
+  - job_name: aetherion-api
     metrics_path: /metrics
     static_configs:
       - targets: ["api:8000"]
 
-  - job_name: sutra-web
+  - job_name: aetherion-web
     metrics_path: /metrics
     static_configs:
       - targets: ["web:3000"]

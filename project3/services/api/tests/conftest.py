@@ -11,7 +11,7 @@ from app.main import create_app, SETTINGS  # noqa: E402
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
-    monkeypatch.setenv("SUTRA_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("Aetherion_DATA_DIR", str(tmp_path / "data"))
     import importlib
     import app.store as store_mod
     importlib.reload(store_mod)

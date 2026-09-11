@@ -1,5 +1,5 @@
 'use client';
-// SUTRA workspace shell — spatial glass navigation.
+// Aetherion workspace shell — spatial glass navigation.
 // Home · Chat · Projects · Agents · Teams · Models · Tools · Skills ·
 // Knowledge · Memory · Workflows · MCP · Plugins · Evaluation · Security ·
 // Activity · Deployments · Marketplace · Settings
@@ -99,7 +99,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
               </linearGradient>
             </defs>
           </svg>
-          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">SUTRA</span>
+          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">Aetherion</span>
         </Link>
         <nav className="flex flex-col gap-0.5">
           {NAV.map((n) => {

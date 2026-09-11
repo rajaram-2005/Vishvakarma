@@ -1,4 +1,4 @@
-// SUTRA — local vector math.
+// Aetherion — local vector math.
 // Deterministic hashed embeddings (offline, provider-neutral) plus BM25
 // re-ranking and document chunking. Any neural embedding provider can be
 // swapped in behind the same Float32Array interface.

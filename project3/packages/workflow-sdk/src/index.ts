@@ -1,4 +1,4 @@
-// SUTRA workflow SDK — provider-neutral workflow graphs with n8n export.
+// Aetherion workflow SDK — provider-neutral workflow graphs with n8n export.
 // The n8n bridge is an adapter: exported JSON is standard n8n workflow format,
 // used in ways that respect n8n's terms of service.
 

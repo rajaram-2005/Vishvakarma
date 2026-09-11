@@ -1,4 +1,4 @@
-// SUTRA Fabricate — deck outlines.
+// Aetherion Fabricate — deck outlines.
 // Deterministic local template when offline; Puter AI gateway (or any
 // injected chat function) when connected. The AI is asked for strict JSON,
 // and every field is validated — a malformed reply can never crash the deck.

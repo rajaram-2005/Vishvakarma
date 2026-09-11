@@ -1,4 +1,4 @@
-# SUTRA service API — Python port of the shared logic (security, router, RAG, workflows).
+# Aetherion service API — Python port of the shared logic (security, router, RAG, workflows).
 # Deterministic, offline-first, provider-neutral.
 
 from __future__ import annotations

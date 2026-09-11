@@ -1,4 +1,4 @@
-# SUTRA memory service — the WHAT. Local, scoped, searchable, deletable.
+# Aetherion memory service — the WHAT. Local, scoped, searchable, deletable.
 from __future__ import annotations
 
 import hashlib
@@ -13,7 +13,7 @@ from fastapi import FastAPI, HTTPException
 
 DATA = Path(__file__).parent / "data"
 DATA.mkdir(parents=True, exist_ok=True)
-app = FastAPI(title="SUTRA Memory", version="0.1.0")
+app = FastAPI(title="Aetherion Memory", version="0.1.0")
 
 DIM = 384
 KINDS = ("fact", "preference", "episodic")

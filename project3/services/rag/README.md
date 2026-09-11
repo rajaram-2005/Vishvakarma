@@ -1,4 +1,4 @@
-# SUTRA RAG
+# Aetherion RAG
 
 The retrieval boundary as a service: **Ingest → Parse → Chunk (420/90) →
 Embed (384-dim local hash) → Retrieve (dense 0.55 + BM25 0.45) → Rerank →

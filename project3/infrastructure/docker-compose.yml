@@ -1,6 +1,6 @@
-# SUTRA — full local stack (hybrid mode).
+# Aetherion — full local stack (hybrid mode).
 # The web app also runs fully standalone in local mode (no containers needed).
-name: sutra
+name: aetherion
 
 services:
   web:
@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      SUTRA_API_URL: http://api:8000
+      Aetherion_API_URL: http://api:8000
     depends_on:
       - api
 
@@ -21,16 +21,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      SUTRA_ENV: production
-      SUTRA_PRIVACY_MODE: ${SUTRA_PRIVACY_MODE:-hybrid}
-      SUTRA_SYNC_SCOPE: ${SUTRA_SYNC_SCOPE:-none}
+      Aetherion_ENV: production
+      Aetherion_PRIVACY_MODE: ${Aetherion_PRIVACY_MODE:-hybrid}
+      Aetherion_SYNC_SCOPE: ${Aetherion_SYNC_SCOPE:-none}
       OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OTLP_ENDPOINT: http://otel-collector:4318
-      SUTRA_CORS_ORIGINS: http://localhost:3000
+      Aetherion_CORS_ORIGINS: http://localhost:3000
     volumes:
-      - sutra-data:/data
+      - aetherion-data:/data
     depends_on:
       - postgres
       - redis
@@ -39,9 +39,9 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: sutra
+      POSTGRES_USER: aetherion
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sutra-local}
-      POSTGRES_DB: sutra
+      POSTGRES_DB: aetherion
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -86,7 +86,7 @@ services:
       - "3001:3000"
 
 volumes:
-  sutra-data:
+  aetherion-data:
   pgdata:
   qdrant-data:
   grafana-data:

@@ -1,4 +1,4 @@
-// SUTRA — Project 3. Core domain types.
+// Aetherion — Project 3. Core domain types.
 // Provider-neutral, serializable, local-first.
 
 export type ID = string;
@@ -24,7 +24,7 @@ export interface Settings {
     otlpEndpoint: string;
   };
   /**
-   * Optional SUTRA service API (services/api). Empty/unset = the workspace
+   * Optional Aetherion service API (services/api). Empty/unset = the workspace
    * runs entirely on the local core. In local privacy mode this is IGNORED
    * and enforced offline — the contract, not a recommendation.
    */

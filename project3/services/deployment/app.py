@@ -1,4 +1,4 @@
-# SUTRA deployment service — local, Docker, Puter cloud targets.
+# Aetherion deployment service — local, Docker, Puter cloud targets.
 # Pre-deploy secret scan always runs; a bundle with secrets never ships.
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ DATA = Path(__file__).parent / "data"
 DATA.mkdir(parents=True, exist_ok=True)
 BUNDLES = DATA / "bundles"
 BUNDLES.mkdir(exist_ok=True)
-app = FastAPI(title="SUTRA Deployment", version="0.1.0")
+app = FastAPI(title="Aetherion Deployment", version="0.1.0")
 
 SECRET_RES = [
     re.compile(r"sk-[a-zA-Z0-9]{16,}"),
@@ -89,7 +89,7 @@ async def deploy(body: dict):
     if target == "puter":
         if not os.environ.get("PUTER_JWT"):
             raise HTTPException(409, {"reason": "puter_not_connected", "note": "Puter is optional — sign in on a client surface or set PUTER_JWT; local mode is never forced"})
-        steps.append({"name": "puter-upload", "ok": True, "detail": "/sutra/deployments/" + deploy_id})
+        steps.append({"name": "puter-upload", "ok": True, "detail": "/aetherion/deployments/" + deploy_id})
     if target == "local":
         steps.append({"name": "copy", "ok": True, "detail": f"{BUNDLES / deploy_id}"})
 
@@ -121,7 +121,7 @@ async def deploy(body: dict):
         "createdAt": time.time(),
         "bundleHash": digest,
         "secretScan": "clean",
-        "url": f"file://{bundle_dir}" if target == "local" else (f"https://puter.com/{deploy_id}" if target == "puter" else f"docker://sutra/{body.get('name', 'workspace')}:{digest[:8]}"),
+        "url": f"file://{bundle_dir}" if target == "local" else (f"https://puter.com/{deploy_id}" if target == "puter" else f"docker://aetherion/{body.get('name', 'workspace')}:{digest[:8]}"),
         "steps": steps,
         "dockerfile": DOCKERFILE if target == "docker" else None,
     }

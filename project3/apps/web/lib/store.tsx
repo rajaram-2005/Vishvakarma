@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — workspace store. Local-first persistence (localStorage),
+// Aetherion — workspace store. Local-first persistence (localStorage),
 // trace recording (OpenTelemetry-shaped), approvals and activity.
 
 import React, {

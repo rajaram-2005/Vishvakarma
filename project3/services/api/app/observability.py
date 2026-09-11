@@ -1,4 +1,4 @@
-# SUTRA service API — OpenTelemetry-compatible tracing (OTLP-flavored JSON).
+# Aetherion service API — OpenTelemetry-compatible tracing (OTLP-flavored JSON).
 # Works with no external collector: spans are kept in-process and exportable.
 from __future__ import annotations
 

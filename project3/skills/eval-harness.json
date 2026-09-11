@@ -2,7 +2,7 @@
   "id": "skill-eval-harness",
   "name": "Evaluation Harness",
   "version": "1.1.0",
-  "author": "SUTRA",
+  "author": "Aetherion",
   "license": "MIT",
   "kind": "skill",
   "description": "Build a reproducible benchmark with refusal and hallucination probes.",

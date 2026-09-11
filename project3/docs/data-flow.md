@@ -1,4 +1,4 @@
-# SUTRA Data Flows
+# Aetherion Data Flows
 
 ## 1. Chat (streaming)
 
@@ -99,7 +99,7 @@ workspace snapshot (virtual FS)
  → target:
      local  → bundle dir + manifest (sha256)
      docker → Dockerfile generation + image ref
-     puter  → requires explicit sign-in (never forced) → /sutra/deployments/<id>
+     puter  → requires explicit sign-in (never forced) → /aetherion/deployments/<id>
  → deployments[] + trace span "deploy <name>"
 ```
 

@@ -1,4 +1,4 @@
-# SUTRA web — production image (Next.js standalone)
+# Aetherion web — production image (Next.js standalone)
 FROM node:20-alpine AS build
 WORKDIR /app
 
@@ -9,7 +9,7 @@ RUN npm ci --no-audit --no-fund
 
 WORKDIR /app/apps/web
 ARG NEXT_TELEMETRY_DISABLED=1
-ENV NEXT_TELEMETRY_DISABLED=1 SUTRA_STANDALONE=1
+ENV NEXT_TELEMETRY_DISABLED=1 Aetherion_STANDALONE=1
 RUN npm run build
 
 # ---- runtime ----

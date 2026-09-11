@@ -1,4 +1,4 @@
-# SUTRA — OTel collector: receives OTLP from api + web, exports to Prometheus
+# Aetherion — OTel collector: receives OTLP from api + web, exports to Prometheus
 receivers:
   otlp:
     protocols:

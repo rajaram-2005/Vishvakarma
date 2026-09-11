@@ -1,9 +1,9 @@
-# SUTRA Infrastructure
+# Aetherion Infrastructure
 
-Kubernetes, Docker and observability for the SUTRA stack. **Everything here is
+Kubernetes, Docker and observability for the Aetherion stack. **Everything here is
 optional** — the web app runs fully local with zero containers.
 
-> CI lives at the **repository root** (`.github/workflows/sutra-ci.yml`) —
+> CI lives at the **repository root** (`.github/workflows/aetherion-ci.yml`) —
 > GitHub Actions only reads workflows from the repo root. The copy in
 > `project3/.github/workflows/ci.yml` is kept for repo-split portability and
 > is ignored by GitHub while `project3/` is a subdirectory.
@@ -46,7 +46,7 @@ docker compose -f infrastructure/docker-compose.yml up --build
 - `qdrant` is the vector store for RAG at scale; the api uses in-memory
   384-dim embeddings until you enable it (adapter boundary in
   `services/api` store layer).
-- The web image is built with `SUTRA_STANDALONE=1` (Next.js standalone
+- The web image is built with `Aetherion_STANDALONE=1` (Next.js standalone
   output, runs `node apps/web/server.js`); local `next start` builds use the
   default output — the flag is read in `apps/web/next.config.mjs`.
 - `host.docker.internal` lets api reach an Ollama running on the host —

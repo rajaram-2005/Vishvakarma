@@ -219,7 +219,7 @@ export function createKVStore(): KVStore {
 export async function puterFsWrite(root: string, name: string, content: string): Promise<void> {
   const p = puter();
   if (!p || !p.auth.isSignedIn()) throw new Error('Puter is not signed in (local mode)');
-  const dir = `/sutra/${root}`;
+  const dir = `/aetherion/${root}`;
   await p.fs.mkdir(dir, { createMissingParents: true });
   await p.fs.write(`${dir}/${name}`, content);
 }

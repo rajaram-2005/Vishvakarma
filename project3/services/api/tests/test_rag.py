@@ -30,7 +30,7 @@ def test_ingest_and_query(client):
 
 
 def test_query_refuses_without_evidence(client):
-    client.post("/api/v1/rag/ingest", json={"title": "Small", "text": "SUTRA is a local-first workspace.", "source": "test"})
+    client.post("/api/v1/rag/ingest", json={"title": "Small", "text": "Aetherion is a local-first workspace.", "source": "test"})
     q = client.post("/api/v1/rag/query", json={"query": "What is the population of Nairobi?"}).json()
     assert "can't verify" in q["answer"] or "won't guess" in q["answer"]
 

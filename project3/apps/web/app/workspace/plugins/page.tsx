@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Plugins: manifest-first, scope-reviewed, revocable.
+// Aetherion — Plugins: manifest-first, scope-reviewed, revocable.
 
 import React, { useMemo, useState } from 'react';
 import { Package } from 'lucide-react';
@@ -10,7 +10,7 @@ import { validateManifest, permissionSummary, type PluginManifest } from '@sutra
 const MARKET: Array<PluginManifest & { installed: boolean }> = [
   { id: 'pl-linear', name: 'Linear Bridge', version: '0.3.0', description: 'Sync tasks with a Linear team via API.', author: 'sutra-community', license: 'MIT', entry: 'index.ts', scopes: ['network', 'memory.write'], minSutra: '0.1.0', installed: false },
   { id: 'pl-notion', name: 'Notion Sync', version: '1.2.3', description: 'Sync selected project folders into Notion pages.', author: 'sutra-community', license: 'MIT', entry: 'index.ts', scopes: ['network', 'fs.read'], minSutra: '0.1.0', installed: false },
-  { id: 'pl-prometheus', name: 'Prometheus Push', version: '0.8.0', description: 'Push SUTRA metrics to a Prometheus endpoint.', author: 'sutra', license: 'MIT', entry: 'main.ts', scopes: ['network'], minSutra: '0.1.0', installed: false },
+  { id: 'pl-prometheus', name: 'Prometheus Push', version: '0.8.0', description: 'Push Aetherion metrics to a Prometheus endpoint.', author: 'sutra', license: 'MIT', entry: 'main.ts', scopes: ['network'], minSutra: '0.1.0', installed: false },
   { id: 'pl-vault', name: 'Vault Secrets', version: '0.4.1', description: 'Read secrets from Vault at deploy time. Why we need the secrets scope: inject deploy credentials without storing them locally.', author: 'sutra', license: 'MIT', entry: 'main.ts', scopes: ['secrets', 'deploy'], minSutra: '0.1.0', installed: false },
 ];
 
@@ -46,7 +46,7 @@ export default function PluginsPage() {
       <SectionTitle
         overline="plugins"
         title="Extensibility with receipts."
-        sub="Every plugin ships a manifest: id, version, entry, scopes. SUTRA validates it before install and shows exactly what it asks for. Disable or remove any time — scopes revoke instantly."
+        sub="Every plugin ships a manifest: id, version, entry, scopes. Aetherion validates it before install and shows exactly what it asks for. Disable or remove any time — scopes revoke instantly."
       />
       <div className="grid md:grid-cols-2 gap-4">
         <div>

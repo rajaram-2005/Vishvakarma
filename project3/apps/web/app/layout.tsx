@@ -5,12 +5,12 @@ import { AmbientController } from '@/lib/AmbientController';
 import { PuterScript } from '@/lib/puter';
 
 export const metadata: Metadata = {
-  title: 'SUTRA — The Open AI Ecosystem',
+  title: 'Aetherion — The Open AI Ecosystem',
   description:
     'Models. Agents. Tools. Knowledge. Workflows. Local AI. One workspace to build, automate, evaluate, and deploy AI systems. Local-first, provider-neutral, cinematic.',
-  keywords: ['AI workspace', 'local-first', 'agents', 'models', 'RAG', 'MCP', 'n8n', 'SUTRA'],
+  keywords: ['AI workspace', 'local-first', 'agents', 'models', 'RAG', 'MCP', 'n8n', 'Aetherion'],
   openGraph: {
-    title: 'SUTRA — Build the Open AI Ecosystem',
+    title: 'Aetherion — Build the Open AI Ecosystem',
     description: 'One workspace to build, automate, evaluate, and deploy AI systems.',
   },
 };

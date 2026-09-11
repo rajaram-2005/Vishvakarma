@@ -1,4 +1,4 @@
-// SUTRA desktop — Tauri v2 shell.
+// Aetherion desktop — Tauri v2 shell.
 // The web app is the product; this shell adds OS integration on top:
 // tray, deep links, and local file-system access *through the security gateway*.
 use tauri::Manager;
@@ -19,5 +19,5 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![sutra_version, system_locale])
         .run(tauri::generate_context!())
-        .expect("error while running SUTRA desktop");
+        .expect("error while running Aetherion desktop");
 }

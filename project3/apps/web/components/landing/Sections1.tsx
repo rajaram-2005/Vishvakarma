@@ -1,5 +1,5 @@
 'use client';
-// SUTRA landing — Hero · AI Core · Ecosystem · Models · Routing.
+// Aetherion landing — Hero · AI Core · Ecosystem · Models · Routing.
 
 import React, { useMemo, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
@@ -70,7 +70,7 @@ export function LandingNav() {
               </linearGradient>
             </defs>
           </svg>
-          <span className="font-display font-semibold tracking-[0.3em] text-sm">SUTRA</span>
+          <span className="font-display font-semibold tracking-[0.3em] text-sm">Aetherion</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           {links.map(([l, h]) => (
@@ -205,7 +205,7 @@ export function CoreSection() {
           One energy source: <span className="text-grad-cyan">your data, your runtime, your intent.</span>
         </>
       }
-      sub="SUTRA is named for the Sanskrit word for “thread.” The Core is where every model, agent, tool and workflow ties together — and it runs on your machine first. Nothing here requires a cloud account."
+      sub="Aetherion fuses a local-first AI workspace with the embedded Aetheris intelligence core. Every model, agent, tool and workflow ties together in one place — and it runs on your machine first. Nothing here requires a cloud account."
     >
       <div className="glass relative overflow-hidden !rounded-[28px]">
         <div className="absolute inset-0">
@@ -215,7 +215,7 @@ export function CoreSection() {
           <div className="glass-2 p-5 max-w-[240px] md:mr-auto self-start">
             <div className="font-mono text-[10px] tracking-widest mb-2" style={{ color: 'var(--acc2)' }}>CORE/STATUS</div>
             <div className="text-sm font-medium">online · local</div>
-            <div className="text-xs mt-2" style={{ color: 'var(--dim)' }}>Sutra Local always available. Connect Ollama or an API and the core routes automatically.</div>
+            <div className="text-xs mt-2" style={{ color: 'var(--dim)' }}>Aetherion Local always available. Connect Ollama or an API and the core routes automatically.</div>
           </div>
           <div />
           <div className="glass-2 p-5 max-w-[240px] self-end">
@@ -350,7 +350,7 @@ const ROUTE_STEPS: Step[] = [
 const SAMPLE_PROMPTS = [
   'Write a TypeScript function that debounces an event handler',
   'What is 17 × 23 + 5?',
-  'Summarize the SUTRA design principles document',
+  'Summarize the Aetherion design principles document',
   'Draft a poetic product tagline for an AI workspace',
 ];
 

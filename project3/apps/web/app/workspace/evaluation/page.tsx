@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Evaluation: real benchmark runs with full metrics.
+// Aetherion — Evaluation: real benchmark runs with full metrics.
 
 import React, { useState } from 'react';
 import { Gauge, Play, Save } from 'lucide-react';

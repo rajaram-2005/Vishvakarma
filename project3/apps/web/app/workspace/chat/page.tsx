@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Chat. Request → Router → Model → Result, streamed and traced.
+// Aetherion — Chat. Request → Router → Model → Result, streamed and traced.
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -15,7 +15,7 @@ import { usePuterAi } from '@/lib/puter';
 
 const SUGGESTIONS = [
   'Plan my Project 3 MVP.',
-  'What are SUTRA’s design principles?',
+  'What are Aetherion’s design principles?',
   'What is 17 × 23 + 5?',
   'Remember that I prefer TypeScript and dark themes.',
   'Explain: function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); } }',
@@ -212,7 +212,7 @@ export default function ChatPage() {
               <div className="text-center max-w-sm">
                 <Sparkles size={22} className="mx-auto mb-3" style={{ color: 'var(--acc2)' }} />
                 <div className="text-sm mb-4" style={{ color: 'var(--dim)' }}>
-                  SUTRA Local answers offline. Connect Ollama in Settings for real local models.
+                  Aetherion Local answers offline. Connect Ollama in Settings for real local models.
                 </div>
                 <div className="flex flex-col gap-2">
                   {SUGGESTIONS.map((sg) => (
@@ -232,7 +232,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && void send()}
-              placeholder="message SUTRA…  (try: remember that I prefer TypeScript)"
+              placeholder="message Aetherion…  (try: remember that I prefer TypeScript)"
               className="glass-2 flex-1 px-4 py-3 text-sm outline-none"
               style={{ color: 'var(--ink)' }}
               disabled={streaming}
@@ -244,7 +244,7 @@ export default function ChatPage() {
           <div className="mt-2 font-mono text-[9px] tracking-wider" style={{ color: 'var(--dim)' }}>
             router: {s.settings.privacyMode === 'local' ? 'local-only pool' : 'all reachable'} · core:{' '}
             <span style={{ color: serverUsable(s.settings) ? 'var(--acc2)' : 'var(--dim)' }}>
-              {serverUsable(s.settings) ? 'SUTRA API' : 'local'}
+              {serverUsable(s.settings) ? 'Aetherion API' : 'local'}
             </span>{' '}
             · every answer is traced · “remember X” stores to memory
           </div>

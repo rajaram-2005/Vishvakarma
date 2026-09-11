@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Models: registry, connectivity tests, live router tester.
+// Aetherion — Models: registry, connectivity tests, live router tester.
 
 import React, { useState } from 'react';
 import { Cpu, PlugZap } from 'lucide-react';

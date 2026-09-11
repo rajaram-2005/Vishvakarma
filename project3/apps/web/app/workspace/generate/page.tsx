@@ -1,5 +1,5 @@
 'use client';
-// SUTRA Generate — the fabrication studio.
+// Aetherion Generate — the fabrication studio.
 // Image · Deck (PPTX) · 3D models. Puter AI gateway when signed in
 // (photoreal images, AI outlines); deterministic on-device fabrication
 // otherwise. Everything exports to open formats.
@@ -116,11 +116,11 @@ function ImageStudio(props: {
       const bin = atob(src.split(',')[1]);
       const bytes = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      downloadBlob(`sutra-${prompt.trim().slice(0, 24).replace(/\W+/g, '-') || 'art'}.png`, bytes, 'image/png');
+      downloadBlob(`aetherion-${prompt.trim().slice(0, 24).replace(/\W+/g, '-') || 'art'}.png`, bytes, 'image/png');
     } else {
       const a = document.createElement('a');
       a.href = src;
-      a.download = 'sutra-image';
+      a.download = 'aetherion-image';
       a.target = '_blank';
       a.rel = 'noreferrer';
       a.click();
@@ -171,7 +171,7 @@ function ImageStudio(props: {
 /* ────────────────────────────── deck ────────────────────────────── */
 
 function DeckStudio(props: { chat: ((msgs: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, opts?: object) => Promise<{ content: string } | null>) | null }) {
-  const [topic, setTopic] = useState('Project 3 — SUTRA: the open AI ecosystem');
+  const [topic, setTopic] = useState('Project 3 — Aetherion: the open AI ecosystem');
   const [busy, setBusy] = useState(false);
   const [deck, setDeck] = useState<{ title: string; slides: Slide[]; via: 'puter' | 'local' } | null>(null);
 
@@ -293,7 +293,7 @@ function MeshStudio(props: { onMade: (label: string) => void }) {
   const exportMesh = (ext: 'obj' | 'gltf') => {
     if (!mesh || !label) return;
     const data = ext === 'obj' ? meshToObj(mesh, label) : meshToGltf(mesh, label);
-    downloadBlob(`sutra-${label}.${ext}`, data, ext === 'obj' ? 'text/plain' : 'model/gltf+json');
+    downloadBlob(`aetherion-${label}.${ext}`, data, ext === 'obj' ? 'text/plain' : 'model/gltf+json');
   };
 
   return (

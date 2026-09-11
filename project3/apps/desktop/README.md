@@ -1,6 +1,6 @@
-# SUTRA Desktop (Tauri v2)
+# Aetherion Desktop (Tauri v2)
 
-A thin, secure shell around the SUTRA web app — the desktop is **not** a
+A thin, secure shell around the Aetherion web app — the desktop is **not** a
 re-implementation. Tauri v2 (Rust) gives: native window, CSP-locked webview
 (only `localhost` origins for API calls), tray, deep links, and OS-level
 integration while the security gateway in the app keeps every dangerous
@@ -36,7 +36,7 @@ cargo tauri build    # installers: .dmg / .app / .msi / .deb / .AppImage
 
 ## Window
 
-- 1440×900 default, min 1024×700, background `#050510` (SUTRA dark)
+- 1440×900 default, min 1024×700, background `#050510` (Aetherion dark)
 - CSP: `connect-src 'self' http://localhost:*` — the desktop webview can
   only talk to local services (Ollama, service API), matching local-mode
   privacy.

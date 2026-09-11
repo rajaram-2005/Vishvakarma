@@ -1,4 +1,4 @@
-// SUTRA mobile theme — the same universe, tuned for a phone.
+// Aetherion mobile theme — the same universe, tuned for a phone.
 const ok = '#34d399';
 const warn = '#fbbf24';
 const danger = '#fb7185';

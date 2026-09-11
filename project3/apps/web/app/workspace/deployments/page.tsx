@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Deployments: local · docker · puter cloud, with real artifacts.
+// Aetherion — Deployments: local · docker · puter cloud, with real artifacts.
 
 import React, { useState } from 'react';
 import { Container, Globe, Rocket } from 'lucide-react';
@@ -87,7 +87,7 @@ export default function DeploymentsPage() {
         </div>
         {target === 'puter' && (
           <div className="mt-3 text-xs" style={{ color: puter.signedIn ? 'var(--ok)' : 'var(--dim)' }}>
-            {puter.signedIn ? `Puter signed in as ${puter.user ?? 'you'} — bundle will be written to /sutra/deployments/` : 'Puter is not signed in (local mode). The bundle stays local; connect Puter in Settings to enable the cloud target.'}
+            {puter.signedIn ? `Puter signed in as ${puter.user ?? 'you'} — bundle will be written to /aetherion/deployments/` : 'Puter is not signed in (local mode). The bundle stays local; connect Puter in Settings to enable the cloud target.'}
           </div>
         )}
         <div className="mt-4">

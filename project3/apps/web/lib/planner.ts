@@ -1,4 +1,4 @@
-// SUTRA — natural-language → structured task planning.
+// Aetherion — natural-language → structured task planning.
 // Uses a connected model when reachable; otherwise the built-in local planner.
 // Never blocks: users can accept/reject/regenerate each suggestion.
 
@@ -38,13 +38,13 @@ function mkTask(
 }
 
 function localPlan(goal: string): SutraTask[] {
-  const subject = /\bplan\b/.test(goal) ? 'SUTRA MVP' : goal.replace(/^plan\b/i, '').trim() || 'the project';
+  const subject = /\bplan\b/.test(goal) ? 'Aetherion MVP' : goal.replace(/^plan\b/i, '').trim() || 'the project';
   const due = (d: number) => todayIso(d);
   const rows: Array<Partial<SutraTask> & { title: string }> = [
     { title: `Define success metric for ${subject}`, description: 'One measurable outcome that tells us the MVP worked.', priority: 'p0', category: 'Discovery', tags: ['spec'], due: due(1), assignee: AGENTS.human },
     { title: 'Write one-page product spec', description: 'Problem, users, core loop, out-of-scope list.', priority: 'p0', category: 'Discovery', tags: ['spec'], due: due(1), assignee: AGENTS.writer },
     { title: 'Scaffold repository + CI', description: 'Next.js app, tests, lint, preview deploy. Local-first defaults.', priority: 'p0', category: 'Core', tags: ['setup'], due: due(2), assignee: AGENTS.coder },
-    { title: 'Implement chat + model router', description: 'Request → analysis → ranking → model. SUTRA Local always available.', priority: 'p0', category: 'AI', tags: ['router'], due: due(3), assignee: AGENTS.coder },
+    { title: 'Implement chat + model router', description: 'Request → analysis → ranking → model. Aetherion Local always available.', priority: 'p0', category: 'AI', tags: ['router'], due: due(3), assignee: AGENTS.coder },
     { title: 'Build task system (local + Puter KV)', description: 'CRUD, priorities, tags, due dates, archive. Local mode never forces auth.', priority: 'p0', category: 'Core', tags: ['tasks', 'puter'], due: due(4), assignee: AGENTS.coder },
     { title: 'Knowledge ingest + RAG with citations', description: 'Ingest → chunk → embed → retrieve → rerank → generate → cite.', priority: 'p1', category: 'AI', tags: ['rag'], due: due(5), assignee: AGENTS.coder },
     { title: 'Agent loop with tool gateway', description: 'Understand → Plan → Tools → Execute → Verify. Every call risk-classified.', priority: 'p0', category: 'Agents', tags: ['agents', 'security'], due: due(6), assignee: AGENTS.architect },

@@ -1,4 +1,4 @@
-# SUTRA service API — provider-neutral chat adapters.
+# Aetherion service API — provider-neutral chat adapters.
 # Local: deterministic grounded responder (offline, always available).
 # Ollama / OpenAI-compatible: real streaming proxies to a runtime you control.
 from __future__ import annotations
@@ -82,7 +82,7 @@ class BaseProvider:
 
 
 # ---------------------------------------------------------------------------
-# SUTRA Local responder — full parity port of packages/model-adapters/local.ts.
+# Aetherion Local responder — full parity port of packages/model-adapters/local.ts.
 # Deterministic, offline, provider-neutral. No network, ever.
 # ---------------------------------------------------------------------------
 
@@ -222,7 +222,7 @@ def analyze_code(code: str) -> str:
     return "\n".join(out)
 
 
-_PLAN = """# Project 3 · SUTRA MVP — SUTRA Local plan
+_PLAN = """# Project 3 · Aetherion MVP — Aetherion Local plan
 
 **Phase 0 · Clarity (day 0–1)**
 - One-paragraph product definition + success metric
@@ -257,18 +257,18 @@ _FIZZBUZZ = (
     "    else if (i % 3 === 0) out.push(\"Fizz\");\n"
     "    else if (i % 5 === 0) out.push(\"Buzz\");\n"
     "    else out.push(String(i));\n  }\n  return out;\n}\n```\n\n"
-    "Local generation (SUTRA built-in). I can also write the test suite for this if you ask."
+    "Local generation (Aetherion built-in). I can also write the test suite for this if you ask."
 )
 
 _STARTER_CODE = (
     "Here is a starting point (local generation):\n\n"
-    "```ts\n// SUTRA local stub — connect a larger model for production code\n"
-    "export function starter(): string {\n  return \"hello from SUTRA\";\n}\n```\n\n"
+    "```ts\n// Aetherion local stub — connect a larger model for production code\n"
+    "export function starter(): string {\n  return \"hello from Aetherion\";\n}\n```\n\n"
     "Tell me the interface you need (inputs, outputs, edge cases) and I'll refine the structure locally, "
     "or hand off to a connected model."
 )
 
-_HELP = """SUTRA is your AI operating workspace. Right now, offline:
+_HELP = """Aetherion is your AI operating workspace. Right now, offline:
 
 • **Plan** — "Plan my Project 3 MVP" → structured tasks
 • **Knowledge** — ingest docs, then ask grounded questions (citations included)
@@ -291,7 +291,7 @@ def build_local_reply(system: str, text: str) -> str:
     # 2) arithmetic
     math = try_math(text)
     if math and not re.search(r"story|poem", lower):
-        return f"**{math}**\n\nComputed locally by SUTRA (offline adapter). Need a worked solution or further steps? Ask."
+        return f"**{math}**\n\nComputed locally by Aetherion (offline adapter). Need a worked solution or further steps? Ask."
 
     # 3) code explanation
     code_match = re.search(r"```[a-z]*\n([\s\S]*?)```", text)
@@ -364,7 +364,7 @@ def build_local_reply(system: str, text: str) -> str:
     # 11) greetings
     if re.match(r"^(hi|hello|hey|yo|salaam|namaste)\b", lower):
         return (
-            "Hello. I'm SUTRA Local — the built-in offline model. I can plan projects, answer grounded questions from "
+            "Hello. I'm Aetherion Local — the built-in offline model. I can plan projects, answer grounded questions from "
             'your knowledge base, compute, analyze code, and route harder work to connected models. Try: "Plan my Project 3 MVP."'
         )
 
@@ -375,7 +375,7 @@ def build_local_reply(system: str, text: str) -> str:
     # 13) default: structured local analysis
     words = _tokenize(text)
     return (
-        "**SUTRA Local** processed your request (offline).\n\n"
+        "**Aetherion Local** processed your request (offline).\n\n"
         f"I read a {len(words)}-term request about: {', '.join(words[:8])}.\n\n"
         "What I can do right now, on-device:\n"
         "1. Turn this into a plan with phases, tasks and owners\n"
@@ -387,19 +387,19 @@ def build_local_reply(system: str, text: str) -> str:
 
 
 class LocalProvider(BaseProvider):
-    """SUTRA Local — offline, deterministic, grounded. No network, ever."""
+    """Aetherion Local — offline, deterministic, grounded. No network, ever."""
 
     id = "sutra-local"
 
     def __init__(self, settings: Settings, model: Optional[ModelInfo] = None):
         super().__init__(
             settings,
-            model or ModelInfo(id="sutra-local", name="SUTRA Local", runtime="sutra-local", capabilities=["code", "structured"]),
+            model or ModelInfo(id="sutra-local", name="Aetherion Local", runtime="sutra-local", capabilities=["code", "structured"]),
         )
 
     @property
     def name(self) -> str:
-        return "SUTRA Local"
+        return "Aetherion Local"
 
     async def ping(self) -> dict:
         return {"ok": True, "latencyMs": 0, "detail": "local responder — always available"}

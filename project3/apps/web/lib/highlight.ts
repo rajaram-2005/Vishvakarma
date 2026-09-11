@@ -1,4 +1,4 @@
-// SUTRA — tiny regex tokenizer for the editor (TS/JS/JSON/Python/MD/Bash).
+// Aetherion — tiny regex tokenizer for the editor (TS/JS/JSON/Python/MD/Bash).
 // Returns token classes; rendering is a plain <pre>, no editor framework.
 
 export interface Token {

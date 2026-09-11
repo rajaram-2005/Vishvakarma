@@ -1,4 +1,4 @@
-// SUTRA Fabricate — procedural 3D geometry.
+// Aetherion Fabricate — procedural 3D geometry.
 // Deterministic, dependency-free mesh generation from a prompt's keyword
 // signature. Everything here is pure and testable; the browser renders the
 // meshes with a canvas preview and exports OBJ/GLTF.

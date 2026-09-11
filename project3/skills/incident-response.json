@@ -2,7 +2,7 @@
   "id": "skill-incident-response",
   "name": "Incident Response",
   "version": "0.7.0",
-  "author": "SUTRA",
+  "author": "Aetherion",
   "license": "MIT",
   "kind": "skill",
   "description": "Triage → contain → mitigate → postmortem, with an on-call digest at the end.",

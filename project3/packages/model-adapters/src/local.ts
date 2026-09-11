@@ -1,4 +1,4 @@
-// SUTRA Local — the built-in offline model adapter.
+// Aetherion Local — the built-in offline model adapter.
 // A deterministic, structured responder that keeps core chat, planning,
 // RAG-grounded answers and evaluation working with zero network.
 
@@ -137,7 +137,7 @@ function groundedAnswer(ctx: string, question: string): string {
   return out;
 }
 
-const PLAN = (subject: string) => `# ${subject} — SUTRA Local plan
+const PLAN = (subject: string) => `# ${subject} — Aetherion Local plan
 
 **Phase 0 · Clarity (day 0–1)**
 - One-paragraph product definition + success metric
@@ -181,7 +181,7 @@ function buildLocalReply(req: ChatRequest): string {
   // arithmetic
   const math = tryMath(text);
   if (math && !/story|poem/.test(lower)) {
-    return `**${math}**\n\nComputed locally by SUTRA (offline adapter). Need a worked solution or further steps? Ask.`;
+    return `**${math}**\n\nComputed locally by Aetherion (offline adapter). Need a worked solution or further steps? Ask.`;
   }
 
   // code explanation
@@ -190,7 +190,7 @@ function buildLocalReply(req: ChatRequest): string {
 
   // planning
   if (/\bplan\b.*\b(mvp|project|release|roadmap|launch)\b|\b(mvp|project)\b.*\bplan\b/i.test(lower) || lower === 'plan my project 3 mvp') {
-    return PLAN('Project 3 · SUTRA MVP');
+    return PLAN('Project 3 · Aetherion MVP');
   }
 
   // remember
@@ -240,19 +240,19 @@ function buildLocalReply(req: ChatRequest): string {
   // code gen
   if (/write|create|generate|implement/.test(lower) && /function|code|script|component|class|api/.test(lower)) {
     if (/fizzbuzz/i.test(lower)) {
-      return '```ts\nfunction fizzbuzz(n: number): string[] {\n  const out: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) out.push("FizzBuzz");\n    else if (i % 3 === 0) out.push("Fizz");\n    else if (i % 5 === 0) out.push("Buzz");\n    else out.push(String(i));\n  }\n  return out;\n}\n```\n\nLocal generation (SUTRA built-in). I can also write the test suite for this if you ask.';
+      return '```ts\nfunction fizzbuzz(n: number): string[] {\n  const out: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) out.push("FizzBuzz");\n    else if (i % 3 === 0) out.push("Fizz");\n    else if (i % 5 === 0) out.push("Buzz");\n    else out.push(String(i));\n  }\n  return out;\n}\n```\n\nLocal generation (Aetherion built-in). I can also write the test suite for this if you ask.';
     }
-    return 'Here is a starting point (local generation):\n\n```ts\n// SUTRA local stub — connect a larger model for production code\nexport function starter(): string {\n  return "hello from SUTRA";\n}\n```\n\nTell me the interface you need (inputs, outputs, edge cases) and I\'ll refine the structure locally, or hand off to a connected model.';
+    return 'Here is a starting point (local generation):\n\n```ts\n// Aetherion local stub — connect a larger model for production code\nexport function starter(): string {\n  return "hello from Aetherion";\n}\n```\n\nTell me the interface you need (inputs, outputs, edge cases) and I\'ll refine the structure locally, or hand off to a connected model.';
   }
 
   // greetings
   if (/^(hi|hello|hey|yo|salaam|namaste)\b/.test(lower)) {
-    return 'Hello. I\'m SUTRA Local — the built-in offline model. I can plan projects, answer grounded questions from your knowledge base, compute, analyze code, and route harder work to connected models (Ollama, vLLM, OpenAI-compatible). Try: "Plan my Project 3 MVP."';
+    return 'Hello. I\'m Aetherion Local — the built-in offline model. I can plan projects, answer grounded questions from your knowledge base, compute, analyze code, and route harder work to connected models (Ollama, vLLM, OpenAI-compatible). Try: "Plan my Project 3 MVP."';
   }
 
   // help
   if (lower === 'help' || /what can you do|capabilities|features/.test(lower)) {
-    return `SUTRA is your AI operating workspace. Right now, offline:
+    return `Aetherion is your AI operating workspace. Right now, offline:
 
 • **Plan** — "Plan my Project 3 MVP" → structured tasks
 • **Knowledge** — ingest docs, then ask grounded questions (citations included)
@@ -266,7 +266,7 @@ Connect a runtime in Settings → Providers (Ollama recommended) and I'll start 
   // default: structured local analysis
   const words = tokenize(text);
   const out = [
-    `**SUTRA Local** processed your request (offline).`,
+    `**Aetherion Local** processed your request (offline).`,
     '',
     `I read a ${words.length}-term request about: ${words.slice(0, 8).join(', ')}.`,
     '',
@@ -282,8 +282,8 @@ Connect a runtime in Settings → Providers (Ollama recommended) and I'll start 
 
 const LOCAL_MODEL: ModelInfo = {
   id: 'sutra-local',
-  name: 'Sutra Local',
-  provider: 'SUTRA built-in',
+  name: 'Aetherion Local',
+  provider: 'Aetherion built-in',
   runtime: 'sutra-local',
   contextWindow: 128000,
   costIn: 0,
@@ -296,7 +296,7 @@ const LOCAL_MODEL: ModelInfo = {
 
 export class SutraLocalProvider implements ChatProvider {
   id = 'sutra-local';
-  name = 'SUTRA Local (offline)';
+  name = 'Aetherion Local (offline)';
   modelId = 'sutra-local';
   modelInfo = LOCAL_MODEL;
 

@@ -2,7 +2,7 @@
   "id": "skill-rag-tuning",
   "name": "RAG Tuning",
   "version": "1.0.0",
-  "author": "SUTRA",
+  "author": "Aetherion",
   "license": "MIT",
   "kind": "skill",
   "description": "Tune chunk size, overlap, rerank blend and citation format to maximize grounded-answer quality.",

@@ -1,4 +1,4 @@
-# SUTRA Registry
+# Aetherion Registry
 
 Manifest-first registry for **skills, plugins, workflows, MCP servers, model
 presets**. Nothing is published without a valid manifest (id, name, semver

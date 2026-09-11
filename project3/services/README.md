@@ -1,6 +1,6 @@
-# SUTRA Services
+# Aetherion Services
 
-Provider-neutral service boundary of the SUTRA workspace. Every service is a
+Provider-neutral service boundary of the Aetherion workspace. Every service is a
 small FastAPI app with local-first JSON persistence, the same deterministic
 contracts as `packages/shared`, and a `/health` endpoint.
 

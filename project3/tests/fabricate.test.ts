@@ -1,4 +1,4 @@
-// SUTRA Fabricate + Aetheris bridge — pure-module tests.
+// Aetherion Fabricate + Aetheris bridge — pure-module tests.
 // PPTX zip structure, OBJ/GLTF export shape, deterministic geometry,
 // deck outlines and the Aetheris SSE parser/reducer.
 
@@ -84,7 +84,7 @@ describe('procedural geometry', () => {
 
   it('hash + rng are stable', () => {
     expect(hashSeed('sutra')).toBe(hashSeed('sutra'));
-    expect(hashSeed('sutra')).not.toBe(hashSeed('Sutra'));
+    expect(hashSeed('sutra')).not.toBe(hashSeed('Aetherion'));
     const r1 = rngFrom(42);
     const r2 = rngFrom(42);
     expect(r1()).toBe(r2());
@@ -93,8 +93,8 @@ describe('procedural geometry', () => {
 
 describe('deck outlines', () => {
   it('local outline is deterministic and structured', () => {
-    const a = localOutline('Project 3 — SUTRA');
-    const b = localOutline('Project 3 — SUTRA');
+    const a = localOutline('Project 3 — Aetherion');
+    const b = localOutline('Project 3 — Aetherion');
     expect(a).toEqual(b);
     expect(a.slides.length).toBeGreaterThanOrEqual(6);
     for (const s of a.slides) {

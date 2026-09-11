@@ -1,4 +1,4 @@
-# SUTRA — Project 3
+# Aetherion — Project 3
 
 **The open AI ecosystem workspace.** A local-first, provider-neutral,
 production-grade operating surface for building, automating, evaluating and
@@ -13,9 +13,9 @@ Contact: [ramkpraja175@gmail.com](mailto:ramkpraja175@gmail.com) · +91 48840799
 
 ---
 
-## What is SUTRA?
+## What is Aetherion?
 
-SUTRA is an **AI operating universe**, not a SaaS dashboard: a cinematic
+Aetherion is an **AI operating universe**, not a SaaS dashboard: a cinematic
 dark-first web app (plus desktop, mobile and API surfaces) in which every
 capability — models, routing, agents, teams, skills, memory, RAG, knowledge,
 tools, browser automation, IDE, security, evaluation, observability,
@@ -58,7 +58,7 @@ project3/
 │   ├── puter-adapter/    # optional Puter layer (KV/FS/auth/AI/hosting), local fallback
 │   └── sdk/            # umbrella SDK
 ├── agents/           # agent definitions (JSON)
-├── workflows/        # bundled workflows (SUTRA JSON + n8n-compatible)
+├── workflows/        # bundled workflows (Aetherion JSON + n8n-compatible)
 ├── skills/           # skill manifests (the HOW)
 ├── plugins/          # plugin examples (manifest-first)
 ├── benchmarks/       # benchmark configs + results
@@ -91,7 +91,7 @@ Settings → Providers:
 - **Ollama** — set `http://localhost:11434`, hit *test*, pick a model
 - **OpenAI-compatible** — vLLM, LM Studio, SGLang or any API: base URL + key + model
 
-Until then, **SUTRA Local** (the built-in offline responder) keeps everything
+Until then, **Aetherion Local** (the built-in offline responder) keeps everything
 functional.
 
 ### Service API (Python) + wire the web to it
@@ -104,12 +104,12 @@ cd services/api
 # interactive docs: http://localhost:8000/docs
 ```
 
-Then in the web app: **Settings → SUTRA API** → `http://localhost:8000` → **test**.
+Then in the web app: **Settings → Aetherion API** → `http://localhost:8000` → **test**.
 The workspace then routes chat, routing, security scans and workflow/n8n export
 through the Python service layer (same contracts as the local core; every call
 is traced; any failure falls back to the local core). In **local privacy mode
 the API is ignored — the workspace stays fully offline by contract.**
-Verify the whole loop with `SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts`.
+Verify the whole loop with `Aetherion_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts`.
 
 ### Full stack (hybrid mode)
 
@@ -126,7 +126,7 @@ See [`infrastructure/README.md`](infrastructure/README.md).
 npm test                                # 74 vitest cases (router, planner, security,
                                         # workflow+n8n, codecheck, terminal, RAG, OTel,
                                         # gateway, local-responder parity, server client)
-SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts  # 6 live E2E
+Aetherion_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts  # 6 live E2E
 cd services/api && ../../.venv/bin/python -m pytest tests/ -q   # 44 cases
 ```
 
@@ -135,7 +135,7 @@ cd services/api && ../../.venv/bin/python -m pytest tests/ -q   # 44 cases
 | Surface | What it does | Real? |
 |---|---|---|
 | **Landing** | 28 cinematic sections: hero → AI core → ecosystem → models → routing → agents → teams → skills → memory → RAG → tools → MCP → GitHub → n8n → IDE → browser → autonomous development → security → evaluation → observability → deployment → Puter.js → desktop → mobile → marketplace → enterprise → final vision | live demos: router, RAG ask, secret scan, 11-step autonomous pipeline with real approval gate, 8-step agents, live `fetchRepo` on this repository |
-| **Chat** | model pinning, route chips with reasons, streaming, "remember that…" → memory; optional **SUTRA API** backend (Settings) with automatic local-core fallback | ✓ |
+| **Chat** | model pinning, route chips with reasons, streaming, "remember that…" → memory; optional **Aetherion API** backend (Settings) with automatic local-core fallback | ✓ |
 | **Projects** | AI To-Do on Puter KV (or local fallback): CRUD, priority p0–p3, tags, due, archive, reorder; `Plan my Project 3 MVP` → structured plan with accept/reject/regenerate/assign/convert-to-workflow | ✓ |
 | **Agents / Teams** | 7 agents · 8-step loop · orchestrator handoffs | ✓ |
 | **Models** | registry, runtime adapters, connectivity tests, router tester | ✓ |
@@ -169,6 +169,6 @@ Ambient soundscape is **off by default**.
 
 ## License & terms
 
-MIT for SUTRA code. Third-party integrations (Puter, n8n, GitHub, Hugging
+MIT for Aetherion code. Third-party integrations (Puter, n8n, GitHub, Hugging
 Face, MCP servers) respect their respective terms — integration is via
 adapters, with explicit scopes and audit.

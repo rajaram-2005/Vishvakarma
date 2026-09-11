@@ -1,4 +1,4 @@
-// SUTRA Fabricate — local generative art.
+// Aetherion Fabricate — local generative art.
 // Deterministic, offline image synthesis from a prompt: layered nebula
 // gradients, orbits, glyph scatter and grain. Runs entirely on-device (no
 // model needed). Puter's txt2img covers photorealistic generation when the
@@ -110,7 +110,7 @@ export function paintArt(ctx: CanvasRenderingContext2D, spec: ArtSpec): void {
   ctx.fillStyle = '#dfe6ff';
   ctx.font = '15px ui-monospace, monospace';
   ctx.textAlign = 'left';
-  const label = `sutra.art · "${spec.prompt.slice(0, 48)}${spec.prompt.length > 48 ? '…' : ''}" · seed ${spec.seed.toString(16)}`;
+  const label = `aetherion.art · "${spec.prompt.slice(0, 48)}${spec.prompt.length > 48 ? '…' : ''}" · seed ${spec.seed.toString(16)}`;
   ctx.fillText(label, 20, H - 20);
 
   void c1;

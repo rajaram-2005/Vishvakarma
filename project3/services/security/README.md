@@ -1,4 +1,4 @@
-# SUTRA Security
+# Aetherion Security
 
 The enforcement boundary: **Agent → Tool Gateway → Policy → Sandbox → Execution.**
 

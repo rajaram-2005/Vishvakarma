@@ -1,4 +1,4 @@
-# SUTRA Marketplace
+# Aetherion Marketplace
 
 Catalog + **scope-reviewed installs**. Every item declares scopes; installing
 requires explicitly granting them — a request without full grant returns
