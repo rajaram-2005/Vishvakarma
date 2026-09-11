@@ -19,7 +19,10 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
+          // NOTE: no X-Frame-Options header. It was set to DENY, which made the
+          // browser refuse to render the app inside the Arena live-preview
+          // iframe (and any site embedding the workspace). The workspace is
+          // meant to be embeddable, so framing is explicitly allowed.
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
       },
