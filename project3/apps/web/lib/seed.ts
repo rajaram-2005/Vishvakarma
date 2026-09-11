@@ -68,6 +68,7 @@ export const DEFAULT_SETTINGS: Settings = {
     otlpEndpoint: '',
   },
   server: { baseUrl: '' },
+  aetheris: { baseUrl: 'http://localhost:3100' },
 };
 
 // Fixed anchor for every seed timestamp. The seed must be byte-identical on the

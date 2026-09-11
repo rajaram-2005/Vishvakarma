@@ -13,6 +13,10 @@ export function modelReachable(m: ModelInfo, settings: Settings): boolean {
   switch (m.runtime) {
     case 'sutra-local':
       return true;
+    case 'puter-cloud':
+      // Reachable whenever Puter.js is loaded and the user is signed in —
+      // the gateway bills the user's own Puter account (no API keys).
+      return typeof window !== 'undefined' && !!(window as unknown as { puter?: unknown }).puter;
     case 'ollama':
       return !!settings.providers.ollamaUrl.trim();
     case 'openai-compat':

@@ -155,7 +155,15 @@ export function SutraProvider({ children }: { children: React.ReactNode }) {
     (p: Partial<Settings>) =>
       dispatch({
         type: 'mutate',
-        fn: (st) => ({ ...st, settings: { ...st.settings, ...p, providers: { ...st.settings.providers, ...(p.providers ?? {}) } } }),
+        fn: (st) => ({
+          ...st,
+          settings: {
+            ...st.settings,
+            ...p,
+            providers: { ...st.settings.providers, ...(p.providers ?? {}) },
+            aetheris: { ...(st.settings.aetheris ?? {}), ...(p.aetheris ?? {}) } as { baseUrl: string },
+          },
+        }),
       }),
     [],
   );

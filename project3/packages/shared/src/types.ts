@@ -29,6 +29,12 @@ export interface Settings {
    * and enforced offline — the contract, not a recommendation.
    */
   server?: { baseUrl: string };
+  /**
+   * Optional Aetheris One bridge (a local Intelligence OS by the same author:
+   * github.com/rajaram-2005/Aetheris). Points at its HTTP API, usually
+   * http://localhost:3100 when running with `npm run dev -- --port 3100`.
+   */
+  aetheris?: { baseUrl: string };
 }
 
 export interface SutraTask {
@@ -243,7 +249,8 @@ export interface ModelInfo {
     | 'mlx'
     | 'onnx'
     | 'trtllm'
-    | 'openai-compat';
+    | 'openai-compat'
+    | 'puter-cloud';
   contextWindow: number;
   costIn: number; // USD per 1k input tokens
   costOut: number; // USD per 1k output tokens

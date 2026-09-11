@@ -7,8 +7,17 @@
 
 import Script from 'next/script';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { connectPuter, disconnectPuter, puterSignedIn, puterUser } from '@sutra/puter-adapter';
-import type { PuterConnectResult } from '@sutra/puter-adapter';
+import {
+  connectPuter,
+  disconnectPuter,
+  listPuterModels,
+  puterAiChat,
+  puterAiAvailable,
+  puterSignedIn,
+  puterTxt2Img,
+  puterUser,
+} from '@sutra/puter-adapter';
+import type { PuterAiChatResult, PuterAiModel, PuterConnectResult, PuterImageResult } from '@sutra/puter-adapter';
 
 /** If Puter.js hasn't appeared after this long, report it as failed. */
 const SCRIPT_TIMEOUT_MS = 15000;
@@ -110,4 +119,79 @@ export function usePuter(): PuterStatus {
   const dismissError = useCallback(() => setError(null), []);
 
   return { scriptLoaded, scriptFailed, signedIn, user, busy, error, connect, disconnect, dismissError };
+}
+
+/* ─────────────────────── Puter AI gateway (hook) ─────────────────────── */
+
+export interface PuterAiStatus {
+  /** The gateway is usable right now (Puter.js loaded + signed in). */
+  available: boolean;
+  /** Gateway models, loaded on demand when signed in. */
+  models: PuterAiModel[] | null;
+  loadingModels: boolean;
+  modelsError: string | null;
+  busy: boolean;
+  loadModels: () => Promise<PuterAiModel[]>;
+  chat: (
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+    options?: { model?: string; temperature?: number; maxTokens?: number },
+  ) => Promise<PuterAiChatResult | null>;
+  image: (prompt: string, options?: { width?: number; height?: number }) => Promise<PuterImageResult | null>;
+}
+
+export function usePuterAi(): PuterAiStatus {
+  const [available, setAvailable] = useState(false);
+  const [models, setModels] = useState<PuterAiModel[] | null>(null);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const check = () => setAvailable(puterAiAvailable());
+    check();
+    const iv = window.setInterval(check, 3000);
+    return () => window.clearInterval(iv);
+  }, []);
+
+  const loadModels = useCallback(async (): Promise<PuterAiModel[]> => {
+    if (!puterAiAvailable()) return [];
+    setLoadingModels(true);
+    setModelsError(null);
+    try {
+      const list = await listPuterModels();
+      setModels(list.length ? list : null);
+      if (list.length === 0) setModelsError('No models reported by the gateway.');
+      return list;
+    } catch {
+      setModelsError('Could not list gateway models.');
+      return [];
+    } finally {
+      setLoadingModels(false);
+    }
+  }, []);
+
+  const chat = useCallback(
+    async (messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, options?: { model?: string; temperature?: number; maxTokens?: number }) => {
+      if (!puterAiAvailable()) return null;
+      setBusy(true);
+      try {
+        return await puterAiChat(messages, options);
+      } finally {
+        setBusy(false);
+      }
+    },
+    [],
+  );
+
+  const image = useCallback(async (prompt: string, options?: { width?: number; height?: number }) => {
+    if (!puterAiAvailable()) return null;
+    setBusy(true);
+    try {
+      return await puterTxt2Img(prompt, options);
+    } finally {
+      setBusy(false);
+    }
+  }, []);
+
+  return { available, models, loadingModels, modelsError, busy, loadModels, chat, image };
 }

@@ -10,6 +10,8 @@ import { sendChat } from '@/lib/chat';
 import { reachableModels } from '@/lib/providers';
 import { serverUsable } from '@/lib/server';
 import { uid, timeAgo } from '@sutra/shared';
+import type { ModelInfo } from '@sutra/shared';
+import { usePuterAi } from '@/lib/puter';
 
 const SUGGESTIONS = [
   'Plan my Project 3 MVP.',
@@ -21,6 +23,7 @@ const SUGGESTIONS = [
 
 export default function ChatPage() {
   const { s, mutate, trace, act } = useSutra();
+  const puterAi = usePuterAi();
   const [convId, setConvId] = useState(s.conversations[0]?.id ?? '');
   const [input, setInput] = useState('');
   const [pin, setPin] = useState('');
@@ -29,7 +32,31 @@ export default function ChatPage() {
   const endRef = useRef<HTMLDivElement>(null);
 
   const conv = s.conversations.find((c) => c.id === convId);
-  const pool = useMemo(() => reachableModels(s.models, s.settings), [s.models, s.settings]);
+
+  // Puter gateway models join the pool once signed in (billed to the user's
+  // own Puter account — no API keys). Loaded lazily, cached by the hook.
+  useEffect(() => {
+    if (puterAi.available && !puterAi.models) void puterAi.loadModels();
+  }, [puterAi.available, puterAi.models, puterAi.loadModels]);
+
+  const allModels = useMemo(() => {
+    const puterModels: ModelInfo[] = (puterAi.models ?? []).map((m) => ({
+      id: m.id,
+      name: `${m.name} (Puter)`,
+      provider: m.provider,
+      runtime: 'puter-cloud',
+      contextWindow: m.contextWindow ?? 128000,
+      costIn: m.costPerMInput ?? 0,
+      costOut: m.costPerMOutput ?? 0,
+      latencyTier: 'medium',
+      capabilities: ['code', 'math', 'long-context', 'creative', 'structured'],
+      available: true,
+      local: false,
+    }));
+    return [...s.models, ...puterModels];
+  }, [s.models, puterAi.models]);
+
+  const pool = useMemo(() => reachableModels(allModels, s.settings), [allModels, s.settings]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -76,7 +103,7 @@ export default function ChatPage() {
     const history = [...(s.conversations.find((c) => c.id === cid)?.messages ?? []), userMsg];
     const result = await sendChat({
       text: content,
-      models: s.models,
+      models: allModels,
       settings: s.settings,
       forceModel: pin || undefined,
       history,

@@ -7,9 +7,13 @@ import { useSutra } from '@/lib/store';
 import { GlassPanel, SectionTitle, Stat } from '@/components/ui';
 import { route } from '@sutra/model-adapters';
 import { providerFor, reachableModels } from '@/lib/providers';
+import { usePuter, usePuterAi } from '@/lib/puter';
+import { Cloud, RefreshCw } from 'lucide-react';
 
 export default function ModelsPage() {
   const { s } = useSutra();
+  const puter = usePuter();
+  const puterAi = usePuterAi();
   const [ping, setPing] = useState<Record<string, { ok: boolean; ms: number; detail?: string } | 'busy'>>({});
   const [testPrompt, setTestPrompt] = useState('Write a TypeScript function that validates an email address');
   const [decision, setDecision] = useState<ReturnType<typeof route> | null>(null);
@@ -93,6 +97,52 @@ export default function ModelsPage() {
             })}
           </tbody>
         </table>
+      </GlassPanel>
+
+      <GlassPanel className="p-5 space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>
+            PUTER AI GATEWAY · {puterAi.available ? 'connected' : puter.signedIn ? 'ready' : 'connect to browse'}
+          </span>
+          <span className="chip !text-[9px]" style={{ color: puterAi.available ? 'var(--ok)' : 'var(--dim)' }}>
+            500+ models · billed to your Puter account · no API keys
+          </span>
+          {!puterAi.available && (
+            <a href="/workspace/settings" className="font-mono text-[10px]" style={{ color: 'var(--acc2)' }}>
+              connect Puter ↗
+            </a>
+          )}
+          {puterAi.available && (
+            <button onClick={() => void puterAi.loadModels()} disabled={puterAi.loadingModels} className="btn-ghost !py-2 !px-3 text-xs disabled:opacity-50">
+              <RefreshCw size={12} /> {puterAi.loadingModels ? 'listing…' : 'refresh catalog'}
+            </button>
+          )}
+        </div>
+        {puterAi.available && puterAi.models && (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2 max-h-[360px] overflow-y-auto pr-1">
+            {puterAi.models.slice(0, 60).map((m) => (
+              <div key={m.id} className="glass-2 rounded-lg p-3 border" style={{ borderColor: 'var(--line)' }}>
+                <div className="flex items-center gap-2">
+                  <Cloud size={12} style={{ color: 'var(--acc2)' }} />
+                  <span className="font-mono text-[11px] font-semibold truncate" style={{ color: 'var(--ink)' }}>{m.name}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                  <span className="chip !text-[8px]" style={{ color: 'var(--acc2)' }}>{m.provider}</span>
+                  {m.contextWindow ? (
+                    <span className="chip !text-[8px]" style={{ color: 'var(--dim)' }}>{Math.round(m.contextWindow / 1000)}k ctx</span>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {puterAi.available && puterAi.modelsError && (
+          <div className="font-mono text-[10px]" style={{ color: 'var(--warn)' }}>⚠ {puterAi.modelsError}</div>
+        )}
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--dim)' }}>
+          Pick any gateway model in Chat — the model selector lists them once you are signed in, and requests route
+          through Puter's AI gateway straight to the provider.
+        </p>
       </GlassPanel>
 
       <GlassPanel className="p-5">

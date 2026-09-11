@@ -120,6 +120,11 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
   let usedFallback = false;
   let modelId = decision.chosen?.id ?? 'sutra-local';
   let modelName = decision.chosen?.name ?? 'Sutra Local';
+
+  // Puter AI gateway models are served by Puter directly, not by a browser
+  // adapter. Requires the user to be signed in to Puter.
+  const puterTarget = decision.chosen?.runtime === 'puter-cloud' ? decision.chosen : null;
+
   if (!provider) {
     provider = new (await import('@sutra/model-adapters')).SutraLocalProvider();
     usedFallback = true;
@@ -131,16 +136,37 @@ export async function sendChat(args: ChatSendArgs): Promise<ChatResult> {
 
   const tModel = Date.now();
   let content = '';
-  try {
-    await provider.chat({ messages: msgs, temperature: 0.7, maxTokens: 1400 }, (c) => {
-      if (!c.done && c.text) content += c.text;
-    });
-    trace.span(`model.${provider.id}`, Date.now() - tModel, { model: modelId });
-  } catch (e) {
-    const err = String((e as Error)?.message ?? e);
-    trace.span(`model.${provider.id}`, Date.now() - tModel, { error: err }, 'error');
-    content = `The model endpoint responded with an error: **${err}**\n\nI stayed safe: no partial data was sent anywhere else. If this is a local runtime, check that it is running; otherwise I can answer with SUTRA Local (Settings → Providers).`;
-    usedFallback = true;
+  if (puterTarget) {
+    const { puterAiChat, puterSignedIn } = await import('@sutra/puter-adapter');
+    if (puterSignedIn()) {
+      const out = await puterAiChat(msgs, { model: puterTarget.id, temperature: 0.7, maxTokens: 1400 });
+      if (out) {
+        content = out.content;
+        modelId = out.model;
+        modelName = puterTarget.name;
+        trace.span(`model.${puterTarget.id}`, Date.now() - tModel, { model: out.model, via: 'puter-gateway' });
+      } else {
+        trace.span(`model.${puterTarget.id}`, Date.now() - tModel, { error: 'gateway call failed' }, 'error');
+        content =
+          'The Puter gateway returned no answer for this model. Check the model id and your Puter account usage, or pick another model.';
+      }
+    } else {
+      trace.span(`model.${puterTarget.id}`, Date.now() - tModel, { error: 'puter not signed in' }, 'error');
+      content =
+        'This model runs on the Puter AI gateway, which needs your Puter sign-in. Connect Puter in Settings → Puter (it bills your own Puter account — no API keys).';
+    }
+  } else {
+    try {
+      await provider.chat({ messages: msgs, temperature: 0.7, maxTokens: 1400 }, (c) => {
+        if (!c.done && c.text) content += c.text;
+      });
+      trace.span(`model.${provider.id}`, Date.now() - tModel, { model: modelId });
+    } catch (e) {
+      const err = String((e as Error)?.message ?? e);
+      trace.span(`model.${provider.id}`, Date.now() - tModel, { error: err }, 'error');
+      content = `The model endpoint responded with an error: **${err}**\n\nI stayed safe: no partial data was sent anywhere else. If this is a local runtime, check that it is running; otherwise I can answer with SUTRA Local (Settings → Providers).`;
+      usedFallback = true;
+    }
   }
 
   const tMem = Date.now();
