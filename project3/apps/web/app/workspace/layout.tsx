@@ -148,8 +148,12 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <span className="chip hidden sm:inline-flex" style={{ color: 'var(--acc2)' }}>
             {s.settings.privacyMode}
           </span>
-          <span className="chip hidden sm:inline-flex" style={{ color: puter.signedIn ? 'var(--ok)' : 'var(--dim)' }}>
-            puter: {puter.signedIn ? puter.user ?? 'connected' : 'local mode'}
+          <span
+            className="chip hidden sm:inline-flex"
+            style={{ color: puter.signedIn ? 'var(--ok)' : puter.scriptFailed ? 'var(--warn)' : 'var(--dim)' }}
+            title={puter.error ?? undefined}
+          >
+            puter: {puter.signedIn ? puter.user ?? 'connected' : puter.scriptFailed ? 'blocked · local mode' : 'local mode'}
           </span>
           <div className="flex-1" />
           {pending > 0 && (

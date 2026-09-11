@@ -54,13 +54,92 @@ export async function puterUser(): Promise<string | null> {
   }
 }
 
-export async function connectPuter(): Promise<{ ok: boolean; user?: string }> {
-  try {
-    await puter()?.auth?.signIn();
-    return { ok: puterSignedIn(), user: (await puterUser()) ?? undefined };
-  } catch {
-    return { ok: false };
+export interface PuterConnectError {
+  /** Machine-readable reason the connection failed. */
+  code: 'script-not-loaded' | 'storage-unavailable' | 'popup-blocked' | 'auth-window-closed' | 'not-available-in-app' | 'sign-in-failed' | 'unknown';
+  /** Human-readable detail intended for the UI. */
+  message: string;
+}
+
+export interface PuterConnectResult {
+  ok: boolean;
+  user?: string;
+  error?: PuterConnectError;
+}
+
+export async function connectPuter(): Promise<PuterConnectResult> {
+  const p = puter();
+  if (!p) {
+    return {
+      ok: false,
+      error: {
+        code: 'script-not-loaded',
+        message:
+          'Puter.js has not loaded. A network filter or content blocker may be blocking js.puter.com — or open the app in a new tab and try again.',
+      },
+    };
   }
+
+  // Puter keeps its session token in the page's storage. In an embedded view
+  // that blocks storage (sandboxed iframe), the popup can succeed but the
+  // session can never stick — detect that up front instead of failing silently.
+  let storageOk = true;
+  try {
+    const ls = window.localStorage;
+    void ls;
+  } catch {
+    storageOk = false;
+  }
+  if (!storageOk) {
+    return {
+      ok: false,
+      error: {
+        code: 'storage-unavailable',
+        message:
+          'This embedded view blocks browser storage, which Puter needs to keep you signed in. Open the app in a new tab and connect there.',
+      },
+    };
+  }
+
+  try {
+    // Opens a popup; must be called from a user action. Rejects with an
+    // object carrying an `error` code (popup_blocked, auth_window_closed, …).
+    await p.auth.signIn();
+  } catch (e) {
+    const code = (e as { error?: unknown })?.error;
+    const msg = (e as { msg?: unknown })?.msg;
+    if (code === 'popup_blocked') {
+      return {
+        ok: false,
+        error: {
+          code: 'popup-blocked',
+          message: 'The sign-in popup was blocked. Allow popups for this site, or open the app in a new tab and connect there.',
+        },
+      };
+    }
+    if (code === 'auth_window_closed') {
+      return {
+        ok: false,
+        error: { code: 'auth-window-closed', message: 'The sign-in window was closed before the process finished. Try again.' },
+      };
+    }
+    if (code === 'not_available_in_app') {
+      return {
+        ok: false,
+        error: { code: 'not-available-in-app', message: 'Puter apps are already signed in via the app shell.' },
+      };
+    }
+    return {
+      ok: false,
+      error: { code: 'unknown', message: typeof msg === 'string' ? msg : String(e).slice(0, 200) },
+    };
+  }
+
+  if (!puterSignedIn()) {
+    return { ok: false, error: { code: 'sign-in-failed', message: 'Sign-in did not complete. Please try again.' } };
+  }
+  const user = (await puterUser()) ?? undefined;
+  return { ok: true, user };
 }
 
 export async function disconnectPuter(): Promise<void> {

@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import './globals.css';
 import { SutraProvider } from '@/lib/store';
 import { AmbientController } from '@/lib/AmbientController';
+import { PuterScript } from '@/lib/puter';
 
 export const metadata: Metadata = {
   title: 'SUTRA — The Open AI Ecosystem',
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {/* Optional Puter.js infrastructure layer — local mode never requires it. */}
-        <Script src="https://js.puter.com/v2/" strategy="lazyOnload" />
+        <PuterScript />
         <SutraProvider>
           <AmbientController />
           {children}
