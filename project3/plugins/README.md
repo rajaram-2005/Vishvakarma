@@ -1,4 +1,4 @@
-# SUTRA Plugins
+# Aetherion Plugins
 
 Example plugins, **manifest-first**. A plugin cannot enable until its
 manifest passes validation and every declared scope is explicitly granted —

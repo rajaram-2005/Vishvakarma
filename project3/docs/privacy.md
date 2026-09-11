@@ -1,4 +1,4 @@
-# SUTRA Privacy
+# Aetherion Privacy
 
 **The contract: your machine is the source of truth. Nothing leaves it
 silently, and nothing dangerous happens without you.**
@@ -7,7 +7,7 @@ silently, and nothing dangerous happens without you.**
 
 | Mode | What runs locally | What may contact the network |
 |---|---|---|
-| **Local** (default) | chat (SUTRA Local + local runtimes), routing, RAG, memory, tasks, workflows, agents, IDE, security, evaluation, local deploys | **only private/loopback hosts** (your Ollama, your vLLM). The service API's egress guard *blocks* and *logs* every attempt to a public host (`GET /api/v1/audit`) |
+| **Local** (default) | chat (Aetherion Local + local runtimes), routing, RAG, memory, tasks, workflows, agents, IDE, security, evaluation, local deploys | **only private/loopback hosts** (your Ollama, your vLLM). The service API's egress guard *blocks* and *logs* every attempt to a public host (`GET /api/v1/audit`) |
 | **Hybrid** | everything | configured provider hosts (your API endpoints). Every outbound request is still logged |
 | **Cloud** | everything | provider + sync hosts, per the sync scope |
 
@@ -44,8 +44,8 @@ is no background sync daemon that can drift.
 |---|---|
 | UI state, FS, git VM, KV, traces | browser `localStorage` (`sutra:app:v3`) |
 | Tasks (Projects) | Puter KV **or** localStorage `sutra:kv:` fallback |
-| Service state (documents, chunks, tasks, bundles, audit) | `SUTRA_DATA_DIR/*.json` (default `./data`) |
-| Model weights | your runtime (Ollama etc.) — SUTRA never stores weights |
+| Service state (documents, chunks, tasks, bundles, audit) | `Aetherion_DATA_DIR/*.json` (default `./data`) |
+| Model weights | your runtime (Ollama etc.) — Aetherion never stores weights |
 | Cloud (hybrid/cloud only) | PostgreSQL / Redis / Qdrant per `infrastructure/` |
 
 ## What we will never do

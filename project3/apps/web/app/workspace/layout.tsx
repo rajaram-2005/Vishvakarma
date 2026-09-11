@@ -1,5 +1,5 @@
 'use client';
-// SUTRA workspace shell — spatial glass navigation.
+// Aetherion workspace shell — spatial glass navigation.
 // Home · Chat · Projects · Agents · Teams · Models · Tools · Skills ·
 // Knowledge · Memory · Workflows · MCP · Plugins · Evaluation · Security ·
 // Activity · Deployments · Marketplace · Settings
@@ -17,12 +17,14 @@ import {
   Gauge,
   Home,
   MessageSquare,
+  Orbit,
   Package,
   Plug,
   Puzzle,
   Rocket,
   Settings,
   ShieldCheck,
+  Sparkles,
   Store,
   Users,
   Volume2,
@@ -44,6 +46,8 @@ const NAV: Array<{ href: string; label: string; icon: React.ComponentType<{ size
   { href: '/workspace/skills', label: 'Skills', icon: Puzzle },
   { href: '/workspace/knowledge', label: 'Knowledge', icon: Database },
   { href: '/workspace/memory', label: 'Memory', icon: Brain },
+  { href: '/workspace/generate', label: 'Generate', icon: Sparkles },
+  { href: '/workspace/aetheris', label: 'Aetheris', icon: Orbit },
   { href: '/workspace/workflows', label: 'Workflows', icon: Workflow },
   { href: '/workspace/mcp', label: 'MCP', icon: Plug },
   { href: '/workspace/plugins', label: 'Plugins', icon: Package },
@@ -95,7 +99,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
               </linearGradient>
             </defs>
           </svg>
-          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">SUTRA</span>
+          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">Aetherion</span>
         </Link>
         <nav className="flex flex-col gap-0.5">
           {NAV.map((n) => {
@@ -148,8 +152,12 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <span className="chip hidden sm:inline-flex" style={{ color: 'var(--acc2)' }}>
             {s.settings.privacyMode}
           </span>
-          <span className="chip hidden sm:inline-flex" style={{ color: puter.signedIn ? 'var(--ok)' : 'var(--dim)' }}>
-            puter: {puter.signedIn ? puter.user ?? 'connected' : 'local mode'}
+          <span
+            className="chip hidden sm:inline-flex"
+            style={{ color: puter.signedIn ? 'var(--ok)' : puter.scriptFailed ? 'var(--warn)' : 'var(--dim)' }}
+            title={puter.error ?? undefined}
+          >
+            puter: {puter.signedIn ? puter.user ?? 'connected' : puter.scriptFailed ? 'blocked · local mode' : 'local mode'}
           </span>
           <div className="flex-1" />
           {pending > 0 && (

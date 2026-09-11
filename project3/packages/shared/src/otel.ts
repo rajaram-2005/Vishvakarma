@@ -1,4 +1,4 @@
-// SUTRA — OpenTelemetry-compatible span export (OTLP-flavored JSON).
+// Aetherion — OpenTelemetry-compatible span export (OTLP-flavored JSON).
 import type { Span } from './types';
 
 export interface OtlpResourceSpans {

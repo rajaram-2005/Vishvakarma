@@ -1,4 +1,4 @@
-# SUTRA Benchmarks
+# Aetherion Benchmarks
 
 - `sutra-smoke.json` — the 7-task suite definition (also embedded in
   `services/evaluation` and the web Evaluation surface — same contract)

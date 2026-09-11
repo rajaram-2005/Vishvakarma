@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Skills: the HOW. Install, manage, inspect scopes.
+// Aetherion — Skills: the HOW. Install, manage, inspect scopes.
 
 import React from 'react';
 import { Puzzle } from 'lucide-react';

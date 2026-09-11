@@ -1,4 +1,4 @@
-# SUTRA Evaluation
+# Aetherion Evaluation
 
 Benchmark service. Runs a 7-task smoke suite (math, code-gen, factuality,
 refusal, structured output, hallucination probe, summarization) against a

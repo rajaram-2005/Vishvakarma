@@ -2,7 +2,7 @@
   "name": "@sutra/workflow-sdk",
   "version": "0.1.0",
   "private": true,
-  "description": "SUTRA workflow graph: types, validation, cycle detection, and n8n-compatible JSON export.",
+  "description": "Aetherion workflow graph: types, validation, cycle detection, and n8n-compatible JSON export.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

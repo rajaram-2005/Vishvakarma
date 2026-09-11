@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Marketplace: skills, plugins, workflows, MCP servers, model presets.
+// Aetherion — Marketplace: skills, plugins, workflows, MCP servers, model presets.
 
 import React, { useMemo, useState } from 'react';
 import { Store } from 'lucide-react';

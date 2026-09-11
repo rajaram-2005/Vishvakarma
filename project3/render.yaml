@@ -1,0 +1,26 @@
+# Aetherion on Render — one-click blueprint.
+# Point Render at this repository with root directory `project3`,
+# or use "Add from repo" → Blueprint. One web service, one container.
+services:
+  - type: web
+    name: aetherion
+    runtime: docker
+    rootDir: project3
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/status
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AETHERIS_DATA_DIR
+        value: /var/data
+      # Optional: add provider keys from the Aetheris mesh here, e.g.
+      # - key: GROQ_API_KEY
+      #   sync: false
+      # - key: GEMINI_API_KEY
+      #   sync: false
+    disk:
+      name: aetherion-data
+      mountPath: /var/data
+      sizeGB: 1

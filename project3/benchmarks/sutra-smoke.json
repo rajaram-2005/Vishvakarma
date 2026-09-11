@@ -1,6 +1,6 @@
 {
   "id": "bench-sutra-smoke",
-  "name": "SUTRA Smoke Suite",
+  "name": "Aetherion Smoke Suite",
   "version": "1.0.0",
   "description": "The 7-task suite used by services/evaluation and the Evaluation surface: math, code-gen, factuality, refusal, structured output, hallucination probe, summarization.",
   "tasks": [

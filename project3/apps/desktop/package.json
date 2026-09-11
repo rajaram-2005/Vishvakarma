@@ -2,7 +2,7 @@
   "name": "@sutra/desktop",
   "version": "0.1.0",
   "private": true,
-  "description": "SUTRA desktop — Tauri v2 shell around the SUTRA workspace",
+  "description": "Aetherion desktop — Tauri v2 shell around the Aetherion workspace",
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",

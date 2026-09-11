@@ -1,4 +1,4 @@
-# SUTRA Service API Reference
+# Aetherion Service API Reference
 
 Base URL: `http://localhost:8000` · OpenAPI: `/docs` · Health: `/health`
 
@@ -10,7 +10,7 @@ descriptive), `502` (upstream provider).
 
 ### GET /api/v1/models
 ```json
-{ "models": [ { "id":"sutra-local", "name":"SUTRA Local", "runtime":"sutra-local",
+{ "models": [ { "id":"sutra-local", "name":"Aetherion Local", "runtime":"sutra-local",
   "contextWindow":16384, "costIn":0, "costOut":0, "latencyTier":"low",
   "capabilities":["code","structured"], "available":true, "local":true } ] }
 ```
@@ -68,7 +68,7 @@ req: `{ "text" }` → `{ "findings":[{"line":1,"kind":"OpenAI-style API key"}], 
 
 ## Workflows
 
-SUTRA workflow JSON:
+Aetherion workflow JSON:
 ```json
 { "id":"wf", "name":"On-call digest", "trigger":"manual",
   "nodes":[{"id":"a","type":"trigger","label":"Start","config":{}}],
@@ -125,17 +125,17 @@ see each `services/<name>/README.md` and its `/docs` when running.
 `apps/web/lib/server.ts` is the browser client for this API (same contracts as
 the local core, so the web app is one setting away from running on either):
 
-- **Settings → SUTRA API** sets `settings.server.baseUrl`; empty = local core only
+- **Settings → Aetherion API** sets `settings.server.baseUrl`; empty = local core only
 - **Local privacy mode ignores the server entirely** — enforced in the client
   (`serverUsable()`), matching the service-side egress guard
 - Chat streams over SSE (`event: route` frame → `data: {text}` chunks →
   `data: {done}`); any failure (unreachable, HTTP, timeout, stream error)
   falls back to the local core and is recorded as an error span
 - Security surface: command risk + secret scan run locally first (instant),
-  then refresh from the server when configured — "via SUTRA API" chip shows
+  then refresh from the server when configured — "via Aetherion API" chip shows
   which copy produced the verdict
 - Verify the live loop:
-  `SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts`
+  `Aetherion_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts`
 
 ## Client contracts (TypeScript ⇄ Python parity)
 

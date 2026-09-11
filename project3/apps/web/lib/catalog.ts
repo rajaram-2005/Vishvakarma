@@ -1,15 +1,15 @@
-// SUTRA — bundled marketplace catalog.
+// Aetherion — bundled marketplace catalog.
 // Installing an item lands it in the local registry with its declared scopes.
 
 import type { CatalogItem, Workflow, WorkflowNode, McpServer, SkillDef } from '@sutra/shared';
 
 export const CATALOG: CatalogItem[] = [
-  { id: 'cat-rag-tuning', kind: 'skill', name: 'RAG Tuning', description: 'Chunk sizes, overlap, rerank blends and citation formats for grounded answers.', version: '1.0.0', author: 'SUTRA', license: 'MIT', scopes: ['fs.read'], tags: ['rag', 'knowledge'] },
-  { id: 'cat-data-pipeline', kind: 'skill', name: 'Data Pipeline', description: 'Source → normalize → validate → store, with idempotent steps.', version: '0.9.2', author: 'SUTRA', license: 'MIT', scopes: ['db', 'network'], tags: ['data'] },
-  { id: 'cat-prompt-craft', kind: 'skill', name: 'Prompt Craft', description: 'Role, context, format, examples, constraints — in that order.', version: '1.0.0', author: 'SUTRA', license: 'MIT', scopes: [], tags: ['prompts'] },
-  { id: 'cat-incident-response', kind: 'skill', name: 'Incident Response', description: 'Detect, contain, communicate, fix, post-mortem without blame.', version: '1.0.1', author: 'SUTRA', license: 'MIT', scopes: ['terminal', 'db'], tags: ['ops'] },
-  { id: 'cat-deploy-checklist', kind: 'skill', name: 'Deploy Checklist', description: 'Env check, secrets scan, canary, health probes, rollback plan.', version: '1.1.1', author: 'SUTRA', license: 'MIT', scopes: ['deploy'], tags: ['deploy'] },
-  { id: 'cat-linear-bridge', kind: 'plugin', name: 'Linear Bridge', description: 'Sync tasks between SUTRA projects and a Linear team via API.', version: '0.3.0', author: 'sutra-community', license: 'MIT', scopes: ['network', 'memory.write'], tags: ['tasks', 'sync'] },
+  { id: 'cat-rag-tuning', kind: 'skill', name: 'RAG Tuning', description: 'Chunk sizes, overlap, rerank blends and citation formats for grounded answers.', version: '1.0.0', author: 'Aetherion', license: 'MIT', scopes: ['fs.read'], tags: ['rag', 'knowledge'] },
+  { id: 'cat-data-pipeline', kind: 'skill', name: 'Data Pipeline', description: 'Source → normalize → validate → store, with idempotent steps.', version: '0.9.2', author: 'Aetherion', license: 'MIT', scopes: ['db', 'network'], tags: ['data'] },
+  { id: 'cat-prompt-craft', kind: 'skill', name: 'Prompt Craft', description: 'Role, context, format, examples, constraints — in that order.', version: '1.0.0', author: 'Aetherion', license: 'MIT', scopes: [], tags: ['prompts'] },
+  { id: 'cat-incident-response', kind: 'skill', name: 'Incident Response', description: 'Detect, contain, communicate, fix, post-mortem without blame.', version: '1.0.1', author: 'Aetherion', license: 'MIT', scopes: ['terminal', 'db'], tags: ['ops'] },
+  { id: 'cat-deploy-checklist', kind: 'skill', name: 'Deploy Checklist', description: 'Env check, secrets scan, canary, health probes, rollback plan.', version: '1.1.1', author: 'Aetherion', license: 'MIT', scopes: ['deploy'], tags: ['deploy'] },
+  { id: 'cat-linear-bridge', kind: 'plugin', name: 'Linear Bridge', description: 'Sync tasks between Aetherion projects and a Linear team via API.', version: '0.3.0', author: 'sutra-community', license: 'MIT', scopes: ['network', 'memory.write'], tags: ['tasks', 'sync'] },
   { id: 'cat-notion-sync', kind: 'plugin', name: 'Notion Sync', description: 'Two-way sync of project docs into Notion pages (selected folders only).', version: '1.2.3', author: 'sutra-community', license: 'MIT', scopes: ['network', 'fs.read'], tags: ['docs', 'sync'] },
   { id: 'cat-sentry-mcp', kind: 'mcp', name: 'Sentry MCP', description: 'Issues, releases and stack traces through a remote MCP server.', version: '1.4.0', author: 'Sentry', license: 'SSPL', scopes: ['network'], tags: ['monitoring'] },
   { id: 'cat-github-mcp', kind: 'mcp', name: 'GitHub MCP', description: 'Repositories, issues, PRs via the official GitHub MCP endpoint.', version: '1.0.0', author: 'GitHub', license: 'MIT', scopes: ['git', 'network'], tags: ['github'] },

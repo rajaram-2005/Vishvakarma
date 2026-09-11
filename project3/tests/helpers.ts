@@ -34,7 +34,7 @@ export function model(p: Partial<ModelInfo> & { id: string }): ModelInfo {
 
 export const LOCAL = model({
   id: 'sutra-local',
-  name: 'SUTRA Local',
+  name: 'Aetherion Local',
   runtime: 'sutra-local',
   capabilities: ['code', 'structured'],
 });

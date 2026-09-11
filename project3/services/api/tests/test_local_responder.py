@@ -1,4 +1,4 @@
-"""Parity pins: services/api SUTRA Local ⇄ packages/model-adapters/local.ts."""
+"""Parity pins: services/api Aetherion Local ⇄ packages/model-adapters/local.ts."""
 import asyncio
 
 from conftest import valid_workflow  # noqa: F401
@@ -31,7 +31,7 @@ def test_plan_reply():
     out = _reply("Plan my Project 3 MVP")
     assert "Phase 0" in out
     assert "Phase 4" in out
-    assert "SUTRA Local plan" in out
+    assert "Aetherion Local plan" in out
 
 
 def test_remember_reply():
@@ -76,7 +76,7 @@ def test_codegen_fizzbuzz():
 
 
 def test_grounded_mode_refuses_without_evidence():
-    system = "context:\n\n[1] (Design) SUTRA is a local-first workspace.\nAnswer the question using ONLY the context."
+    system = "context:\n\n[1] (Design) Aetherion is a local-first workspace.\nAnswer the question using ONLY the context."
     out = _reply("What is the population of Nairobi?", system)
     assert "can't verify" in out
     assert "won't guess" in out

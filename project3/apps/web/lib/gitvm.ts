@@ -1,4 +1,4 @@
-// SUTRA — virtual git: commits, history, dirty-state over the FS snapshot.
+// Aetherion — virtual git: commits, history, dirty-state over the FS snapshot.
 
 import { shortHash } from '@sutra/shared';
 import type { GitCommit, GitState } from '@sutra/shared';

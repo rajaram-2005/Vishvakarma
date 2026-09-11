@@ -1,4 +1,4 @@
-# SUTRA security service — policy, approvals, session grants, audit.
+# Aetherion security service — policy, approvals, session grants, audit.
 # Agent → Tool Gateway → Policy → Sandbox → Execution. Never silently: anything
 # dangerous is routed to a human (Allow Once / Allow Session / Inspect).
 from __future__ import annotations
@@ -13,7 +13,7 @@ from fastapi import FastAPI, HTTPException
 
 DATA = Path(__file__).parent / "data"
 DATA.mkdir(parents=True, exist_ok=True)
-app = FastAPI(title="SUTRA Security", version="0.1.0")
+app = FastAPI(title="Aetherion Security", version="0.1.0")
 
 POLICY = [
     {"category": "fs.read", "risk": "low", "requiresApproval": False},

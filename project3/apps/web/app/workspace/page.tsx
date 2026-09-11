@@ -1,5 +1,5 @@
 'use client';
-// SUTRA workspace — Home: core status, stats, quick actions, activity.
+// Aetherion workspace — Home: core status, stats, quick actions, activity.
 
 import React from 'react';
 import Link from 'next/link';
@@ -44,9 +44,9 @@ export default function WorkspaceHome() {
             <UniverseCanvas mode="core" intensity={0.55} parallax={false} />
           </div>
           <div className="relative z-10 p-6 h-full flex flex-col justify-end min-h-[240px] pointer-events-none">
-            <div className="font-mono text-[10px] tracking-widest mb-1" style={{ color: 'var(--acc2)' }}>SUTRA CORE</div>
+            <div className="font-mono text-[10px] tracking-widest mb-1" style={{ color: 'var(--acc2)' }}>Aetherion CORE</div>
             <div className="text-sm" style={{ color: 'var(--dim)' }}>
-              {s.settings.privacyMode} mode · sync: {s.settings.syncScope} · {online} reachable models · Sutra Local always on
+              {s.settings.privacyMode} mode · sync: {s.settings.syncScope} · {online} reachable models · Aetherion Local always on
             </div>
           </div>
         </GlassPanel>

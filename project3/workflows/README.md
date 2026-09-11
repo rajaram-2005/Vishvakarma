@@ -1,6 +1,6 @@
-# SUTRA Workflows
+# Aetherion Workflows
 
-Bundled workflows in SUTRA JSON (the same format the Workflows surface
+Bundled workflows in Aetherion JSON (the same format the Workflows surface
 edits and simulates). Each exports to **standard n8n JSON** via
 `POST /api/v1/workflows/n8n` or the web export button — adapter pattern,
 n8n's terms respected.

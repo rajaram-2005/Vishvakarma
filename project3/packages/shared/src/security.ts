@@ -1,4 +1,4 @@
-// SUTRA — security policy & risk engine.
+// Aetherion — security policy & risk engine.
 // Agent → Tool Gateway → Policy → Sandbox → Execution.
 // Dangerous operations are NEVER silent: they are classified, reasoned and
 // (when policy says so) routed to a human approval queue.

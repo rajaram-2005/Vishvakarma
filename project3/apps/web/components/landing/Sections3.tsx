@@ -1,5 +1,5 @@
 'use client';
-// SUTRA landing — MCP · GitHub · n8n · IDE · Browser · Autonomous Development.
+// Aetherion landing — MCP · GitHub · n8n · IDE · Browser · Autonomous Development.
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ export function McpSection() {
           MCP, <span className="text-grad-cyan">tamed.</span>
         </>
       }
-      sub="Discover servers, install with explicit scopes, monitor health, audit every tool call and pin versions. SUTRA ships local adapters (filesystem, fetch) and speaks to remote MCP servers over stdio or HTTP."
+      sub="Discover servers, install with explicit scopes, monitor health, audit every tool call and pin versions. Aetherion ships local adapters (filesystem, fetch) and speaks to remote MCP servers over stdio or HTTP."
     >
       <div className="grid md:grid-cols-2 gap-3">
         {SEED_MCP.map((s) => (
@@ -122,7 +122,7 @@ export function GithubSection() {
             <div>
               <div className="font-mono text-[10px] tracking-widest mb-2" style={{ color: 'var(--acc2)' }}>COMPATIBILITY</div>
               <div className="space-y-1.5">
-                {(repo?.compat ?? ['SUTRA adapter coverage: high']).map((c) => (
+                {(repo?.compat ?? ['Aetherion adapter coverage: high']).map((c) => (
                   <div key={c} className="text-xs flex items-center gap-2">
                     <span className="w-1 h-1 rounded-full" style={{ background: 'var(--acc)' }} />
                     <span style={{ color: 'var(--dim)' }}>{c}</span>
@@ -149,7 +149,7 @@ export function N8nSection() {
           n8n, <span className="text-grad-cyan">through a clean adapter.</span>
         </>
       }
-      sub="Workflows, templates, triggers, schedules, webhooks and AI/agent workflows. SUTRA speaks n8n's format natively: author here, export standard n8n workflow JSON, or import their templates. The adapter respects n8n's terms of service — self-hosted or your own instance."
+      sub="Workflows, templates, triggers, schedules, webhooks and AI/agent workflows. Aetherion speaks n8n's format natively: author here, export standard n8n workflow JSON, or import their templates. The adapter respects n8n's terms of service — self-hosted or your own instance."
     >
       <div className="glass-2 p-6 font-mono text-xs leading-relaxed overflow-x-auto" style={{ color: 'var(--dim)' }}>
         <div style={{ color: 'var(--acc2)' }}>workflow "Nightly Evaluation"</div>
@@ -202,12 +202,12 @@ export function IdeSection() {
             ))}
           </div>
           <div className="flex-1 p-4 font-mono text-[10.5px] leading-relaxed" style={{ color: 'var(--dim)' }}>
-            <div><span style={{ color: '#c084fc' }}>import</span> {'{ SutraCore }'} <span style={{ color: '#c084fc' }}>from</span> <span style={{ color: '#67e8f9' }}>"./core"</span>;</div>
+            <div><span style={{ color: '#c084fc' }}>import</span> {'{ AetherionCore }'} <span style={{ color: '#c084fc' }}>from</span> <span style={{ color: '#67e8f9' }}>"./core"</span>;</div>
             <div>&nbsp;</div>
             <div><span style={{ color: '#c084fc' }}>export default function</span> <span style={{ color: '#fbbf24' }}>App</span>() {'{'}</div>
-            <div>&nbsp;&nbsp;<span style={{ color: '#c084fc' }}>const</span> core = <span style={{ color: '#c084fc' }}>new</span> <span style={{ color: '#fbbf24' }}>SutraCore</span>({'{ mode: '}<span style={{ color: '#67e8f9' }}>"local"</span>{' }'});</div>
+            <div>&nbsp;&nbsp;<span style={{ color: '#c084fc' }}>const</span> core = <span style={{ color: '#c084fc' }}>new</span> <span style={{ color: '#fbbf24' }}>AetherionCore</span>({'{ mode: '}<span style={{ color: '#67e8f9' }}>"local"</span>{' }'});</div>
             <div>&nbsp;&nbsp;core.<span style={{ color: '#fbbf24' }}>connect</span>();</div>
-            <div>&nbsp;&nbsp;<span style={{ color: '#c084fc' }}>return</span> (&lt;main&gt;&lt;h1&gt;SUTRA&lt;/h1&gt;&lt;/main&gt;);</div>
+            <div>&nbsp;&nbsp;<span style={{ color: '#c084fc' }}>return</span> (&lt;main&gt;&lt;h1&gt;Aetherion&lt;/h1&gt;&lt;/main&gt;);</div>
             <div>{'}'}</div>
           </div>
           <div className="w-48 p-3 hidden md:block border-l" style={{ borderColor: 'var(--line)' }}>
@@ -257,7 +257,7 @@ export function BrowserSection() {
           <div><span style={{ color: 'var(--acc2)' }}>› navigate</span> https://example.com/docs <span style={{ color: 'var(--ok)' }}>200 · 312ms</span></div>
           <div><span style={{ color: 'var(--acc2)' }}>› extract</span> h1, code — 4 elements captured</div>
           <div><span style={{ color: 'var(--acc2)' }}>› screenshot</span> → trace #b72e · attached as evidence</div>
-          <div><span style={{ color: 'var(--acc2)' }}>› verify</span> "SUTRA" visible in viewport ✓</div>
+          <div><span style={{ color: 'var(--acc2)' }}>› verify</span> "Aetherion" visible in viewport ✓</div>
         </div>
       </div>
     </LandingSection>
@@ -286,12 +286,12 @@ const AUTO_LOGS: Record<string, string[]> = {
   s3: ['plan: 3 tasks — implement, test, docs'],
   s4: ['src/utils.ts written (+22 lines)', 'src/app.tsx imports updated'],
   s5: ['$ ls src → app.tsx core.ts router.ts utils.ts', '$ npm test (sandbox) → exit 0'],
-  s6: ['preview at sutra://local — no console errors', 'screenshot attached to trace'],
+  s6: ['preview at aetherion://local — no console errors', 'screenshot attached to trace'],
   s7: ['2 tests added · 4/4 pass', 'bracket balance ✓ · imports ✓'],
   s8: ['secret scan: clean', 'risk classification: low (workspace write)'],
   s9: ['review: +38 −2 · no scope creep', 'notes: name consistency OK'],
   s10: ['approval requested — review the diff', 'allow once · allow session · inspect'],
-  s11: ['bundle built · hash 7c21f0a', 'deployed → sutra://local/7c21f0a · health 200'],
+  s11: ['bundle built · hash 7c21f0a', 'deployed → aetherion://local/7c21f0a · health 200'],
 };
 
 export function AutonomousSection() {

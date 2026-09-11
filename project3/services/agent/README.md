@@ -1,4 +1,4 @@
-# SUTRA Agent
+# Aetherion Agent
 
 Runs the canonical 8-step agent loop as a service:
 **Understand → Plan → Tools → Execute → Observe → Verify → Repair → Finalize.**

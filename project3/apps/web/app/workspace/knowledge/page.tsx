@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Knowledge: ingest → chunk → embed → retrieve → rerank → answer.
+// Aetherion — Knowledge: ingest → chunk → embed → retrieve → rerank → answer.
 
 import React, { useMemo, useRef, useState } from 'react';
 import { Database, Upload, FileText } from 'lucide-react';
@@ -12,7 +12,7 @@ export default function KnowledgePage() {
   const { s, mutate, act, trace } = useSutra();
   const [paste, setPaste] = useState('');
   const [title, setTitle] = useState('');
-  const [q, setQ] = useState('What is SUTRA\'s security model?');
+  const [q, setQ] = useState('What is Aetherion\'s security model?');
   const [answer, setAnswer] = useState('');
   const [hits, setHits] = useState<Hit[]>([]);
   const [busy, setBusy] = useState(false);
@@ -100,7 +100,7 @@ export default function KnowledgePage() {
                   <Upload size={13} /> Upload file
                 </button>
                 <input ref={fileRef} type="file" accept=".txt,.md,.json,.ts,.js,.py" hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
-                <button onClick={() => ingest(SAMPLE_DOC_TEXT, 'SUTRA Design Principles (re-ingest)', 'bundled document')} className="btn-ghost !py-2 text-xs">
+                <button onClick={() => ingest(SAMPLE_DOC_TEXT, 'Aetherion Design Principles (re-ingest)', 'bundled document')} className="btn-ghost !py-2 text-xs">
                   <FileText size={13} /> Re-ingest sample
                 </button>
               </div>

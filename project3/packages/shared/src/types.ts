@@ -1,4 +1,4 @@
-// SUTRA — Project 3. Core domain types.
+// Aetherion — Project 3. Core domain types.
 // Provider-neutral, serializable, local-first.
 
 export type ID = string;
@@ -24,11 +24,17 @@ export interface Settings {
     otlpEndpoint: string;
   };
   /**
-   * Optional SUTRA service API (services/api). Empty/unset = the workspace
+   * Optional Aetherion service API (services/api). Empty/unset = the workspace
    * runs entirely on the local core. In local privacy mode this is IGNORED
    * and enforced offline — the contract, not a recommendation.
    */
   server?: { baseUrl: string };
+  /**
+   * Optional Aetheris One bridge (a local Intelligence OS by the same author:
+   * github.com/rajaram-2005/Aetheris). Points at its HTTP API, usually
+   * http://localhost:3100 when running with `npm run dev -- --port 3100`.
+   */
+  aetheris?: { baseUrl: string };
 }
 
 export interface SutraTask {
@@ -235,6 +241,7 @@ export interface ModelInfo {
   provider: string;
   runtime:
     | 'sutra-local'
+    | 'aetherion-own'
     | 'ollama'
     | 'vllm'
     | 'sglang'
@@ -243,7 +250,8 @@ export interface ModelInfo {
     | 'mlx'
     | 'onnx'
     | 'trtllm'
-    | 'openai-compat';
+    | 'openai-compat'
+    | 'puter-cloud';
   contextWindow: number;
   costIn: number; // USD per 1k input tokens
   costOut: number; // USD per 1k output tokens

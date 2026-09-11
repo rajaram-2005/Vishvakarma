@@ -1,5 +1,5 @@
 'use client';
-// SUTRA landing — Agents · Teams · Skills · Memory · RAG · Tools.
+// Aetherion landing — Agents · Teams · Skills · Memory · RAG · Tools.
 
 import React, { useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -158,7 +158,7 @@ export function SkillsSection() {
 
 export function MemorySection() {
   const items = [
-    ['fact', 'Project 3 is codenamed SUTRA — the open AI ecosystem workspace.'],
+    ['fact', 'Project 3 is codenamed Aetherion — the open AI ecosystem workspace.'],
     ['preference', 'Local-first: no data leaves the machine without an explicit opt-in.'],
     ['episodic', '“Fix debounce bug” — resolved 14:02, trace #a41f, 0 approvals.'],
   ];
@@ -207,7 +207,7 @@ export function RagSection() {
   const [hits, setHits] = useState<Hit[]>([]);
   const [busy, setBusy] = useState(false);
 
-  const doc = useMemo(() => ingestText('SUTRA Design Principles', SAMPLE_DOC_TEXT, 'bundled document', 'text'), []);
+  const doc = useMemo(() => ingestText('Aetherion Design Principles', SAMPLE_DOC_TEXT, 'bundled document', 'text'), []);
 
   const ask = async () => {
     setBusy(true);
@@ -232,7 +232,7 @@ export function RagSection() {
           Knowledge, <span className="text-grad">grounded and cited.</span>
         </>
       }
-      sub="Documents, websites, GitHub, databases, APIs and folders flow through one pipeline. Embeddings and reranking run locally; generation cites its sources. This demo is live — it just ingested the SUTRA design document into your browser."
+      sub="Documents, websites, GitHub, databases, APIs and folders flow through one pipeline. Embeddings and reranking run locally; generation cites its sources. This demo is live — it just ingested the Aetherion design document into your browser."
     >
       <Pipeline steps={RAG_STEPS} compact />
       <div className="mt-8 glass p-5 md:p-6">

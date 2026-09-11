@@ -1,4 +1,4 @@
-// SUTRA Mobile — the AI control center.
+// Aetherion Mobile — the AI control center.
 // Phone-first: status, quick chat, approvals (the mobile superpower),
 // security scanner, tasks. NOT a shrunken desktop.
 import React, { useCallback, useEffect, useState } from 'react';
@@ -54,7 +54,7 @@ export default function App() {
       <View style={[styles.root, { backgroundColor: T.bg }]}>
         <StatusBar style="light" />
         <View style={styles.header}>
-          <Text style={styles.wordmark}>SUTRA</Text>
+          <Text style={styles.wordmark}>Aetherion</Text>
           <Text style={styles.subtitle}>AI control center</Text>
         </View>
         <View style={{ flex: 1 }}>
@@ -93,7 +93,7 @@ function HomeScreen() {
       setModels(m.models);
       setErr('');
     } catch (e: any) {
-      setErr(`Cannot reach SUTRA API — check Settings → server URL (${e.message})`);
+      setErr(`Cannot reach Aetherion API — check Settings → server URL (${e.message})`);
     }
   }, []);
   useEffect(() => {
@@ -211,7 +211,7 @@ function ChatScreen() {
           style={styles.input}
           value={input}
           onChangeText={setInput}
-          placeholder="Message SUTRA…"
+          placeholder="Message Aetherion…"
           placeholderTextColor={T.dim}
           onSubmitEditing={send}
         />
@@ -312,7 +312,7 @@ function SecurityScreen() {
   return (
     <ScrollView contentContainerStyle={styles.screen}>
       <Text style={styles.cardTitle}>COMMAND RISK</Text>
-      <Text style={{ color: T.dim, fontSize: 12, marginBottom: 8 }}>Paste a command — SUTRA classifies it before it runs.</Text>
+      <Text style={{ color: T.dim, fontSize: 12, marginBottom: 8 }}>Paste a command — Aetherion classifies it before it runs.</Text>
       <TextInput style={styles.input} value={cmd} onChangeText={setCmd} placeholder="git push origin main --force" placeholderTextColor={T.dim} multiline />
       <Pressable onPress={assess} style={[styles.chip, { alignSelf: 'flex-start', borderColor: T.purple + '77', marginTop: 10 }]}>
         <Text style={{ color: T.purple, fontSize: 12 }}>Assess</Text>

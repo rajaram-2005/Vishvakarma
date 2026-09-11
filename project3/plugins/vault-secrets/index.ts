@@ -3,7 +3,7 @@
 // mask values. Never touches the network, never writes.
 import type { Plugin, ToolDef } from '@sutra/plugin-sdk';
 
-const vaultPath = process.env.SUTRA_VAULT_PATH ?? 'secrets/vault.env';
+const vaultPath = process.env.Aetherion_VAULT_PATH ?? 'secrets/vault.env';
 
 function loadVault(): Record<string, string> {
   // fs.read through the gateway (low risk)

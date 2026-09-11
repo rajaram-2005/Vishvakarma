@@ -50,7 +50,7 @@ describe('retrieve', () => {
   });
 });
 
-describe('generate (SUTRA Local grounding)', () => {
+describe('generate (Aetherion Local grounding)', () => {
   it('answers with a grounded response and sources', async () => {
     const { chunks } = ingestText('Design doc', DOC, 'test', 'text');
     const out = await generate(chunks, 'What risk levels does the gateway use?', [LOCAL], SETTINGS);
@@ -61,7 +61,7 @@ describe('generate (SUTRA Local grounding)', () => {
   }, 15000);
 
   it('admits when the context is insufficient', async () => {
-    const { chunks } = ingestText('Small doc', 'SUTRA is a local-first workspace.', 'test', 'text');
+    const { chunks } = ingestText('Small doc', 'Aetherion is a local-first workspace.', 'test', 'text');
     const out = await generate(chunks, 'What is the population of Nairobi?', [LOCAL], SETTINGS);
     expect(out.answer.toLowerCase()).toMatch(/not enough|insufficient|cannot|can't|no (direct )?evidence|context/);
   }, 15000);

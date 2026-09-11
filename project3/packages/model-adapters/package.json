@@ -2,7 +2,7 @@
   "name": "@sutra/model-adapters",
   "version": "0.1.0",
   "private": true,
-  "description": "Provider-neutral model adapters: SUTRA Local, Ollama, OpenAI-compatible, plus the task router.",
+  "description": "Provider-neutral model adapters: Aetherion Local, Ollama, OpenAI-compatible, plus the task router.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

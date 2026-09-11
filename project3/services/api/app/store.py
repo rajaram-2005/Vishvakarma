@@ -1,5 +1,5 @@
-# SUTRA service API — local-first persistence.
-# JSON files under SUTRA_DATA_DIR (default: ./data). No external database required;
+# Aetherion service API — local-first persistence.
+# JSON files under Aetherion_DATA_DIR (default: ./data). No external database required;
 # PostgreSQL/Redis adapters slot in for cloud mode without touching route code.
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ class JsonStore:
     """Tiny file-backed store with process-safe reads/writes (atomic replace)."""
 
     def __init__(self, root: str | Path | None = None):
-        env = os.environ.get("SUTRA_DATA_DIR", "")
+        env = os.environ.get("Aetherion_DATA_DIR", "")
         self.root = Path(root or env or Path(__file__).resolve().parent.parent / "data")
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
@@ -49,7 +49,7 @@ class JsonStore:
 
 
 MODEL_REGISTRY: list[ModelInfo] = [
-    ModelInfo("sutra-local", "SUTRA Local", "sutra-local", 16384, 0, 0, "low", ["code", "structured", "long-context"], True, True),
+    ModelInfo("sutra-local", "Aetherion Local", "sutra-local", 16384, 0, 0, "low", ["code", "structured", "long-context"], True, True),
     ModelInfo("llama3.1-8b", "Llama 3.1 8B", "ollama", 131072, 0, 0, "medium", ["code", "creative", "structured"], True, True),
     ModelInfo("qwen2.5-coder-14b", "Qwen 2.5 Coder 14B", "ollama", 32768, 0, 0, "medium", ["code", "structured"], True, True),
     ModelInfo("mistral-7b-instruct", "Mistral 7B Instruct", "ollama", 32768, 0, 0, "low", ["creative", "structured"], True, True),

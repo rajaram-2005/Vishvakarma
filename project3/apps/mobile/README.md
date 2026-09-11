@@ -1,4 +1,4 @@
-# SUTRA Mobile (Expo / React Native)
+# Aetherion Mobile (Expo / React Native)
 
 **The AI control center — not a shrunken desktop.**
 

@@ -1,4 +1,4 @@
-// SUTRA — workspace seed data. Everything the app ships with, offline.
+// Aetherion — workspace seed data. Everything the app ships with, offline.
 
 import type {
   ActivityEvent,
@@ -68,15 +68,24 @@ export const DEFAULT_SETTINGS: Settings = {
     otlpEndpoint: '',
   },
   server: { baseUrl: '' },
+  // Empty = the intelligence core is embedded in this app (same origin,
+  // /api/*). Set an explicit http(s) URL only to target an external
+  // Aetheris One instance.
+  aetheris: { baseUrl: '' },
 };
 
-const now = () => new Date().toISOString();
+// Fixed anchor for every seed timestamp. The seed must be byte-identical on the
+// server and client render passes — wall-clock values (`Date.now()`) change in
+// the gap between SSR and hydration and break React hydration.
+export const SEED_NOW_MS = Date.parse('2026-09-01T09:00:00.000Z');
+
+const now = () => new Date(SEED_NOW_MS).toISOString();
 
 export const SEED_MODELS: ModelInfo[] = [
   {
     id: 'sutra-local',
-    name: 'Sutra Local',
-    provider: 'SUTRA built-in',
+    name: 'Aetherion Local',
+    provider: 'Aetherion built-in',
     runtime: 'sutra-local',
     contextWindow: 128000,
     costIn: 0,
@@ -338,7 +347,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to review: diff-first, risk-prioritized, style second. Produces findings with severity.',
     version: '1.2.0',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['fs.read'],
     installed: true,
     builtin: true,
@@ -350,7 +359,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to test: property lists → cases → red/green loop with real assertions.',
     version: '1.0.3',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['terminal'],
     installed: true,
     builtin: true,
@@ -362,7 +371,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to branch: trunk-based with short-lived feature branches and atomic commits.',
     version: '1.1.0',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['git'],
     installed: true,
     builtin: true,
@@ -374,7 +383,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to prompt: role, context, format, examples, constraints — in that order.',
     version: '1.0.0',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: [],
     installed: true,
     builtin: true,
@@ -386,7 +395,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to respond: detect, contain, communicate, fix, post-mortem without blame.',
     version: '1.0.1',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['terminal', 'db'],
     installed: true,
     builtin: true,
@@ -398,7 +407,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to pipe: source → normalize → validate → store, with idempotent steps.',
     version: '0.9.2',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['db', 'network'],
     installed: false,
     builtin: true,
@@ -410,7 +419,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to tune retrieval: chunk sizes, overlap, rerank blends, citation formats.',
     version: '1.0.0',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['fs.read'],
     installed: false,
     builtin: true,
@@ -422,7 +431,7 @@ export const SEED_SKILLS: SkillDef[] = [
     description: 'HOW to ship: env check, secrets scan, canary, health probes, rollback plan.',
     version: '1.1.1',
     license: 'MIT',
-    author: 'SUTRA',
+    author: 'Aetherion',
     scopes: ['deploy'],
     installed: true,
     builtin: true,
@@ -505,9 +514,9 @@ export const SEED_MCP: McpServer[] = [
   },
 ];
 
-export const SAMPLE_DOC_TEXT = `# SUTRA Design Principles
+export const SAMPLE_DOC_TEXT = `# Aetherion Design Principles
 
-SUTRA is a local-first AI operating workspace. The name means "thread" in Sanskrit — SUTRA is the thread that connects your models, agents, tools, knowledge and workflows into one system.
+Aetherion is a local-first AI operating workspace fused with the embedded Aetheris intelligence core — one shared field where your models, agents, tools, knowledge and workflows connect into a single system.
 
 ## Principle 1 — Local by default
 
@@ -538,7 +547,7 @@ Local mode keeps everything on-device. Hybrid mode allows selected cloud calls w
 React, Next.js, TypeScript and Tailwind for the web surface; Tauri for desktop; React Native for mobile; Python FastAPI for services; PostgreSQL, Redis and a vector store for persistence; Prometheus and Grafana for metrics; OpenTelemetry for traces.`;
 
 export const SEED_FS: Record<string, string> = {
-  'README.md': `# Project 3 — SUTRA MVP
+  'README.md': `# Project 3 — Aetherion MVP
 
 Local-first AI operating workspace.
 
@@ -548,7 +557,7 @@ npm run dev
 
 See docs/ for architecture.`,
   'package.json': `{
-  "name": "sutra-mvp",
+  "name": "aetherion-mvp",
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
@@ -562,25 +571,25 @@ See docs/ for architecture.`,
     "moduleResolution": "Bundler"
   }
 }`,
-  'src/app.tsx': `import { SutraCore } from './core';
+  'src/app.tsx': `import { AetherionCore } from './core';
 
 export default function App() {
-  const core = new SutraCore({ mode: 'local' });
+  const core = new AetherionCore({ mode: 'local' });
   core.connect();
   return (
     <main className="sutra">
-      <h1>SUTRA</h1>
+      <h1>Aetherion</h1>
       <p>{core.status}</p>
     </main>
   );
 }`,
-  'src/core.ts': `export interface SutraOptions {
+  'src/core.ts': `export interface AetherionOptions {
   mode: 'local' | 'hybrid' | 'cloud';
 }
 
-export class SutraCore {
+export class AetherionCore {
   status = 'idle';
-  constructor(private opts: SutraOptions) {}
+  constructor(private opts: AetherionOptions) {}
 
   connect(): void {
     this.status = this.opts.mode === 'local' ? 'online (local)' : 'online (' + this.opts.mode + ')';
@@ -601,12 +610,12 @@ export function classify(text: string): TaskKind {
 }
 `,
   'tests/app.test.ts': `import { describe, it, expect } from 'vitest';
-import { SutraCore } from '../src/core';
+import { AetherionCore } from '../src/core';
 import { classify } from '../src/router';
 
-describe('SUTRA core', () => {
+describe('Aetherion core', () => {
   it('connects in local mode', () => {
-    const core = new SutraCore({ mode: 'local' });
+    const core = new AetherionCore({ mode: 'local' });
     core.connect();
     expect(core.status).toContain('local');
   });
@@ -616,7 +625,7 @@ describe('SUTRA core', () => {
   });
 });
 `,
-  '.sutra/config.json': `{
+  '.aetherion/config.json': `{
   "version": 1,
   "privacy": { "mode": "local", "sync": "none" },
   "security": { "autoApproveBelow": "low" }
@@ -628,9 +637,9 @@ export const SEED_GIT: GitState = {
   log: [
     {
       hash: 'a1f0c9d',
-      message: 'init: SUTRA MVP scaffold',
+      message: 'init: Aetherion MVP scaffold',
       files: Object.keys(SEED_FS),
-      ts: new Date(Date.now() - 3600e3).toISOString(),
+      ts: new Date(SEED_NOW_MS - 3600e3).toISOString(),
       branch: 'main',
     },
   ],
@@ -641,10 +650,10 @@ export const SEED_GIT: GitState = {
 export const SEED_KNOWLEDGE: KnowledgeDoc[] = [
   {
     id: 'doc-design',
-    title: 'SUTRA Design Principles',
+    title: 'Aetherion Design Principles',
     source: 'bundled document',
     kind: 'text',
-    createdAt: new Date(Date.now() - 7200e3).toISOString(),
+    createdAt: new Date(SEED_NOW_MS - 7200e3).toISOString(),
     chars: SAMPLE_DOC_TEXT.length,
     chunkCount: 0,
   },
@@ -659,7 +668,7 @@ export const seedState = (): AppStateSeed => {
     projects: [
       {
         id: 'prj-3',
-        name: 'Project 3 — SUTRA MVP',
+        name: 'Project 3 — Aetherion MVP',
         description: 'The open AI ecosystem: models, agents, tools, knowledge, workflows — one workspace.',
         template: 'mvp',
         color: '#8b5cf6',
@@ -669,14 +678,14 @@ export const seedState = (): AppStateSeed => {
     conversations: [
       {
         id: 'conv-welcome',
-        title: 'Welcome to SUTRA',
+        title: 'Welcome to Aetherion',
         createdAt: now(),
         messages: [
           {
             id: 'm-welcome',
             role: 'assistant',
             content:
-              'Welcome to SUTRA — your AI operating workspace. Everything here runs locally first.\n\nTry:\n• "Plan my Project 3 MVP." — I\'ll structure it into tasks\n• "What are SUTRA\'s design principles?" — answered from your Knowledge base with citations\n• "What is 17 × 23 + 5?" — computed on-device\n\nConnect Ollama in Settings → Providers and real local models join the router.',
+              'Welcome to Aetherion — your AI operating workspace. Everything here runs locally first.\n\nTry:\n• "Plan my Project 3 MVP." — I\'ll structure it into tasks\n• "What are Aetherion\'s design principles?" — answered from your Knowledge base with citations\n• "What is 17 × 23 + 5?" — computed on-device\n\nConnect Ollama in Settings → Providers and real local models join the router.',
             ts: now(),
             model: 'sutra-local',
           },
@@ -730,7 +739,7 @@ export const seedState = (): AppStateSeed => {
     ] as Workflow[],
     mcp: SEED_MCP.map((m) => ({ ...m })),
     memory: [
-      { id: 'mem-1', kind: 'fact', text: 'Project 3 is codenamed SUTRA — the open AI ecosystem workspace.', source: 'system', ts: now() },
+      { id: 'mem-1', kind: 'fact', text: 'Project 3 is codenamed Aetherion — the open AI ecosystem workspace.', source: 'system', ts: now() },
       { id: 'mem-2', kind: 'preference', text: 'Local-first: no data leaves the machine without an explicit opt-in.', source: 'system', ts: now() },
     ] as MemoryEntry[],
     knowledge: SEED_KNOWLEDGE.map((d) => ({ ...d, chunkCount: chunks.length })),
@@ -746,7 +755,7 @@ export const seedState = (): AppStateSeed => {
         ts: now(),
         kind: 'system',
         title: 'Workspace initialized',
-        detail: 'SUTRA core online · privacy mode: Local · sync: none',
+        detail: 'Aetherion core online · privacy mode: Local · sync: none',
       },
     ],
     installed: [] as string[],

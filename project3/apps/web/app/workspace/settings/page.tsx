@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Settings: appearance, privacy, providers, Puter, data, about.
+// Aetherion — Settings: appearance, privacy, providers, Puter, data, about.
 
 import React, { useRef, useState } from 'react';
 import { ExternalLink, Server, Trash2, Upload } from 'lucide-react';
@@ -31,10 +31,10 @@ export default function SettingsPage() {
     try {
       const h = await server.health(url);
       setApiMsg(`reachable · ${h.service} v${h.version} · mode ${h.privacyMode} · backends: ${h.backends.join(', ') || 'none'}`);
-      act('settings', 'SUTRA API reachable', `${url} · ${h.privacyMode}`, undefined);
+      act('settings', 'Aetherion API reachable', `${url} · ${h.privacyMode}`, undefined);
     } catch (e) {
       setApiMsg(`unreachable · ${e instanceof ServerError ? e.message : String(e)}`);
-      act('settings', 'SUTRA API unreachable', `${url} · ${e instanceof ServerError ? e.message : String(e)}`, undefined);
+      act('settings', 'Aetherion API unreachable', `${url} · ${e instanceof ServerError ? e.message : String(e)}`, undefined);
     }
   };
 
@@ -205,7 +205,7 @@ export default function SettingsPage() {
 
       <GlassPanel className="p-5 space-y-4">
         <div className="font-mono text-[10px] tracking-widest flex items-center gap-2" style={{ color: 'var(--acc2)' }}>
-          <Server size={12} /> SUTRA API (OPTIONAL SERVICE LAYER)
+          <Server size={12} /> Aetherion API (OPTIONAL SERVICE LAYER)
         </div>
         <Field label="service api base url (services/api · uvicorn app.main:app)">
           <div className="flex gap-2">
@@ -249,18 +249,64 @@ export default function SettingsPage() {
       <GlassPanel className="p-5 space-y-3">
         <div className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>PUTER (OPTIONAL LAYER)</div>
         <div className="flex flex-wrap items-center gap-3">
-          <span className="chip" style={{ color: puter.signedIn ? 'var(--ok)' : 'var(--dim)' }}>
-            {puter.scriptLoaded ? (puter.signedIn ? `signed in · ${puter.user ?? ''}` : 'script loaded · local mode') : 'script loading…'}
+          <span
+            className="chip"
+            style={{ color: puter.signedIn ? 'var(--ok)' : puter.scriptFailed ? 'var(--warn)' : 'var(--dim)' }}
+          >
+            {puter.scriptLoaded
+              ? puter.signedIn
+                ? `signed in · ${puter.user ?? ''}`
+                : 'script loaded · local mode'
+              : puter.scriptFailed
+                ? 'script blocked · local mode'
+                : 'script loading…'}
           </span>
           {puter.signedIn ? (
-            <button onClick={() => void puter.disconnect()} className="btn-ghost !py-2 !px-3 text-xs">sign out</button>
+            <button
+              onClick={() => void puter.disconnect()}
+              disabled={puter.busy}
+              className="btn-ghost !py-2 !px-3 text-xs disabled:opacity-50"
+            >
+              sign out
+            </button>
           ) : (
-            <button onClick={() => void puter.connect()} className="btn-primary !py-2 !px-3 text-xs">connect Puter</button>
+            <button
+              onClick={() => void puter.connect()}
+              disabled={puter.busy}
+              className="btn-primary !py-2 !px-3 text-xs disabled:opacity-50"
+            >
+              {puter.busy ? 'connecting…' : 'connect Puter'}
+            </button>
           )}
+          <a
+            href="/workspace/settings"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 font-mono text-[10px]"
+            style={{ color: 'var(--acc2)' }}
+            title="Open this page in a new tab — popups and browser storage work there even when this preview is embedded"
+          >
+            open in new tab <ExternalLink size={10} />
+          </a>
           <a href={PUTER_DOC_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-[10px]" style={{ color: 'var(--dim)' }}>
             Powered by Puter <ExternalLink size={10} />
           </a>
         </div>
+        {puter.error && (
+          <div className="flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2" style={{ borderColor: 'var(--warn)', background: 'color-mix(in srgb, var(--warn) 8%, transparent)' }}>
+            <span className="font-mono text-[11px] leading-relaxed" style={{ color: 'var(--warn)' }}>
+              ⚠ {puter.error}
+            </span>
+            {!puter.signedIn && (
+              <a href="/workspace/settings" target="_blank" rel="noreferrer" className="font-mono text-[10px] shrink-0" style={{ color: 'var(--acc2)' }}>
+                open in a new tab ↗
+              </a>
+            )}
+            <button onClick={puter.dismissError} className="font-mono text-[10px] ml-auto" style={{ color: 'var(--dim)' }}>
+              dismiss
+            </button>
+          </div>
+        )}
         <p className="text-xs" style={{ color: 'var(--dim)' }}>
           Used for KV persistence, cloud filesystem, auth, AI, hosting and task management — only when you opt in.
           Local mode never forces Puter authentication.
@@ -270,7 +316,7 @@ export default function SettingsPage() {
       <GlassPanel className="p-5 space-y-3">
         <div className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>DATA</div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => download('sutra-export.json', exportAll())} className="btn-ghost !py-2 !px-3 text-xs">export everything (JSON)</button>
+          <button onClick={() => download('aetherion-export.json', exportAll())} className="btn-ghost !py-2 !px-3 text-xs">export everything (JSON)</button>
           <button onClick={() => fileRef.current?.click()} className="btn-ghost !py-2 !px-3 text-xs">
             <Upload size={12} /> import
           </button>
@@ -284,7 +330,7 @@ export default function SettingsPage() {
               if (!f) return;
               f.text().then((txt) => {
                 const ok = importAll(txt);
-                alert(ok ? 'Imported.' : 'Import failed — not a valid SUTRA export.');
+                alert(ok ? 'Imported.' : 'Import failed — not a valid Aetherion export.');
               });
             }}
           />
@@ -303,7 +349,7 @@ export default function SettingsPage() {
       <GlassPanel className="p-5">
         <div className="font-mono text-[10px] tracking-widest mb-3" style={{ color: 'var(--acc2)' }}>ABOUT</div>
         <div className="text-sm space-y-1.5">
-          <div><span style={{ color: 'var(--dim)' }}>SUTRA</span> — Project 3 · v0.1.0</div>
+          <div><span style={{ color: 'var(--dim)' }}>Aetherion</span> — Project 3 · v0.1.0</div>
           <div className="text-xs" style={{ color: 'var(--dim)' }}>
             The open AI ecosystem workspace. Local-first, provider-neutral, OpenTelemetry-compatible.
             <br />

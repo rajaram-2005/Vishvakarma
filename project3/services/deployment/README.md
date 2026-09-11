@@ -1,4 +1,4 @@
-# SUTRA Deployment
+# Aetherion Deployment
 
 Deployment boundary: **local · Docker · Puter cloud**.
 

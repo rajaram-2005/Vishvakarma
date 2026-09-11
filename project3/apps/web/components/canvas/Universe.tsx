@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — the living particle universe.
+// Aetherion — the living particle universe.
 // 3D-projected particle clouds, nebula fog, the central AI energy core,
 // light trails and a perspective grid floor. Pure Canvas 2D, no deps.
 // Honors reduced motion (renders one cinematic still) and visibility.
@@ -119,9 +119,8 @@ export function UniverseCanvas({
     if (parallax) window.addEventListener('scroll', onScroll, { passive: true });
 
     const hueCss = (h: number, a: number) => {
-      const [r, g, b] = [
-        h === 0 ? [139, 92, 246] : h === 1 ? [34, 211, 238] : h === 2 ? [232, 121, 249] : [96, 165, 250],
-      ][h as 0 | 1 | 2 | 3];
+      const [r, g, b] =
+        h === 0 ? [139, 92, 246] : h === 1 ? [34, 211, 238] : h === 2 ? [232, 121, 249] : [96, 165, 250];
       return `rgba(${r},${g},${b},${a})`;
     };
 

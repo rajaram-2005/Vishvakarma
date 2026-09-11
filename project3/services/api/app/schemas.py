@@ -1,4 +1,4 @@
-# SUTRA service API — request schemas (module-level so PEP 563 annotations resolve).
+# Aetherion service API — request schemas (module-level so PEP 563 annotations resolve).
 from typing import Optional
 
 from pydantic import BaseModel, Field

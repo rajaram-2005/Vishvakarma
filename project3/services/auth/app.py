@@ -1,4 +1,4 @@
-# SUTRA auth service — local-first identity.
+# Aetherion auth service — local-first identity.
 # HS256 tokens (stdlib only), JSON persistence, session revocation. No external IdP required.
 from __future__ import annotations
 
@@ -13,12 +13,12 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Request
 
-DATA = Path(os.environ.get("SUTRA_DATA_DIR", Path(__file__).parent / "data"))
+DATA = Path(os.environ.get("Aetherion_DATA_DIR", Path(__file__).parent / "data"))
 DATA.mkdir(parents=True, exist_ok=True)
-SECRET = os.environ.get("SUTRA_AUTH_SECRET", "sutra-local-dev-secret-change-me").encode()
-PEPPER = os.environ.get("SUTRA_AUTH_PEPPER", "sutra-pepper").encode()
+SECRET = os.environ.get("Aetherion_AUTH_SECRET", "sutra-local-dev-secret-change-me").encode()
+PEPPER = os.environ.get("Aetherion_AUTH_PEPPER", "sutra-pepper").encode()
 
-app = FastAPI(title="SUTRA Auth", version="0.1.0")
+app = FastAPI(title="Aetherion Auth", version="0.1.0")
 
 
 def _store() -> dict:

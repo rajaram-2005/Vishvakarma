@@ -1,4 +1,4 @@
-// SUTRA — sandboxed virtual terminal.
+// Aetherion — sandboxed virtual terminal.
 // Commands run against the workspace virtual FS. Anything exec-class or
 // destructive passes the Tool Gateway (risk policy + approvals).
 
@@ -20,7 +20,7 @@ export interface TermResult {
   gitNote?: string;
 }
 
-const HELP = `SUTRA sandbox terminal
+const HELP = `Aetherion sandbox terminal
   ls [path]        list files
   cd <path>        change directory
   pwd              print working directory
@@ -62,7 +62,7 @@ export function tree(fs: Record<string, string>): string {
     }
     node[parts[parts.length - 1]] = c ? {} : undefined;
   }
-  const lines: string[] = ['sutra-mvp/'];
+  const lines: string[] = ['aetherion-mvp/'];
   const walk = (node: Record<string, unknown>, indent: string) => {
     const keys = Object.keys(node).sort();
     for (const k of keys) {
@@ -91,7 +91,7 @@ export async function runCommand(raw: string, ctx: TermCtx): Promise<TermResult>
     case 'pwd':
       return { output: ctx.cwd };
     case 'whoami':
-      return { output: 'sutra@local (sandbox: workspace)' };
+      return { output: 'aetherion@local (sandbox: workspace)' };
     case 'date':
       return { output: new Date().toString() };
     case 'clear':
@@ -99,7 +99,7 @@ export async function runCommand(raw: string, ctx: TermCtx): Promise<TermResult>
     case 'env':
       return {
         output:
-          'SUTRA_MODE=local\nOLLAMA_URL=http://localhost:11434\nOPENAI_API_KEY=•••••••• (masked by secret isolation)\nOTEL_ENDPOINT=(not set)',
+          'Aetherion_MODE=local\nOLLAMA_URL=http://localhost:11434\nOPENAI_API_KEY=•••••••• (masked by secret isolation)\nOTEL_ENDPOINT=(not set)',
       };
     case 'ls': {
       const dir = arg ? normPath(ctx.cwd, arg) : ctx.cwd;
@@ -243,7 +243,7 @@ export async function runCommand(raw: string, ctx: TermCtx): Promise<TermResult>
         const v = await ctx.gate('git.push', `git push ${arg.replace('push', '')}`);
         if (!v.ok) return { output: `⛔ ${v.note ?? 'push requires approval'} — remote not updated` };
         ctx.log('[git] push approved → remote synced');
-        return { output: `To sutra.local:${ctx.git.branch}\n   synced (remote accepted)`, gitNote: 'push' };
+        return { output: `To aetherion.local:${ctx.git.branch}\n   synced (remote accepted)`, gitNote: 'push' };
       }
       return { output: `git ${sub}: try git status | git log | git commit -m "msg" | git push` };
     }

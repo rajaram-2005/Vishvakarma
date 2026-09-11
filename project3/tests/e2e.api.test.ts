@@ -1,13 +1,13 @@
 // E2E: the web's server client (apps/web/lib/server) against a REAL running
 // services/api (uvicorn). Skipped automatically when no API is reachable —
-// run it with:  SUTRA_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts
+// run it with:  Aetherion_E2E_API=http://localhost:8000 npx vitest run tests/e2e.api.test.ts
 // (start the API first: cd services/api && uvicorn app.main:app --port 8000)
 import { describe, expect, it } from 'vitest';
 import { server, serverUsable, serverUrl } from '../apps/web/lib/server';
 import { SETTINGS } from './helpers';
 import type { Settings } from '@sutra/shared';
 
-const API = process.env.SUTRA_E2E_API;
+const API = process.env.Aetherion_E2E_API;
 const settings: Settings = { ...SETTINGS, privacyMode: 'hybrid', server: { baseUrl: API ?? '' } };
 
 describe.skipIf(!API || !serverUsable(settings))('E2E web client ↔ services/api', () => {

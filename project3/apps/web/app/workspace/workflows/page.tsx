@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Workflows: DAG editor, live simulation, n8n export.
+// Aetherion — Workflows: DAG editor, live simulation, n8n export.
 
 import React, { useRef, useState } from 'react';
 import { Download, Play, Plus, Trash2, Workflow as WfIcon } from 'lucide-react';
@@ -164,10 +164,10 @@ export default function WorkflowsPage() {
               <Download size={12} /> Export n8n JSON
             </button>
             <button
-              onClick={() => download(`${wf.name.replace(/\s+/g, '-').toLowerCase()}.sutra.json`, JSON.stringify(wf, null, 2))}
+              onClick={() => download(`${wf.name.replace(/\s+/g, '-').toLowerCase()}.aetherion.json`, JSON.stringify(wf, null, 2))}
               className="btn-ghost !py-2 !px-4 text-xs"
             >
-              <Download size={12} /> SUTRA JSON
+              <Download size={12} /> Aetherion JSON
             </button>
             <button onClick={() => mutate((st) => ({ ...st, workflows: st.workflows.filter((x) => x.id !== wf.id) }))} className="btn-ghost !py-2 !px-3 text-xs ml-auto" style={{ color: 'var(--bad)' }}>
               <Trash2 size={12} />
