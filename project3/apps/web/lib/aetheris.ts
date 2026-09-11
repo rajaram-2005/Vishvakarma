@@ -31,6 +31,8 @@ export interface AetherisChatResult {
   provider?: string;
   model?: string;
   offline?: boolean;
+  /** Set when the core streamed an error event (e.g. providers unreachable). */
+  error?: string;
 }
 
 const REQUEST_TIMEOUT_MS = 8000;
@@ -39,6 +41,7 @@ async function fetchJson<T>(url: string): Promise<T> {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), REQUEST_TIMEOUT_MS);
   try {
+    // Relative /api/* URLs hit the embedded core in this same app.
     const res = await fetch(url, { signal: ctl.signal, headers: { accept: 'application/json' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()) as T;
@@ -47,14 +50,22 @@ async function fetchJson<T>(url: string): Promise<T> {
   }
 }
 
+function apiUrl(baseUrl: string, path: string): string {
+  const base = aetherisBaseUrl(baseUrl);
+  return base ? `${base}${path}` : path;
+}
+
 export function aetherisBaseUrl(raw: string | undefined): string {
   const t = (raw ?? '').trim().replace(/\/+$/, '');
-  return t || 'http://localhost:3100';
+  // Empty = the embedded core: Aetheris's API is vendored into this app and
+  // served from the same origin under /api/*. A non-empty value targets an
+  // external Aetheris One instance instead (advanced).
+  return t;
 }
 
 export async function aetherisHealth(baseUrl: string): Promise<AetherisHealth | null> {
   try {
-    return await fetchJson<AetherisHealth>(`${aetherisBaseUrl(baseUrl)}/api/health`);
+    return await fetchJson<AetherisHealth>(apiUrl(baseUrl, '/api/health'));
   } catch {
     return null;
   }
@@ -62,7 +73,7 @@ export async function aetherisHealth(baseUrl: string): Promise<AetherisHealth | 
 
 export async function aetherisCapabilities(baseUrl: string): Promise<AetherisCapabilities | null> {
   try {
-    return await fetchJson<AetherisCapabilities>(`${aetherisBaseUrl(baseUrl)}/api/capabilities?limit=80`);
+    return await fetchJson<AetherisCapabilities>(apiUrl(baseUrl, '/api/capabilities?limit=80'));
   } catch {
     return null;
   }
@@ -126,11 +137,10 @@ export async function aetherisChat(
   baseUrl: string,
   messages: Array<{ role: string; content: string }>,
 ): Promise<AetherisChatResult | null> {
-  const base = aetherisBaseUrl(baseUrl);
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 120000);
   try {
-    const res = await fetch(`${base}/api/chat`, {
+    const res = await fetch(apiUrl(baseUrl, '/api/chat'), {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'text/event-stream' },
       body: JSON.stringify({ messages: messages.filter((m) => m.role !== 'system').slice(-40) }),
@@ -153,7 +163,13 @@ export async function aetherisChat(
       }
     }
     if (buf.trim()) frames.push(...parseSse(buf));
-    return reduceSse(frames);
+    try {
+      return reduceSse(frames);
+    } catch (e) {
+      // The core streams an explicit error event when every provider failed
+      // (e.g. no outbound internet). Surface it instead of a generic failure.
+      return { content: '', error: (e as Error)?.message ?? 'Aetheris reported an error' };
+    }
   } catch {
     return null;
   } finally {

@@ -1,20 +1,21 @@
 'use client';
-// SUTRA ⇄ Aetheris One. Aetheris is a local Intelligence OS by the same
-// author (github.com/rajaram-2005/Aetheris). This page browses its
-// capability registry and delegates prompts to its agent core over its
-// local HTTP API. Purely optional — the workspace is complete without it.
+// SUTRA ⇄ Aetheris core — embedded. Aetheris One (an Intelligence OS by the
+// same author, github.com/rajaram-2005/Aetheris) is vendored into this app:
+// its capability registry, agent core and SSE chat stream run right here on
+// this server under /api/*. One app, one launch, one intelligence layer.
+// An external Aetheris instance can still be targeted (advanced) instead.
 
 import React, { useEffect, useState } from 'react';
-import { Bot, ExternalLink, PlugZap, RefreshCw, SendHorizonal, Server } from 'lucide-react';
+import { Bot, ExternalLink, RefreshCw, SendHorizonal } from 'lucide-react';
 import { GlassPanel, SectionTitle } from '@/components/ui';
 import { useSutra } from '@/lib/store';
 import { aetherisCapabilities, aetherisChat, aetherisHealth } from '@/lib/aetheris';
 import type { AetherisCapabilities, AetherisChatResult, AetherisHealth } from '@/lib/aetheris';
-import { normalizeBaseUrl } from '@/lib/server';
 
 export default function AetherisPage() {
-  const { s, setSettings, act } = useSutra();
-  const baseUrl = s.settings.aetheris?.baseUrl ?? 'http://localhost:3100';
+  const { s, act } = useSutra();
+  const baseUrl = s.settings.aetheris?.baseUrl ?? '';
+  const embedded = baseUrl.trim() === '';
 
   const [health, setHealth] = useState<AetherisHealth | null>(null);
   const [caps, setCaps] = useState<AetherisCapabilities | null>(null);
@@ -24,15 +25,14 @@ export default function AetherisPage() {
   const [reply, setReply] = useState<AetherisChatResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const probe = async (url?: string) => {
-    const target = url ?? baseUrl;
+  const probe = async () => {
     setProbing(true);
     setError(null);
     try {
-      const h = await aetherisHealth(target);
+      const h = await aetherisHealth(baseUrl);
       setHealth(h);
-      setCaps(h?.ok ? await aetherisCapabilities(target) : null);
-      if (!h) setError('Aetheris is not reachable. Start it locally (see below) and check the base URL.');
+      setCaps(h?.ok ? await aetherisCapabilities(baseUrl) : null);
+      if (!h) setError('The intelligence core did not answer. Reload this page; the core is served by this app itself.');
     } finally {
       setProbing(false);
     }
@@ -41,7 +41,7 @@ export default function AetherisPage() {
   useEffect(() => {
     void probe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [baseUrl]);
 
   const delegate = async () => {
     const p = prompt.trim();
@@ -52,11 +52,16 @@ export default function AetherisPage() {
     try {
       const r = await aetherisChat(baseUrl, [{ role: 'user', content: p }]);
       if (!r) {
-        setError('Delegation failed — is Aetheris running and the base URL correct?');
+        setError('Delegation failed — is the core responsive? Try again in a moment.');
+        return;
+      }
+      if (r.error) {
+        setError(r.error);
+        setReply({ ...r, content: '' });
         return;
       }
       setReply(r);
-      act('aetheris', 'delegated to Aetheris', `${r.content.length} chars${r.model ? ` · ${r.model}` : ''}`, undefined);
+      act('aetheris', 'delegated to the intelligence core', `${r.content.length} chars${r.model ? ` · ${r.model}` : ''}`, undefined);
     } finally {
       setBusy(false);
     }
@@ -66,18 +71,22 @@ export default function AetherisPage() {
     <div className="space-y-6">
       <SectionTitle
         overline="aetheris"
-        title="Connected intelligence."
-        sub="Aetheris One is your local Intelligence OS — capability registry, agent core and knowledge fabric. SUTRA treats it as an optional connected brain over its local HTTP API."
+        title="The intelligence core."
+        sub="Aetheris One lives inside this app now — capability registry, agent core (Prime planner → Hermes specialists → Metis verifier) and knowledge fabric, all served by this same server."
       />
 
       <GlassPanel className="p-5 space-y-4">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>BRIDGE</span>
-          <span
-            className="chip"
-            style={{ color: health ? 'var(--ok)' : error ? 'var(--warn)' : 'var(--dim)' }}
-          >
-            {health ? `online · aetheris-one v${health.version}${health.uptime_s ? ` · up ${Math.round(health.uptime_s / 60)}m` : ''}` : probing ? 'probing…' : 'offline'}
+          <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>CORE</span>
+          <span className="chip" style={{ color: health ? 'var(--ok)' : error ? 'var(--warn)' : 'var(--dim)' }}>
+            {health
+              ? `online · aetheris-one v${health.version} · embedded${health.uptime_s ? ` · up ${Math.round(health.uptime_s / 60)}m` : ''}`
+              : probing
+                ? 'probing…'
+                : 'unreachable'}
+          </span>
+          <span className="chip !text-[10px]" style={{ color: 'var(--acc2)' }}>
+            {embedded ? 'same app · same origin · /api/*' : `external · ${baseUrl}`}
           </span>
           <button onClick={() => void probe()} disabled={probing} className="btn-ghost !py-2 !px-3 text-xs disabled:opacity-50">
             <RefreshCw size={13} /> re-probe
@@ -88,46 +97,21 @@ export default function AetherisPage() {
             </span>
           )}
         </div>
-
-        <div className="flex flex-col md:flex-row gap-3">
-          <label className="font-mono text-[10px] flex items-center gap-2 shrink-0 self-center" style={{ color: 'var(--dim)' }}>
-            <Server size={12} /> base URL
-          </label>
-          <input
-            value={baseUrl}
-            onChange={(e) => setSettings({ aetheris: { baseUrl: normalizeBaseUrl(e.target.value) } })}
-            className="glass-2 flex-1 px-4 py-2.5 font-mono text-xs outline-none"
-            style={{ color: 'var(--ink)' }}
-            placeholder="http://localhost:3100"
-          />
-          <button onClick={() => void probe()} disabled={probing} className="btn-ghost !py-2 !px-3 text-xs">
-            <PlugZap size={13} /> test
-          </button>
-        </div>
         {error && <div className="font-mono text-[11px]" style={{ color: 'var(--warn)' }}>⚠ {error}</div>}
-
         <div className="text-xs leading-relaxed" style={{ color: 'var(--dim)' }}>
-          Start Aetheris alongside SUTRA on another port:
-          <pre className="mt-2 glass-2 rounded-lg p-3 font-mono text-[11px] overflow-x-auto" style={{ color: 'var(--acc2)' }}>
-{`git clone https://github.com/rajaram-2005/Aetheris.git
-cd Aetheris && npm ci && cp .env.example .env.local
-npm run dev -- --hostname 127.0.0.1 -p 3100`}
-          </pre>
-          <a
-            href="https://github.com/rajaram-2005/Aetheris"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 mt-1"
-            style={{ color: 'var(--acc2)' }}
-          >
+          The core is vendored from{' '}
+          <a href="https://github.com/rajaram-2005/Aetheris" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1" style={{ color: 'var(--acc2)' }}>
             github.com/rajaram-2005/Aetheris <ExternalLink size={11} />
-          </a>
+          </a>{' '}
+          and served by this app — nothing to install, no second server. Model-provider keys stay optional: the core
+          answers from its deterministic offline engine when no provider is configured, and uses any configured local
+          or online provider when one is.
         </div>
       </GlassPanel>
 
       <GlassPanel className="p-5 space-y-4">
         <div className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>
-          DELEGATE · prompt → Aetheris agent core (Prime planner → Hermes → Metis verifier)
+          DELEGATE · prompt → agent core (Prime planner → Hermes → Metis verifier)
         </div>
         <div className="flex flex-col md:flex-row gap-3">
           <textarea
@@ -178,7 +162,7 @@ npm run dev -- --hostname 127.0.0.1 -p 3100`}
         </div>
         {!caps ? (
           <div className="text-xs" style={{ color: 'var(--dim)' }}>
-            {health ? 'Registry unreachable.' : 'Connect to Aetheris to browse its registry — models, agents, tools, MCP connectors and more.'}
+            {health ? 'Registry unreachable.' : 'Waiting for the core…'}
           </div>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2 max-h-[420px] overflow-y-auto pr-1">
