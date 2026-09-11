@@ -2,8 +2,10 @@
 // Installing an item lands it in the local registry with its declared scopes.
 
 import type { CatalogItem, Workflow, WorkflowNode, McpServer, SkillDef } from '@sutra/shared';
+import { PLUGIN_CATALOG } from './catalog-plugins';
 
 export const CATALOG: CatalogItem[] = [
+  ...PLUGIN_CATALOG,
   { id: 'cat-rag-tuning', kind: 'skill', name: 'RAG Tuning', description: 'Chunk sizes, overlap, rerank blends and citation formats for grounded answers.', version: '1.0.0', author: 'Aetherion', license: 'MIT', scopes: ['fs.read'], tags: ['rag', 'knowledge'] },
   { id: 'cat-data-pipeline', kind: 'skill', name: 'Data Pipeline', description: 'Source → normalize → validate → store, with idempotent steps.', version: '0.9.2', author: 'Aetherion', license: 'MIT', scopes: ['db', 'network'], tags: ['data'] },
   { id: 'cat-prompt-craft', kind: 'skill', name: 'Prompt Craft', description: 'Role, context, format, examples, constraints — in that order.', version: '1.0.0', author: 'Aetherion', license: 'MIT', scopes: [], tags: ['prompts'] },

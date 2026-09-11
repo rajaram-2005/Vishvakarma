@@ -51,11 +51,16 @@ export default function MarketplacePage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <SectionTitle
-          overline="marketplace"
-          title="Capability, on demand."
-          sub="Every item declares its scopes before install. Installing is local: it lands in your registry, audited and revocable."
-        />
+        <div>
+          <div className="overline mb-2">marketplace</div>
+          <div className="display-1">Capability, on demand<span className="text-grad">.</span></div>
+          <div className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: 'var(--dim)' }}>
+            Every item declares its scopes before install. Installing is local: it lands in your registry, audited and revocable.
+          </div>
+        </div>
+        <span className="chip" style={{ color: 'var(--acc2)' }}>
+          {CATALOG.length} items · {CATALOG.filter((c) => c.kind === 'plugin').length} plugins
+        </span>
         {toast && <span className="chip" style={{ color: 'var(--ok)' }}>{toast}</span>}
       </div>
 

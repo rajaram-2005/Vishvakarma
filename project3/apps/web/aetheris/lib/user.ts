@@ -38,14 +38,33 @@ export async function getUserId(options: { allowAnonymous?: boolean; freshAnonym
   return { uid: randomBytes(16).toString("hex"), isNew: true };
 }
 
+/** Should the anonymous uid cookie carry the Secure attribute? */
+function cookieSecure(): boolean {
+  // In production behind a real deployment HTTPS is the norm, but plain-HTTP
+  // hosts (LAN, `next start` on localhost, Docker on a private network) must
+  // keep cookies non-secure — otherwise browsers drop them and every request
+  // rotates a fresh anonymous uid, breaking schedules/memory/kb persistence.
+  if (process.env.NODE_ENV !== 'production') return false;
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    try {
+      return new URL(process.env.NEXT_PUBLIC_APP_URL).protocol === 'https:';
+    } catch {
+      /* fall through */
+    }
+  }
+  // No canonical URL configured → assume plain-HTTP self-hosting
+  // (Render/Fly/Vercel inject their own public URL; the Dockerfile ships none).
+  return false;
+}
+
 export function uidCookie(uid: string) {
   return {
     name: UID_COOKIE,
     value: uid,
     httpOnly: true,
-    sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
+    sameSite: 'lax' as const,
+    secure: cookieSecure(),
+    path: '/',
     maxAge: 60 * 60 * 24 * 365,
   };
 }

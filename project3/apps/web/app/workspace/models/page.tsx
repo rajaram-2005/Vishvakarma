@@ -8,8 +8,9 @@ import { GlassPanel, SectionTitle, Stat } from '@/components/ui';
 import { route } from '@sutra/model-adapters';
 import { providerFor, reachableModels } from '@/lib/providers';
 import { usePuter, usePuterAi } from '@/lib/puter';
-import { Cloud, RefreshCw } from 'lucide-react';
+import { Cloud, RefreshCw, Search } from 'lucide-react';
 import { OWN_MODELS } from '@/lib/localmodels/registry';
+import { PUTER_MODEL_CATALOG, mergePuterModels } from '@/lib/puter-models';
 
 export default function ModelsPage() {
   const { s } = useSutra();
@@ -18,6 +19,8 @@ export default function ModelsPage() {
   const [ping, setPing] = useState<Record<string, { ok: boolean; ms: number; detail?: string } | 'busy'>>({});
   const [testPrompt, setTestPrompt] = useState('Write a TypeScript function that validates an email address');
   const [decision, setDecision] = useState<ReturnType<typeof route> | null>(null);
+  const [gatewaySearch, setGatewaySearch] = useState('');
+  const [gatewayShown, setGatewayShown] = useState(48);
 
   const pool = reachableModels(s.models, s.settings);
 
@@ -120,46 +123,98 @@ export default function ModelsPage() {
       <GlassPanel className="p-5 space-y-3">
         <div className="flex flex-wrap items-center gap-3">
           <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--acc2)' }}>
-            PUTER AI GATEWAY · {puterAi.available ? 'connected' : puter.signedIn ? 'ready' : 'connect to browse'}
+            PUTER AI GATEWAY · {PUTER_MODEL_CATALOG.length}+ MODELS
           </span>
-          <span className="chip !text-[9px]" style={{ color: puterAi.available ? 'var(--ok)' : 'var(--dim)' }}>
-            500+ models · billed to your Puter account · no API keys
+          <span className="chip !text-[9px]" style={{ color: puter.signedIn ? 'var(--ok)' : 'var(--dim)' }}>
+            {puter.signedIn
+              ? puterAi.models
+                ? `${puterAi.models.length} live · validated by the gateway`
+                : 'live validation pending…'
+              : 'sign in to live-validate · catalog browsable now'}
           </span>
-          {!puterAi.available && (
+          <span className="chip !text-[9px]" style={{ color: 'var(--dim)' }}>
+            billed to your Puter account · no API keys
+          </span>
+          {!puter.signedIn && (
             <a href="/workspace/settings" className="font-mono text-[10px]" style={{ color: 'var(--acc2)' }}>
               connect Puter ↗
             </a>
           )}
-          {puterAi.available && (
+          {puter.signedIn && (
             <button onClick={() => void puterAi.loadModels()} disabled={puterAi.loadingModels} className="btn-ghost !py-2 !px-3 text-xs disabled:opacity-50">
-              <RefreshCw size={12} /> {puterAi.loadingModels ? 'listing…' : 'refresh catalog'}
+              <RefreshCw size={12} /> {puterAi.loadingModels ? 'listing…' : 'refresh live list'}
             </button>
           )}
         </div>
-        {puterAi.available && puterAi.models && (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2 max-h-[360px] overflow-y-auto pr-1">
-            {puterAi.models.slice(0, 60).map((m) => (
-              <div key={m.id} className="glass-2 rounded-lg p-3 border" style={{ borderColor: 'var(--line)' }}>
-                <div className="flex items-center gap-2">
-                  <Cloud size={12} style={{ color: 'var(--acc2)' }} />
-                  <span className="font-mono text-[11px] font-semibold truncate" style={{ color: 'var(--ink)' }}>{m.name}</span>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                  <span className="chip !text-[8px]" style={{ color: 'var(--acc2)' }}>{m.provider}</span>
-                  {m.contextWindow ? (
-                    <span className="chip !text-[8px]" style={{ color: 'var(--dim)' }}>{Math.round(m.contextWindow / 1000)}k ctx</span>
-                  ) : null}
-                </div>
+
+        {(() => {
+          const liveIds = new Set((puterAi.models ?? []).map((m) => m.id));
+          const merged = mergePuterModels(puterAi.models ?? []);
+          const q = gatewaySearch.trim().toLowerCase();
+          const filtered = q
+            ? merged.filter((m) => m.id.toLowerCase().includes(q) || m.name.toLowerCase().includes(q) || m.provider.toLowerCase().includes(q))
+            : merged;
+          const shown = filtered.slice(0, gatewayShown);
+          return (
+            <>
+              <div className="pill-input">
+                <Search size={14} style={{ color: 'var(--dim)' }} />
+                <input
+                  value={gatewaySearch}
+                  onChange={(e) => { setGatewaySearch(e.target.value); setGatewayShown(48); }}
+                  placeholder={`search ${PUTER_MODEL_CATALOG.length}+ gateway models (gpt, claude, gemini, llama, qwen…)`}
+                />
               </div>
-            ))}
-          </div>
-        )}
-        {puterAi.available && puterAi.modelsError && (
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2 max-h-[420px] overflow-y-auto pr-1">
+                {shown.map((m) => {
+                  const live = liveIds.has(m.id);
+                  return (
+                    <div key={m.id} className="glass-2 rounded-lg p-3 border" style={{ borderColor: live ? 'color-mix(in srgb, var(--ok) 35%, var(--line))' : 'var(--line)' }}>
+                      <div className="flex items-center gap-2">
+                        <Cloud size={12} style={{ color: live ? 'var(--ok)' : 'var(--acc2)' }} />
+                        <span className="font-mono text-[11px] font-semibold truncate" style={{ color: 'var(--ink)' }}>{m.name}</span>
+                        <span className="chip !text-[8px] ml-auto shrink-0" style={{ color: live ? 'var(--ok)' : 'var(--dim)' }}>
+                          {live ? 'live · validated' : 'catalog'}
+                        </span>
+                      </div>
+                      <div className="font-mono text-[9px] mt-0.5 truncate" style={{ color: 'var(--dim)' }}>{m.id}</div>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                        <span className="chip !text-[8px]" style={{ color: 'var(--acc2)' }}>{m.provider}</span>
+                        {m.contextWindow > 0 && (
+                          <span className="chip !text-[8px]" style={{ color: 'var(--dim)' }}>{Math.round(m.contextWindow / 1000)}k ctx</span>
+                        )}
+                        {m.costIn > 0 && (
+                          <span className="chip !text-[8px]" style={{ color: 'var(--dim)' }}>${m.costIn}/${m.costOut} /1M</span>
+                        )}
+                        {m.capabilities.slice(0, 2).map((c) => (
+                          <span key={c} className="chip !text-[8px]" style={{ color: 'var(--dim)' }}>{c}</span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-[10px] font-mono" style={{ color: 'var(--dim)' }}>
+                  {filtered.length} of {PUTER_MODEL_CATALOG.length} shown{q ? ` for “${gatewaySearch}”` : ''}
+                </div>
+                {filtered.length > gatewayShown && (
+                  <button onClick={() => setGatewayShown((n) => n + 96)} className="chip hover:opacity-100 !text-[10px]" style={{ color: 'var(--acc2)' }}>
+                    show more ({filtered.length - gatewayShown} left)
+                  </button>
+                )}
+              </div>
+            </>
+          );
+        })()}
+
+        {puterAi.modelsError && (
           <div className="font-mono text-[10px]" style={{ color: 'var(--warn)' }}>⚠ {puterAi.modelsError}</div>
         )}
         <p className="text-xs leading-relaxed" style={{ color: 'var(--dim)' }}>
-          Pick any gateway model in Chat — the model selector lists them once you are signed in, and requests route
-          through Puter's AI gateway straight to the provider.
+          The catalog lists {PUTER_MODEL_CATALOG.length}+ models Puter's AI gateway exposes (OpenAI, Anthropic, Google, Meta, Mistral, xAI, DeepSeek and
+          40+ other providers). Every id is re-validated against the live puter.ai.listModels() result when you are signed in — live models get the
+          “live · validated” badge. Pick any of them in Chat once connected; requests route through the gateway straight to the provider.
         </p>
       </GlassPanel>
 

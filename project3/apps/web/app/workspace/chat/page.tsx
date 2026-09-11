@@ -1,10 +1,15 @@
 'use client';
-// Aetherion — Chat. Modern: aura header, gradient/glass bubbles, the
-// own-model family front and centre, router reasoning on every answer.
+// Aetherion — Chat. ChatGPT-inspired surface + Claude-style artifacts:
+// conversation search, a model-picker pill above the composer, gradient
+// bubbles, code blocks rendered as Artifact cards (copy · language · lines)
+// and per-message actions.
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Brain, Calculator, Code2, LineChart, Plus, SendHorizonal, Sparkles, Wrench } from 'lucide-react';
+import {
+  Bot, Brain, Calculator, Check, ChevronDown, Code2, Copy, LineChart, Plus,
+  Search, SendHorizonal, Sparkles, Wrench, X,
+} from 'lucide-react';
 import { useSutra } from '@/lib/store';
 import { sendChat, ownModelInfos } from '@/lib/chat';
 import { reachableModels } from '@/lib/providers';
@@ -30,12 +35,180 @@ const SUGGESTIONS = [
   { icon: Brain, title: 'Aetherion Writer', text: 'Write a story about a lonely space station' },
 ];
 
+// ── Claude-style artifact renderer ────────────────────────────────────────────
+type Part = { type: 'text'; text: string } | { type: 'code'; lang: string; code: string };
+
+function splitParts(content: string): Part[] {
+  const parts: Part[] = [];
+  const re = /```([a-z0-9_+-]*)\n([\s\S]*?)```/gi;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(content)) !== null) {
+    if (m.index > last) parts.push({ type: 'text', text: content.slice(last, m.index) });
+    parts.push({ type: 'code', lang: m[1] || 'code', code: m[2].replace(/\n$/, '') });
+    last = m.index + m[0].length;
+  }
+  if (last < content.length) parts.push({ type: 'text', text: content.slice(last) });
+  return parts;
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  };
+  return (
+    <button onClick={() => void copy()} className="chip !text-[9px] hover:opacity-100" style={{ color: 'var(--acc2)', cursor: 'pointer' }}>
+      {copied ? <Check size={10} /> : <Copy size={10} />} {copied ? 'copied' : 'copy'}
+    </button>
+  );
+}
+
+function ArtifactCard({ lang, code }: { lang: string; code: string }) {
+  const lines = code.split('\n').length;
+  return (
+    <div className="glass-2 rounded-xl overflow-hidden border" style={{ borderColor: 'var(--line)' }}>
+      <div className="flex items-center gap-2 px-3 py-2 border-b" style={{ borderColor: 'var(--line)', background: 'color-mix(in srgb, var(--panel-2) 60%, transparent)' }}>
+        <span className="chip !text-[8px]" style={{ color: 'var(--acc3)' }}>{lang || 'code'}</span>
+        <span className="text-[9px] font-mono" style={{ color: 'var(--dim)' }}>{lines} line{lines === 1 ? '' : 's'}</span>
+        <span className="chip !text-[8px]" style={{ color: 'var(--dim)' }}>artifact</span>
+        <div className="ml-auto">
+          <CopyButton text={code} />
+        </div>
+      </div>
+      <pre className="console overflow-x-auto px-4 py-3 max-h-[340px] overflow-y-auto text-[11.5px]">{code}</pre>
+    </div>
+  );
+}
+
+function MessageContent({ content }: { content: string }) {
+  const parts = splitParts(content);
+  if (!parts.some((p) => p.type === 'code')) return <>{content}</>;
+  return (
+    <div className="space-y-2.5">
+      {parts.map((p, i) =>
+        p.type === 'code' ? <ArtifactCard key={i} lang={p.lang} code={p.code} /> : p.text.trim() ? (
+          <div key={i} className="whitespace-pre-wrap">{p.text}</div>
+        ) : null,
+      )}
+    </div>
+  );
+}
+
+// ── Model picker pill (ChatGPT-style) ────────────────────────────────────────
+function ModelPicker({
+  pin, setPin, pool, puterModels,
+}: {
+  pin: string;
+  setPin: (id: string) => void;
+  pool: ModelInfo[];
+  puterModels: Array<{ id: string; name: string; provider: string }> | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState('');
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, []);
+
+  const current = pool.find((m) => m.id === pin);
+  const live = puterModels ?? [];
+  const query = q.trim().toLowerCase();
+  const filter = (ms: ModelInfo[]) => (query ? ms.filter((m) => m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query)) : ms);
+  const own = filter(pool.filter((m) => m.runtime === 'aetherion-own'));
+  const local = filter(pool.filter((m) => m.runtime !== 'aetherion-own' && m.runtime !== 'puter-cloud'));
+  const puter = query
+    ? live.filter((m) => m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query)).slice(0, 40)
+    : live.slice(0, 24);
+
+  return (
+    <div ref={boxRef} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="chip hover:opacity-100 !py-1.5"
+        style={{ color: current ? 'var(--acc2)' : 'var(--dim)', borderColor: current ? 'color-mix(in srgb, var(--acc2) 45%, var(--line))' : undefined }}
+      >
+        <Sparkles size={11} />
+        {current ? current.name : 'auto (router)'}
+        <ChevronDown size={11} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s ease' }} />
+      </button>
+      {open && (
+        <div
+          className="absolute bottom-full left-0 mb-2 w-[320px] max-h-[380px] overflow-y-auto glass-2 rounded-2xl p-2 z-50"
+          style={{ boxShadow: '0 24px 70px -20px rgba(0,0,0,.6)' }}
+        >
+          <div className="pill-input !py-0 mb-2">
+            <Search size={12} style={{ color: 'var(--dim)' }} />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="search models…" autoFocus />
+          </div>
+          <button onClick={() => { setPin(''); setOpen(false); }} className="w-full text-left px-3 py-2 rounded-lg text-xs transition-colors" style={{ color: 'var(--ink)', background: !pin ? 'color-mix(in srgb, var(--acc) 14%, transparent)' : 'transparent' }}>
+            auto (router) <span className="font-mono text-[9px]" style={{ color: 'var(--dim)' }}>— let the router decide</span>
+          </button>
+          {own.length > 0 && (
+            <>
+              <div className="font-mono text-[8px] tracking-widest px-3 pt-2 pb-1" style={{ color: 'var(--dim)' }}>OWN MODELS · ON-DEVICE</div>
+              {own.map((m) => (
+                <button key={m.id} onClick={() => { setPin(m.id); setOpen(false); }} className="w-full text-left px-3 py-2 rounded-lg text-xs transition-colors" style={{ color: m.id === pin ? 'var(--acc2)' : 'var(--ink)', background: m.id === pin ? 'color-mix(in srgb, var(--acc) 14%, transparent)' : 'transparent' }}>
+                  {m.name} <span className="font-mono text-[9px]" style={{ color: 'var(--ok)' }}>offline ✓</span>
+                </button>
+              ))}
+            </>
+          )}
+          {local.length > 0 && (
+            <>
+              <div className="font-mono text-[8px] tracking-widest px-3 pt-2 pb-1" style={{ color: 'var(--dim)' }}>LOCAL & API</div>
+              {local.map((m) => (
+                <button key={m.id} onClick={() => { setPin(m.id); setOpen(false); }} className="w-full text-left px-3 py-2 rounded-lg text-xs transition-colors" style={{ color: m.id === pin ? 'var(--acc2)' : 'var(--ink)' }}>
+                  {m.name}
+                </button>
+              ))}
+            </>
+          )}
+          {puter.length > 0 && (
+            <>
+              <div className="font-mono text-[8px] tracking-widest px-3 pt-2 pb-1" style={{ color: 'var(--dim)' }}>PUTER GATEWAY · {live.length} LIVE</div>
+              {puter.map((m) => (
+                <button key={m.id} onClick={() => { setPin(m.id); setOpen(false); }} className="w-full text-left px-3 py-2 rounded-lg text-xs transition-colors" style={{ color: m.id === pin ? 'var(--acc2)' : 'var(--ink)' }}>
+                  <span className="truncate">{m.name}</span> <span className="font-mono text-[9px] truncate" style={{ color: 'var(--dim)' }}>{m.provider}</span>
+                </button>
+              ))}
+              {live.length === 0 && (
+                <div className="px-3 py-2 text-[10px]" style={{ color: 'var(--dim)' }}>
+                  Sign in to Puter (Settings) to use the 500+ gateway models here.
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 export default function ChatPage() {
   const { s, mutate, trace, act } = useSutra();
   const puterAi = usePuterAi();
   const [convId, setConvId] = useState(s.conversations[0]?.id ?? '');
   const [input, setInput] = useState('');
   const [pin, setPin] = useState('');
+  const [convSearch, setConvSearch] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [streamText, setStreamText] = useState('');
   const endRef = useRef<HTMLDivElement>(null);
@@ -60,7 +233,6 @@ export default function ChatPage() {
       available: true,
       local: false,
     }));
-    // Own-model family first — they are the product's own models.
     return [...ownModelInfos(), ...s.models, ...puterModels];
   }, [s.models, puterAi.models]);
 
@@ -138,7 +310,10 @@ export default function ChatPage() {
     act('chat', `chat · ${result.modelName}`, `routed: ${result.route.analysis} · ${result.content.length} chars`, live);
   };
 
-  const pinnedName = pool.find((m) => m.id === pin)?.name ?? null;
+  const filteredConvs = useMemo(() => {
+    const q = convSearch.trim().toLowerCase();
+    return q ? s.conversations.filter((c) => c.title.toLowerCase().includes(q)) : s.conversations;
+  }, [s.conversations, convSearch]);
 
   return (
     <div className="grid lg:grid-cols-[250px_1fr] gap-5">
@@ -152,8 +327,17 @@ export default function ChatPage() {
           <button onClick={newConv} className="btn-primary w-full justify-center !py-2 text-xs">
             <Plus size={13} /> New conversation
           </button>
-          <div className="mt-3 space-y-1 max-h-[240px] overflow-y-auto">
-            {s.conversations.map((c) => (
+          <div className="pill-input !py-0 mt-2.5">
+            <Search size={12} style={{ color: 'var(--dim)' }} />
+            <input value={convSearch} onChange={(e) => setConvSearch(e.target.value)} placeholder="search conversations…" />
+            {convSearch && (
+              <button onClick={() => setConvSearch('')} className="p-1" style={{ color: 'var(--dim)' }}>
+                <X size={12} />
+              </button>
+            )}
+          </div>
+          <div className="mt-2.5 space-y-1 max-h-[220px] overflow-y-auto">
+            {filteredConvs.map((c) => (
               <button
                 key={c.id}
                 onClick={() => setConvId(c.id)}
@@ -167,10 +351,13 @@ export default function ChatPage() {
                 <div className="font-mono text-[9px] mt-0.5 opacity-70">{timeAgo(c.createdAt)}</div>
               </button>
             ))}
+            {filteredConvs.length === 0 && (
+              <div className="text-[10px] px-2 py-1" style={{ color: 'var(--dim)' }}>no conversations match</div>
+            )}
           </div>
         </div>
 
-        {/* Own-model family — always available, zero network */}
+        {/* Own-model family */}
         <div className="glass p-3">
           <div className="font-mono text-[9px] tracking-widest mb-2 flex items-center justify-between">
             <span style={{ color: 'var(--dim)' }}>OWN MODELS · {OWN_MODELS.length}</span>
@@ -202,24 +389,6 @@ export default function ChatPage() {
             Tap to pin. Deterministic, on-device — nothing leaves the machine.
           </div>
         </div>
-
-        <div className="glass p-3">
-          <div className="font-mono text-[9px] tracking-widest mb-2" style={{ color: 'var(--dim)' }}>PIN MODEL</div>
-          <select
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            className="glass-2 w-full px-3 py-2 text-xs outline-none"
-            style={{ color: 'var(--ink)' }}
-          >
-            <option value="">auto (router)</option>
-            {pool.map((m) => (
-              <option key={m.id} value={m.id}>{m.name}</option>
-            ))}
-          </select>
-          <div className="mt-2 text-[10px] leading-relaxed" style={{ color: 'var(--dim)' }}>
-            {pool.length} reachable models. The router analyzes every request and shows its reasoning on each answer.
-          </div>
-        </div>
       </div>
 
       {/* ── Conversation ─────────────────────────────────────────── */}
@@ -236,7 +405,7 @@ export default function ChatPage() {
               <span className="dot-online" />
             </div>
             <div className="text-[10px] font-mono truncate" style={{ color: 'var(--dim)' }}>
-              {pinnedName ? `pinned → ${pinnedName}` : 'auto router · own models + connected providers'}
+              own models + {puterAi.models ? `${puterAi.models.length} Puter` : 'Puter gateway'} + local runtimes
             </div>
           </div>
         </div>
@@ -245,7 +414,9 @@ export default function ChatPage() {
         <div className="relative flex-1 overflow-y-auto p-5 space-y-5">
           {conv?.messages.map((m) => (
             <motion.div key={m.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-              <div className={`max-w-[85%] ${m.role === 'user' ? 'msg-user' : 'msg-assistant'}`}>{m.content}</div>
+              <div className={`max-w-[85%] ${m.role === 'user' ? 'msg-user' : 'msg-assistant'}`}>
+                <MessageContent content={m.content} />
+              </div>
               {m.role === 'assistant' && (
                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                   <span className="chip !text-[9px]" style={{ color: 'var(--acc2)' }}>routed: {m.route?.chosenName ?? m.model}</span>
@@ -253,7 +424,11 @@ export default function ChatPage() {
                   {m.route?.reasons.slice(0, 2).map((r) => (
                     <span key={r} className="chip !text-[9px]" style={{ color: 'var(--dim)' }}>{r}</span>
                   ))}
+                  <CopyButton text={m.content} />
                 </div>
+              )}
+              {m.role === 'user' && (
+                <div className="mt-1.5"><CopyButton text={m.content} /></div>
               )}
             </motion.div>
           ))}
@@ -270,7 +445,7 @@ export default function ChatPage() {
             <div className="h-full flex flex-col items-center justify-center text-center py-6">
               <div className="display-2 mb-1.5">Aetherion is online<span className="text-grad">.</span></div>
               <div className="text-sm mb-6 max-w-md" style={{ color: 'var(--dim)' }}>
-                Six own models run right here — math, code, summaries, data, stories — zero keys, zero network. Connect Ollama or pin the Aetheris core for more.
+                Six own models run right here — math, code, summaries, data, stories — zero keys, zero network. Pick a model in the pill below, or let the router decide.
               </div>
               <div className="grid sm:grid-cols-2 gap-2.5 w-full max-w-lg">
                 {SUGGESTIONS.map((sg) => (
@@ -288,7 +463,8 @@ export default function ChatPage() {
         </div>
 
         {/* composer */}
-        <div className="relative p-4 border-t" style={{ borderColor: 'var(--line)' }}>
+        <div className="relative p-4 border-t space-y-2.5" style={{ borderColor: 'var(--line)' }}>
+          <ModelPicker pin={pin} setPin={setPin} pool={pool} puterModels={puterAi.models} />
           <div className="pill-input">
             <input
               value={input}
@@ -306,7 +482,7 @@ export default function ChatPage() {
               <SendHorizonal size={15} />
             </button>
           </div>
-          <div className="mt-2 flex items-center justify-between font-mono text-[9px] tracking-wider" style={{ color: 'var(--dim)' }}>
+          <div className="flex items-center justify-between font-mono text-[9px] tracking-wider" style={{ color: 'var(--dim)' }}>
             <span>own models: {OWN_MODELS.length} on-device · every answer is traced</span>
             <span>
               core:{' '}
