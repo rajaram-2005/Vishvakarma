@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { OrchestrationCore } from './core';
+import { CostEngine } from './cost';
 import { NeedsPermissionError, type CapabilityContract, type NodeExecutor } from './types';
 import type { NetworkRequirement, RuntimeKind } from './types';
 
@@ -231,5 +232,70 @@ describe('OrchestrationCore — execution engine (§7/§8/§45/§63)', () => {
       availability: 'stable',
     });
     expect(fn).toHaveBeenCalledWith({ capabilityId: 'x' });
+  });
+});
+
+describe('OrchestrationCore — approval & cost integration (§34/§35/§64)', () => {
+  it('surfaces an approval request and can be auto-approved', async () => {
+    const core = new OrchestrationCore();
+    registerScenario(core);
+    const { graph } = core.plan(REQUEST);
+    let scheduleAttempts = 0;
+    const exec: NodeExecutor = {
+      async execute(node) {
+        // First attempt needs a permission; after approval it proceeds.
+        if (node.id === 'schedule' && scheduleAttempts++ < 1) {
+          throw new NeedsPermissionError('needs write to create schedule', 'fs.write', 'high');
+        }
+        return { result: node.id };
+      },
+    };
+    // The caller (human/UI) approves the permission request.
+    const result = await core.run(graph, exec, {
+      context,
+      pauseForPermission: true,
+      onPermissionRequired: async () => 'approve-once',
+    });
+    expect(result.paused).toBeUndefined();
+    expect(result.failed).toEqual([]);
+    expect(graph.nodes['schedule'].status).toBe('completed');
+    // The approval center recorded + resolved the request.
+    expect(core.approvalCenter.list('approved').length).toBeGreaterThan(0);
+  });
+
+  it('denies a permission request and fails the node', async () => {
+    const core = new OrchestrationCore();
+    registerScenario(core);
+    const { graph } = core.plan(REQUEST);
+    const exec: NodeExecutor = {
+      async execute(node) {
+        if (node.id === 'schedule') {
+          throw new NeedsPermissionError('needs write', 'fs.write', 'high');
+        }
+        return { result: node.id };
+      },
+    };
+    const result = await core.run(graph, exec, {
+      context,
+      pauseForPermission: true,
+      onPermissionRequired: async () => 'deny',
+    });
+    expect(result.failed).toContain('schedule');
+    expect(graph.nodes['schedule'].status).toBe('failed');
+  });
+
+  it('records estimated cost during a run', async () => {
+    const core = new OrchestrationCore();
+    registerScenario(core);
+    const { graph } = core.plan(REQUEST);
+    const cost = new CostEngine();
+    const result = await core.run(graph, okExecutor, {
+      context,
+      costEngine: cost,
+      costScope: 'user:alice',
+    });
+    expect(result.failed).toEqual([]);
+    expect(cost.total()).toBeGreaterThan(0);
+    expect(cost.byScope('user:alice')).toBeGreaterThan(0);
   });
 });

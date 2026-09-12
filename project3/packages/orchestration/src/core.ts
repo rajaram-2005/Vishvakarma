@@ -19,6 +19,8 @@ import { StateMachine, ResumableTask } from './statemachine';
 import { topoOrder, cascadeSkip } from './taskgraph';
 import { HealthRegistry } from './router';
 import { planToTaskGraph } from './planner';
+import { ApprovalCenter } from './approval';
+import { estimateTokens } from './context';
 import type {
   CapabilityContract,
   CompatibilityContext,
@@ -44,6 +46,8 @@ export class OrchestrationCore {
   readonly bus = new EventBus();
   readonly tracer = new Tracer();
   readonly health = new HealthRegistry();
+  /** §35 — universal approval queue (AI + human handoff, §34). */
+  readonly approvalCenter = new ApprovalCenter();
 
   registerCapability(cap: CapabilityContract): CapabilityContract {
     const c = this.registry.register(cap);
@@ -210,11 +214,59 @@ export class OrchestrationCore {
           sm.transition('VERIFYING');
           sm.transition('COMPLETED');
           span.end('ok', { status: 'completed' });
+          if (opts.costEngine && opts.costScope) {
+            const tokens = estimateTokens(String(out.result ?? ''));
+            opts.costEngine.record({ scope: opts.costScope, kind: 'model', amount: (tokens / 1000) * 0.01 });
+          }
           void this.bus.emit('task.completed', { taskId: id });
           completed.push(id);
           settled = true;
         } catch (e) {
           if (e instanceof NeedsPermissionError && opts.pauseForPermission) {
+            // §35 / §34 — surface a universal approval request and pause.
+            const req = this.approvalCenter.request({
+              task: node.name,
+              requestedAction: e.permission,
+              risk: e.risk,
+              reasons: [e.message],
+              model: node.model,
+              plugin: node.tools[0],
+            });
+            // Already-granted session grant? Proceed without pausing.
+            if (this.approvalCenter.isGranted(e.risk)) {
+              node.status = 'running';
+              sm.restore('RUNNING', 'session grant');
+              continue;
+            }
+            if (opts.onPermissionRequired) {
+              const action = await opts.onPermissionRequired({
+                taskId: id,
+                permission: e.permission,
+                risk: e.risk,
+                message: e.message,
+              });
+              this.approvalCenter.decide(req.id, action);
+              if (action === 'deny') {
+                node.status = 'failed';
+                node.error = 'permission denied';
+                void this.bus.emit('security.alert', { risk: e.risk, detail: `denied: ${e.permission}` });
+                void this.bus.emit('task.failed', { taskId: id, error: node.error });
+                failed.push(id);
+                cascadeSkip(graph, id);
+                trace.end('error');
+                return { graph, completed, failed, trace: trace.trace };
+              }
+              if (action === 'inspect') {
+                node.status = 'waiting_for_permission';
+                sm.transition('WAITING_FOR_PERMISSION');
+                span.end('ok', { status: 'waiting_for_permission', permission: e.permission });
+                trace.end('ok');
+                return { graph, completed, failed, paused: id, trace: trace.trace };
+              }
+              node.status = 'running';
+              sm.restore('RUNNING', 'approved');
+              continue;
+            }
             sm.transition('WAITING_FOR_PERMISSION');
             node.status = 'waiting_for_permission';
             span.end('ok', { status: 'waiting_for_permission', permission: e.permission });

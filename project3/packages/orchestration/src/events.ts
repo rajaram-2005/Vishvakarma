@@ -53,12 +53,10 @@ export class EventBus<M extends DomainEventMap = DomainEventMap> {
     this.stats.emitted += 1;
     const specific = [...(this.listeners.get(name) ?? [])];
     const wild = [...(this.listeners.get('*') ?? [])];
-    const all = [...specific, ...wild];
-    this.stats.handlers += all.length;
+    this.stats.handlers += specific.length + wild.length;
     await Promise.all(
-      all.map(async (h) => {
+      specific.map(async (h) => {
         try {
-          if (name === '*') return;
           await (h as Handler<K>)(payload);
         } catch (e) {
           this.stats.errors += 1;

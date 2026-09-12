@@ -129,7 +129,68 @@ console.log(result.completed, result.paused, result.trace.spans.length);
 npx vitest run packages/orchestration
 ```
 
-66 tests covering every subsystem and an end-to-end run of the §122
+96 tests covering every subsystem and an end-to-end run of the §122
 "final scenario" (research → PDF analysis → report → diagram → dashboard →
-library → schedule) with retry, failure-cascade, permission-pause and resume
-behaviours.
+library → schedule) with retry, failure-cascade, permission-pause, approval and
+resume behaviours. Typechecks clean under `strict` (`npm run typecheck`).
+
+## Phase 2 — expanded subsystems
+
+The core was extended to cover the full architecture breadth from the spec:
+
+| Subsystem | Module | Spec |
+| --- | --- | --- |
+| Offline/Online Capability Matrix | `matrix.ts` | §60 |
+| Offline cache policy & connectivity recovery | `matrix.ts` | §61, §62 |
+| Context Builder & Budgeting | `context.ts` | §22, §23 |
+| Universal Output Validation (repair/validate) | `validation.ts` | §17 |
+| Cost Engine & Usage Limits/Quota | `cost.ts` | §64, §65, §66 |
+| Approval Center (AI + human handoff) | `approval.ts` | §34, §35 |
+| Search Engine (semantic + keyword + metadata) | `search.ts` | §48 |
+| Model Ensembles | `ensemble.ts` | §12 |
+| Privacy Modes & Data-Policy Display | `privacy.ts` | §67, §68 |
+| Feature Flags | `featureflags.ts` | §99 |
+| Professional Package Installer | `packages.ts` | §112–114 |
+| Explainability ("why this model") | `explain.ts` | §77 |
+| Durable Job Queue | `jobqueue.ts` | §46 |
+
+`OrchestrationCore` now also integrates the **Approval Center** (a permission
+requirement pauses the run and surfaces a universal approval request; an
+`onPermissionRequired` hook — or a human in the UI — can approve, deny, inspect
+or session-grant) and **Cost tracking** (records estimated spend per run).
+
+## Running it
+
+A CLI and an API/dashboard server make the core executable without the full web
+app. Both are powered by `sample.ts` (sample models + capabilities + a demo
+executor that exercises a transient retry and a permission approval).
+
+```bash
+# Full end-to-end demo of the §122 scenario:
+npx tsx bin/cli.ts demo
+
+# Individual commands:
+npx tsx bin/cli.ts plan "Research X and write a report"
+npx tsx bin/cli.ts matrix
+npx tsx bin/cli.ts health
+npx tsx bin/cli.ts capabilities
+npx tsx bin/cli.ts search "pdf"
+npx tsx bin/cli.ts explain "write a function to sort"
+
+# API + single-page dashboard:
+npx tsx server.ts            # http://localhost:4789
+```
+
+The server exposes `GET /api/matrix`, `GET /api/capabilities`,
+`GET /api/health`, `POST /api/plan`, `POST /api/run` and serves a dashboard at
+`/` that plans/validates/runs a request through the core and visualises the task
+graph, live trace and event/approval log.
+
+## What this proves
+
+The platform is realised as **one core** with surfaces built on top: a single
+`OrchestrationCore` drives capability discovery, compatibility analysis, task
+graph construction, the explicit state machine, resumable execution, permission
+handoff, cost accounting, tracing and events — and the CLI/server demonstrate
+the entire §122 request executing as one continuous operation rather than seven
+separate apps.

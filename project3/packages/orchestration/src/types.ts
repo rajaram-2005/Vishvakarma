@@ -202,13 +202,6 @@ export interface StateTransition {
   note?: string;
 }
 
-export interface Checkpoint {
-  id: string;
-  label: string;
-  completed: boolean;
-  ts?: string;
-}
-
 /* ------------------------------------------------------------------ */
 /* §45 — Event Bus                                                     */
 /* ------------------------------------------------------------------ */
@@ -269,6 +262,21 @@ export interface RunOptions {
   maxAttempts?: number;
   /** If an executor throws NeedsPermissionError, pause instead of failing. */
   pauseForPermission?: boolean;
+  /**
+   * §35 / §34 — When a node needs a permission, let the caller decide
+   * (human-in-the-loop, approval center UI, or automated). Returning 'deny'
+   * fails the node; 'inspect' keeps it paused; anything else continues.
+   */
+  onPermissionRequired?: (req: {
+    taskId: string;
+    permission: string;
+    risk: RiskLevel;
+    message: string;
+  }) => Promise<'approve' | 'deny' | 'approve-once' | 'approve-session' | 'always-ask' | 'inspect'>;
+  /** §64 — Optional cost engine to record estimated spend per run. */
+  costEngine?: { record: (e: { scope: string; kind: 'model'; amount: number }) => unknown };
+  /** Scope under which to record cost (e.g. 'user:alice', 'project:p1'). */
+  costScope?: string;
 }
 
 export interface RunResult {

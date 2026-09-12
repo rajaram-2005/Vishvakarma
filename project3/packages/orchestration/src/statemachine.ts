@@ -4,7 +4,15 @@
 // in ambiguous states, and must be resumable from the last completed
 // checkpoint after a crash, disconnect, model/plugin failure or restart.
 
-import type { Checkpoint, FlowState, StateTransition } from './types';
+import type { FlowState, StateTransition } from './types';
+
+/** A resumable checkpoint (§8). */
+export interface Checkpoint {
+  id: string;
+  label: string;
+  completed: boolean;
+  ts?: string;
+}
 
 /** Allowed transitions. WAITING_* are paused states; FAILED recovers. */
 export const TRANSITIONS: Record<FlowState, FlowState[]> = {
