@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "lib": ["ES2022", "DOM"],
+    "paths": {
+      "@sutra/shared": ["../../packages/shared/src/index.ts"],
+      "@sutra/model-adapters": ["../../packages/model-adapters/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

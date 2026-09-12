@@ -1,0 +1,16 @@
+{
+  "name": "@sutra/orchestration",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unified AI Studio ONE CORE: capability graph + compatibility engine + universal task graph + state machine + event bus + tracer + model router/fallback/health.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@sutra/shared": "*",
+    "@sutra/model-adapters": "*"
+  }
+}
