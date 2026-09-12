@@ -56,7 +56,7 @@ export class AuthService {
     return bufToHex(bits);
   }
 
-  async register(email: string, password: string, role: Role = 'viewer'): Promise<User> {
+  async register(email: string, password: string, role: Role = 'contributor'): Promise<User> {
     const users = this.storage.list<User>('users');
     if (users.some((u) => u.email === email)) throw new Error('email already registered');
     const salt = hex(0, 16);

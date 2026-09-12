@@ -107,7 +107,7 @@ async function handleApi(
   // --- Auth (§69/§32) ---
   if (url.pathname === '/api/auth/register' && req.method === 'POST') {
     const b = req.body as { email: string; password: string; role?: Role };
-    const u = await auth.register(b.email, b.password, b.role ?? 'viewer');
+    const u = await auth.register(b.email, b.password, b.role ?? 'contributor');
     return { status: 201, json: { id: u.id, email: u.email, role: u.role } };
   }
   if (url.pathname === '/api/auth/login' && req.method === 'POST') {

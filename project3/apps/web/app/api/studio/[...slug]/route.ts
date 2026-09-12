@@ -18,6 +18,10 @@ import {
   type Storage,
 } from '@sutra/orchestration';
 
+// This route touches node built-ins (node:sqlite/pg) and long-lived singletons,
+// so it must run on the Node.js runtime, not the Edge runtime.
+export const runtime = 'nodejs';
+
 interface AppBundle {
   handle: (req: { method: string; path: string; query: URLSearchParams; body: unknown; auth?: string }) => Promise<{ status: number; json?: unknown; html?: string; headers?: Record<string, string> }>;
   auth: AuthService;
@@ -48,17 +52,24 @@ function bearer(token?: string | null): string | undefined {
   return token ? token.replace(/^Bearer\s+/, '') : undefined;
 }
 
+/** Map the public /api/studio/* URL to the core's /api/* path the handler expects. */
+function normalizePath(p: string): string {
+  let path = p.replace(/^\/api\/studio/, '/api');
+  if (path === '/api' || path === '/api/') path = '/';
+  return path;
+}
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug?: string[] }> }) {
-  const { slug } = await params;
-  const path = '/' + (slug ?? []).join('/') + (req.nextUrl.search ?? '');
+  await params;
+  const path = normalizePath(req.nextUrl.pathname);
   const { handle } = await getBundle();
   const out = await handle({ method: 'GET', path, query: req.nextUrl.searchParams, body: undefined, auth: req.headers.get('authorization') ?? undefined });
   return new NextResponse(out.html ?? JSON.stringify(out.json ?? ''), { status: out.status, headers: out.headers });
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ slug?: string[] }> }) {
-  const { slug } = await params;
-  const path = '/' + (slug ?? []).join('/') + (req.nextUrl.search ?? '');
+  await params;
+  const path = normalizePath(req.nextUrl.pathname);
   const { handle, auth } = await getBundle();
 
   // Enforce auth + RBAC at the proxy for mutating requests (auth endpoints stay open).
