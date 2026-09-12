@@ -128,10 +128,20 @@ async function handleApi(
     return { status: 200, json: WORKFLOW_TEMPLATES.map((t) => ({ id: t.id, name: t.name })) };
   }
   if (url.pathname === '/api/workflows/run' && req.method === 'POST') {
-    const id = (req.body as { template?: string })?.template ?? 'research-report';
+    const b = req.body as { template?: string; name?: string; nodes?: Array<{ id: string; name: string; dependsOn?: string[] }> };
+    if (b.nodes && b.nodes.length) {
+      const wf = { id: 'custom', name: b.name ?? 'Custom', nodes: b.nodes };
+      const r = await platform.runWorkflowObject(wf as never);
+      return { status: 200, json: { name: wf.name, nodes: r.debug } };
+    }
+    const id = b.template ?? 'research-report';
     const r = await platform.runWorkflow(id);
     const name = WORKFLOW_TEMPLATES.find((t) => t.id === id)?.name ?? id;
     return { status: 200, json: { name, nodes: r.debug } };
+  }
+  if (url.pathname === '/api/schedules/tick' && req.method === 'POST') {
+    const results = await platform.tickNow();
+    return { status: 200, json: { ran: Object.keys(results).length } };
   }
 
   if (url.pathname === '/api/schedules' && req.method === 'GET') return { status: 200, json: platform.scheduler.list() };

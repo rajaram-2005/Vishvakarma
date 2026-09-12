@@ -318,6 +318,13 @@ NODE_OPTIONS=--experimental-sqlite STUDIO_DB=.studio.db npx tsx server.ts
 cd apps/web && npm run dev
 ```
 
+- **Visual editors (additive surfaces):** `apps/web/app/studio/workflows/page.tsx` is a
+  Workflow Builder that composes nodes + dependencies and runs them through the
+  core (`POST /api/studio/workflows/run` with a custom definition); `apps/web/app/studio/schedules/page.tsx`
+  creates/manages schedules and ticks due ones (`POST /api/schedules/tick`). The
+  core gained `Platform.runWorkflowObject(wf)` and `Platform.tickNow()` to back
+  these. Both pages + the studio client + route typecheck cleanly.
+
 ## What this proves
 
 The platform is realised as **one core** with surfaces built on top: a single

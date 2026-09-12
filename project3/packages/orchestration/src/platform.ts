@@ -91,6 +91,16 @@ export class Platform {
     return this.workflows.run(wf, this.executor, ctx);
   }
 
+  /** Run a caller-supplied workflow definition (e.g. from the visual builder). */
+  async runWorkflowObject(wf: Workflow, ctx: CompatibilityContext = sampleContext) {
+    return this.workflows.run(wf, this.executor, ctx);
+  }
+
+  /** Run any schedules whose nextRun is due. */
+  async tickNow(ctx: CompatibilityContext = sampleContext) {
+    return this.scheduler.tick(this.executor, ctx);
+  }
+
   searchLibrary(q: string) {
     return this.library.search(q);
   }

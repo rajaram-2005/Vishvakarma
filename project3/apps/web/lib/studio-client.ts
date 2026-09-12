@@ -19,6 +19,9 @@ export const studioClient = {
   models: () => api<unknown[]>('GET', '/api/models'),
   workflowTemplates: () => api<Array<{ id: string; name: string }>>('GET', '/api/workflows/templates'),
   runWorkflow: (template: string) => api<{ name: string; nodes: unknown[] }>('POST', '/api/workflows/run', { template }),
+  runCustomWorkflow: (nodes: Array<{ id: string; name: string; dependsOn?: string[] }>) =>
+    api<{ name: string; nodes: Array<{ id: string; name: string; status: string }> }>('POST', '/api/workflows/run', { nodes }),
+  tickSchedules: () => api<{ ran: number }>('POST', '/api/schedules/tick'),
   schedules: () => api<unknown[]>('GET', '/api/schedules'),
   addSchedule: (name: string, request: string, expr: string) => api('POST', '/api/schedules', { name, request, expr }),
   security: () => api<Record<string, unknown>>('GET', '/api/security'),

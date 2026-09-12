@@ -55,6 +55,27 @@ describe('Web application (§120/§121)', () => {
     expect((run.json as { nodes: unknown[] }).nodes.length).toBeGreaterThan(0);
   });
 
+  it('runs a custom workflow from the visual builder', async () => {
+    const a = app();
+    const run = await a(
+      req({
+        method: 'POST',
+        path: '/api/workflows/run',
+        body: { name: 'My Flow', nodes: [ { id: 'a', name: 'Step A', dependsOn: [] }, { id: 'b', name: 'Step B', dependsOn: ['a'] } ] },
+      }),
+    );
+    expect(run.status).toBe(200);
+    expect((run.json as { nodes: unknown[] }).nodes.length).toBe(2);
+  });
+
+  it('ticks due schedules through the core', async () => {
+    const a = app();
+    await a(req({ method: 'POST', path: '/api/schedules', body: { name: 't', request: 'Research solar EV charging', expr: 'daily' } }));
+    const tick = await a(req({ method: 'POST', path: '/api/schedules/tick' }));
+    expect(tick.status).toBe(200);
+    expect(typeof (tick.json as { ran: number }).ran).toBe('number');
+  });
+
   it('schedules and plugins can be created via API', async () => {
     const a = app();
     const sch = await a(req({ method: 'POST', path: '/api/schedules', body: { name: 't', request: 'do x', expr: 'daily' } }));
