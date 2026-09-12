@@ -325,6 +325,39 @@ cd apps/web && npm run dev
   core gained `Platform.runWorkflowObject(wf)` and `Platform.tickNow()` to back
   these. Both pages + the studio client + route typecheck cleanly.
 
+## Phases 7–13 — production shaping
+
+The substrate was turned into a production-shaped product across later phases:
+- **Web-app wiring**: the Next.js app mounts the core at `/api/studio` and `/studio`
+  (chat, library, models, workflows builder, schedules, coder, studio, security,
+  marketplace, activity). The whole `apps/web` typechecks clean.
+- **Real adapters** (OpenAI/Ollama/Anthropic/plugin/MCP) activated from env keys;
+  the core calls real providers end-to-end when a key is present.
+- **DB persistence**: `createStorageFromUrl(STUDIO_DB)` selects SQLite (node:sqlite)
+  or a managed **Postgres** (write-through `PostgresStorage`) — a one-line switch.
+- **Auth + RBAC at the proxy**: sessions, scoped API keys, roles; the studio route
+  enforces `requiredPermission(method, path)` against the user role before any
+  mutation reaches the core. Auth shares the same DB so sessions persist.
+- **Richer canvases**: Coder/Studio/Workflow surfaces render the live task-graph
+  execution trace (per-node status + result), and a shared StudioShell gives every
+  surface consistent navigation and auth state.
+- **Activity & Notifications** (§47/§49) surfaced through the core + `/api/activity`
+  and `/api/notifications`.
+
+## Running behind a real database + enforced auth
+
+```bash
+# Standalone, real Postgres, auth enforced:
+STUDIO_DB=postgres://user:pass@localhost:5432/studio npx tsx packages/orchestration/server.ts
+# or SQLite on disk:
+NODE_OPTIONS=--experimental-sqlite STUDIO_DB=.studio.db npx tsx packages/orchestration/server.ts
+
+# Next.js app (mounts core at /api/studio and /studio):
+cd apps/web && STUDIO_DB=postgres://user:pass@localhost:5432/studio STUDIO_AUTH_OPEN=0 npm run dev
+```
+Set `OPENAI_API_KEY` / `OLLAMA_URL` / `ANTHROPIC_API_KEY` to make the core call
+real providers. `STUDIO_AUTH_OPEN=1` disables the proxy auth gate for local dev.
+
 ## What this proves
 
 The platform is realised as **one core** with surfaces built on top: a single
