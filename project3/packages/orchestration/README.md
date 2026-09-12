@@ -228,6 +228,30 @@ The server additionally exposes `POST /api/chaos` and `POST /api/workflow`
 `GET /api/capabilities`, `GET /api/health`), and the dashboard visualises
 scheduling, workflows and chaos results alongside the task graph, trace and events.
 
+## Phase 4 — surfaces, storage, adapters and the assembled Platform
+
+The substrate now has the actual product surfaces built on top of it, plus the
+persistence and adapter layers the spec requires (§121: Storage; §96: contract
+testing). All are unit-tested in `surfaces.test.ts` (125 tests total).
+
+| Layer | Module | Spec |
+| --- | --- | --- |
+| Storage / persistence | `storage.ts` | §121, §8 |
+| Chat / Library / Studio / Coder services | `surfaces.ts` | §115, §120 |
+| Scheduler service (runs due jobs via core) | `surfaces.ts` | §57–§59 |
+| Model / Workflow / Plugin / MCP managers | `surfaces.ts` | §54, §42, §39, §40 |
+| Search service | `surfaces.ts` | §48 |
+| Model / Plugin / MCP adapters + contract tests | `adapters.ts` | §96 |
+| Platform facade (ONE AI STUDIO assembled) | `platform.ts` | §120, §121 |
+
+Every surface is a thin service that plans/validates/runs through
+`OrchestrationCore`, so they all share identity, context, compatibility,
+execution, permission, security, storage, observability and events — exactly the
+"build on the core, not as separate apps" rule (§121). The `Platform` object
+wires the core + storage + all surfaces + adapters into one facade and is exposed
+via the CLI (`tsx bin/cli.ts platform`) and the server
+(`GET /api/platform/status`, `POST /api/platform/chat`).
+
 ## What this proves
 
 The platform is realised as **one core** with surfaces built on top: a single

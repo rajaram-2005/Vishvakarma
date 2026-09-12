@@ -7,11 +7,12 @@
 //   curl -X POST localhost:4789/api/run -d '{"text":"..."}'
 
 import { createServer } from 'node:http';
-import { OrchestrationCore, HealthRegistry, CostEngine, CAPABILITY_MATRIX, buildSampleCore, demoExecutor, sampleContext, SAMPLE_REQUEST, runChaos, runWorkflow, WORKFLOW_TEMPLATES } from './src/index';
+import { OrchestrationCore, HealthRegistry, CostEngine, CAPABILITY_MATRIX, buildSampleCore, demoExecutor, sampleContext, SAMPLE_REQUEST, runChaos, runWorkflow, WORKFLOW_TEMPLATES, Platform } from './src/index';
 
 const PORT = Number(process.env.PORT ?? 4789);
 
 const core = buildSampleCore();
+const platform = new Platform({ seedSample: true });
 const health = new HealthRegistry();
 health.recordSuccess('research-model', 40);
 health.recordError('writer-model');
@@ -169,6 +170,14 @@ const server = createServer(async (req, res) => {
       const wf = (WORKFLOW_TEMPLATES.find((t) => t.id === body.template) ?? WORKFLOW_TEMPLATES[0]).build();
       const { debug } = await runWorkflow(core, wf, demoExecutor(), { context: sampleContext });
       return sendJson(res, 200, { name: wf.name, nodes: debug });
+    }
+    if (req.method === 'GET' && url.pathname === '/api/platform/status') {
+      return sendJson(res, 200, platform.status());
+    }
+    if (req.method === 'POST' && url.pathname === '/api/platform/chat') {
+      const body = JSON.parse(await readBody(req));
+      const result = await platform.chat(body.text || SAMPLE_REQUEST);
+      return sendJson(res, 200, { completed: result.completed, failed: result.failed, paused: result.paused });
     }
     sendJson(res, 404, { error: 'not found' });
   } catch (e) {

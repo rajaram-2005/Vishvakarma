@@ -22,6 +22,7 @@ import {
   runChaos,
   WORKFLOW_TEMPLATES,
   runWorkflow,
+  Platform,
   CAPABILITY_MATRIX,
   sampleModels,
   buildSampleCore,
@@ -157,6 +158,20 @@ async function runWorkflowCmd(): Promise<void> {
   for (const d of debug) line(`  • ${d.name}: ${d.status}`);
 }
 
+async function runPlatform(): Promise<void> {
+  const p = new Platform({ seedSample: true });
+  header('PLATFORM — ONE AI STUDIO assembled (§120/§121)');
+  const chat = await p.chat();
+  line(`  chat: completed ${chat.completed.length} nodes, failed ${chat.failed.length}`);
+  p.saveToLibrary('EV Notes', 'solar EV charging summary');
+  p.installPlugin({ id: 'demo', name: 'Demo Plugin' });
+  p.installMcp({ id: 'demo-mcp', name: 'Demo MCP', tools: ['read'] });
+  const wf = await p.runWorkflow('research-report');
+  line(`  workflow: ${wf.debug.length} nodes`);
+  const s = p.status();
+  line(`  capabilities=${s.capabilities} models=${s.models} plugins=${s.plugins} mcps=${s.mcps} library=${s.library}`);
+}
+
 async function main(): Promise<void> {
   const [cmd, ...rest] = process.argv.slice(2);
   switch (cmd) {
@@ -183,6 +198,9 @@ async function main(): Promise<void> {
       break;
     case 'workflow':
       await runWorkflowCmd();
+      break;
+    case 'platform':
+      await runPlatform();
       break;
     case 'demo':
     case undefined:
