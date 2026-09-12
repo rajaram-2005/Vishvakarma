@@ -73,4 +73,20 @@ export class Marketplace {
   openReports(): Report[] {
     return this.reports;
   }
+
+  /** Aggregate trust overview for dashboards (§104). */
+  trustSummary() {
+    const listings = [...this.listings.values()];
+    const verifiedPublishers = [...this.publishers.values()].filter((p) => p.state === 'verified').length;
+    const avgTrust = listings.length ? listings.reduce((s, l) => s + this.trustScore(l), 0) / listings.length : 0;
+    const serious = this.reports.filter((r) => r.reason === 'malware' || r.reason === 'security').length;
+    return {
+      listings: listings.length,
+      verifiedPublishers,
+      avgTrust: Number(avgTrust.toFixed(3)),
+      openReports: this.reports.length,
+      seriousReports: serious,
+      top: this.ranked().slice(0, 5).map((l) => ({ id: l.id, publisher: l.publisher, trust: Number(this.trustScore(l).toFixed(3)) })),
+    };
+  }
 }

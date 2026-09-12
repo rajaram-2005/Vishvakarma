@@ -11,7 +11,7 @@ import { I18n } from './i18n';
 import { runChaos } from './chaos';
 import { WORKFLOW_TEMPLATES } from './workflows';
 import { APIKeyManager } from './api';
-import { AuthService, type Role } from './auth';
+import { AuthService, type Role, type Permission } from './auth';
 import { AdapterRegistry } from './adapters-real';
 import type { Storage } from './storage';
 
@@ -41,6 +41,22 @@ export interface WebAppDeps {
   apiKeys?: APIKeyManager;
   auth?: AuthService;
   adapters?: AdapterRegistry;
+}
+
+/** Map a request to the permission required to perform it. GET and auth
+ *  endpoints are open; mutating endpoints require the matching capability. */
+export function requiredPermission(method: string, path: string): Permission | null {
+  if (path.startsWith('/api/auth/')) return null;
+  if (method !== 'POST') return null;
+  if (path.startsWith('/api/chat')) return 'read';
+  if (path.startsWith('/api/library')) return 'create';
+  if (path.startsWith('/api/workflows/run')) return 'create';
+  if (path.startsWith('/api/schedules/tick')) return 'deploy';
+  if (path.startsWith('/api/schedules')) return 'create';
+  if (path.startsWith('/api/plugins') || path.startsWith('/api/mcp')) return 'manage-users';
+  if (path.startsWith('/api/marketplace')) return 'edit';
+  if (path.startsWith('/api/code') || path.startsWith('/api/studio')) return 'create';
+  return 'create';
 }
 
 export function createWebApp(deps: WebAppDeps) {
@@ -107,6 +123,7 @@ async function handleApi(
 
   if (url.pathname === '/api/status') return { status: 200, json: platform.status() };
   if (url.pathname === '/api/security') return { status: 200, json: security.summary() };
+  if (url.pathname === '/api/marketplace') return { status: 200, json: platform.core.marketplace.trustSummary() };
 
   if (url.pathname === '/api/chat' && req.method === 'POST') {
     const text = (req.body as { text?: string })?.text ?? '';

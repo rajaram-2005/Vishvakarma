@@ -21,6 +21,7 @@ import { HealthRegistry } from './router';
 import { planToTaskGraph } from './planner';
 import { ApprovalCenter } from './approval';
 import { estimateTokens } from './context';
+import { Marketplace } from './marketplace';
 import type {
   CapabilityContract,
   CompatibilityContext,
@@ -48,6 +49,8 @@ export class OrchestrationCore {
   readonly health = new HealthRegistry();
   /** §35 — universal approval queue (AI + human handoff, §34). */
   readonly approvalCenter = new ApprovalCenter();
+  /** §104 — marketplace trust + verified publishers. */
+  readonly marketplace = new Marketplace();
 
   registerCapability(cap: CapabilityContract): CapabilityContract {
     const c = this.registry.register(cap);

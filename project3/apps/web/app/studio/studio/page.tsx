@@ -5,11 +5,11 @@ import { studioClient } from '@/lib/studio-client';
 
 export default function StudioPageSurface() {
   const [prompt, setPrompt] = useState('Generate a brand concept for a solar EV startup');
-  const [out, setOut] = useState('');
+  const [out, setOut] = useState<{ completed: string[]; failed: string[] } | null>(null);
 
   async function run() {
     const r = await studioClient.studio(prompt);
-    setOut(JSON.stringify(r, null, 2));
+    setOut(r);
   }
 
   return (
@@ -21,7 +21,15 @@ export default function StudioPageSurface() {
         <div>
           <button onClick={run} style={{ padding: 8, marginTop: 8 }}>Generate</button>
         </div>
-        <pre>{out || 'not run yet'}</pre>
+        {out ? (
+          <section>
+            <h3>Completed</h3>
+            <ul>{out.completed.map((n) => <li key={n}>{n}</li>)}</ul>
+            {out.failed.length > 0 && <p>Failed: {out.failed.join(', ')}</p>}
+          </section>
+        ) : (
+          <p>not run yet</p>
+        )}
       </section>
     </main>
   );

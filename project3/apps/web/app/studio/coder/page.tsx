@@ -5,11 +5,11 @@ import { studioClient } from '@/lib/studio-client';
 
 export default function CoderPage() {
   const [task, setTask] = useState('Write a TypeScript function to debounce a callback');
-  const [out, setOut] = useState('');
+  const [out, setOut] = useState<{ completed: string[]; failed: string[] } | null>(null);
 
   async function run() {
     const r = await studioClient.code(task);
-    setOut(JSON.stringify(r, null, 2));
+    setOut(r);
   }
 
   return (
@@ -21,7 +21,15 @@ export default function CoderPage() {
         <div>
           <button onClick={run} style={{ padding: 8, marginTop: 8 }}>Run</button>
         </div>
-        <pre>{out || 'not run yet'}</pre>
+        {out ? (
+          <section>
+            <h3>Completed</h3>
+            <ul>{out.completed.map((n) => <li key={n}>{n}</li>)}</ul>
+            {out.failed.length > 0 && <p>Failed: {out.failed.join(', ')}</p>}
+          </section>
+        ) : (
+          <p>not run yet</p>
+        )}
       </section>
     </main>
   );

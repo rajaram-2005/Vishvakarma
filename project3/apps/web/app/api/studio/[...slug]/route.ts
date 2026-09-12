@@ -14,6 +14,7 @@ import {
   adapterExecutor,
   createWebApp,
   createStorageFromUrl,
+  requiredPermission,
   type Storage,
 } from '@sutra/orchestration';
 
@@ -60,13 +61,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   const path = '/' + (slug ?? []).join('/') + (req.nextUrl.search ?? '');
   const { handle, auth } = await getBundle();
 
-  // Enforce auth at the proxy for mutating requests (auth endpoints stay open).
+  // Enforce auth + RBAC at the proxy for mutating requests (auth endpoints stay open).
   const open = process.env.STUDIO_AUTH_OPEN === '1';
   const isAuthEndpoint = path.startsWith('/api/auth/');
   if (!open && !isAuthEndpoint) {
     const token = bearer(req.headers.get('authorization'));
-    if (!token || !auth.verifyToken(token)) {
+    const user = token ? auth.verifyToken(token) : null;
+    if (!user) {
       return new NextResponse(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'content-type': 'application/json' } });
+    }
+    const perm = requiredPermission(req.method ?? 'POST', path);
+    if (perm && !auth.can(user.role, perm)) {
+      return new NextResponse(JSON.stringify({ error: 'forbidden', required: perm }), { status: 403, headers: { 'content-type': 'application/json' } });
     }
   }
 

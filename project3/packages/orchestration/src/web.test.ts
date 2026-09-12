@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Platform } from './platform';
 import { MemoryStorage } from './storage';
-import { createWebApp, type WebRequest } from './web';
+import { createWebApp, requiredPermission, type WebRequest } from './web';
 
 function app() {
   const platform = new Platform({ seedSample: true });
@@ -101,5 +101,27 @@ describe('Web application (§120/§121)', () => {
   it('unknown api returns 404', async () => {
     const res = await app()(req({ method: 'GET', path: '/api/nope' }));
     expect(res.status).toBe(404);
+  });
+
+  it('marketplace endpoint returns trust summary', async () => {
+    const res = await app()(req({ method: 'GET', path: '/api/marketplace' }));
+    expect(res.status).toBe(200);
+    expect((res.json as { listings: number }).listings).toBe(0);
+  });
+});
+
+describe('RBAC permission mapping (§32/§69)', () => {
+  it('open by default for GET and auth endpoints', () => {
+    expect(requiredPermission('GET', '/api/models')).toBeNull();
+    expect(requiredPermission('POST', '/api/auth/login')).toBeNull();
+  });
+  it('maps mutating endpoints to capabilities', () => {
+    expect(requiredPermission('POST', '/api/chat')).toBe('read');
+    expect(requiredPermission('POST', '/api/library')).toBe('create');
+    expect(requiredPermission('POST', '/api/workflows/run')).toBe('create');
+    expect(requiredPermission('POST', '/api/schedules/tick')).toBe('deploy');
+    expect(requiredPermission('POST', '/api/plugins')).toBe('manage-users');
+    expect(requiredPermission('POST', '/api/marketplace')).toBe('edit');
+    expect(requiredPermission('POST', '/api/code')).toBe('create');
   });
 });
