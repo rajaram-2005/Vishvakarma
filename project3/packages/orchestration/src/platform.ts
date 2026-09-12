@@ -7,6 +7,8 @@
 import { OrchestrationCore } from './core';
 import { MemoryStorage, type Storage } from './storage';
 import { ChatService, LibraryService, StudioService, CoderService, SchedulerService, ModelManager, WorkflowRunner, PluginSystem, McpSystem, SearchService } from './surfaces';
+import { ActivityFeed } from './activity';
+import { NotificationEngine } from './notifications';
 import { buildSampleCore, demoExecutor, sampleContext, SAMPLE_REQUEST } from './sample';
 import { WORKFLOW_TEMPLATES, type Workflow } from './workflows';
 import type { CompatibilityContext, NodeExecutor } from './types';
@@ -38,6 +40,10 @@ export class Platform {
   readonly plugins: PluginSystem;
   readonly mcp: McpSystem;
   readonly search: SearchService;
+  /** §49 — unified recent-activity timeline (bridged from the core event bus). */
+  readonly activity: ActivityFeed;
+  /** §47 — one notification engine for all surfaces. */
+  readonly notifications: NotificationEngine;
   private executor: NodeExecutor;
 
   constructor(opts: { core?: OrchestrationCore; storage?: Storage; executor?: NodeExecutor; seedSample?: boolean } = {}) {
@@ -54,6 +60,9 @@ export class Platform {
     this.plugins = new PluginSystem(this.core);
     this.mcp = new McpSystem(this.core);
     this.search = new SearchService(this.core);
+    this.activity = new ActivityFeed();
+    this.activity.attach(this.core.bus);
+    this.notifications = new NotificationEngine();
   }
 
   /** Run a Chat request through the core. */

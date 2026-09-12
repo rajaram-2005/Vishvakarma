@@ -14,6 +14,7 @@ const LINKS: Array<[string, string]> = [
   ['/studio/coder', 'Coder'],
   ['/studio/studio', 'Studio'],
   ['/studio/security', 'Security'],
+  ['/studio/activity', 'Activity'],
   ['/studio/marketplace', 'Marketplace'],
 ];
 

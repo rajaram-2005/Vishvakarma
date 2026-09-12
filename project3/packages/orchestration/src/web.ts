@@ -130,6 +130,12 @@ async function handleApi(
   if (url.pathname === '/api/status') return { status: 200, json: platform.status() };
   if (url.pathname === '/api/security') return { status: 200, json: security.summary() };
   if (url.pathname === '/api/marketplace') return { status: 200, json: platform.core.marketplace.trustSummary() };
+  if (url.pathname === '/api/activity' && req.method === 'GET') {
+    return { status: 200, json: { items: platform.activity.recent() } };
+  }
+  if (url.pathname === '/api/notifications' && req.method === 'GET') {
+    return { status: 200, json: { items: platform.notifications.recent() } };
+  }
 
   if (url.pathname === '/api/chat' && req.method === 'POST') {
     const text = (req.body as { text?: string })?.text ?? '';

@@ -108,6 +108,16 @@ describe('Web application (§120/§121)', () => {
     expect(res.status).toBe(200);
     expect((res.json as { listings: number }).listings).toBe(0);
   });
+
+  it('activity and notifications endpoints return recent items', async () => {
+    const a = app();
+    const act = await a(req({ method: 'GET', path: '/api/activity' }));
+    expect(act.status).toBe(200);
+    expect(Array.isArray((act.json as { items: unknown[] }).items)).toBe(true);
+    const note = await a(req({ method: 'GET', path: '/api/notifications' }));
+    expect(note.status).toBe(200);
+    expect(Array.isArray((note.json as { items: unknown[] }).items)).toBe(true);
+  });
 });
 
 describe('RBAC permission mapping (§32/§69)', () => {
