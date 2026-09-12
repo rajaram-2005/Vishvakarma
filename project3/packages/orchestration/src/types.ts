@@ -301,7 +301,7 @@ export class NeedsPermissionError extends Error {
 
 /** Implemented by callers: performs the actual work for one task node. */
 export interface NodeExecutor {
-  execute(node: TaskNode, ctx: { context?: CompatibilityContext }): Promise<{
+  execute(node: TaskNode, ctx?: { context?: CompatibilityContext }): Promise<{
     result?: unknown;
     evidence?: unknown[];
   }>;

@@ -12,7 +12,7 @@ export interface SecurityAlert {
   resolved?: boolean;
 }
 
-export interface Session {
+export interface SecuritySession {
   id: string;
   device: string;
   startedAt: string;
@@ -33,7 +33,7 @@ export interface AuditLog {
 
 export class SecurityCenter {
   private alerts: SecurityAlert[] = [];
-  private sessions = new Map<string, Session>();
+  private sessions = new Map<string, SecuritySession>();
   private devices = new Map<string, Device>();
   private audit: AuditLog[] = [];
   private policies = new Map<string, boolean>();
@@ -54,8 +54,8 @@ export class SecurityCenter {
     return a;
   }
 
-  addSession(id: string, device: string, permissions: string[]): Session {
-    const s: Session = { id, device, startedAt: new Date().toISOString(), permissions };
+  addSession(id: string, device: string, permissions: string[]): SecuritySession {
+    const s: SecuritySession = { id, device, startedAt: new Date().toISOString(), permissions };
     this.sessions.set(id, s);
     return s;
   }

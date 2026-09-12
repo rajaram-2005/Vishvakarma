@@ -285,6 +285,39 @@ A minimal auth scaffold (`SecurityCenter` sessions + scoped `APIKeyManager`)
 gates the product; the default key is open for local/demo use and should be
 enforced by a reverse proxy in production.
 
+## Phase 6 — real adapters, DB persistence, auth & web-app wiring
+
+The substrate is now production-shaped: it talks to real providers, persists to a
+real database, authenticates users, and is mounted into the existing Next.js app.
+
+- **Real adapters** (`adapters-real.ts`, §96): `OpenAIChatAdapter` (OpenAI-compatible
+  `/chat/completions`), `OllamaAdapter`, `AnthropicAdapter`, `HttpPluginAdapter`,
+  `HttpMcpAdapter` — all contract-compliant and performing real HTTP calls when
+  configured via env (`OPENAI_API_KEY`, `OLLAMA_URL`, `ANTHROPIC_API_KEY`).
+  `AdapterRegistry` + `adapterExecutor` let the core delegate node execution to
+  live models. `registryFromEnv()` seeds the registry from the environment.
+- **DB-backed Storage** (`storage-backend.ts` + `server.ts`): real SQLite via
+  Node's `node:sqlite` (run with `NODE_OPTIONS=--experimental-sqlite` and
+  `STUDIO_DB=...`), falling back to in-memory when unavailable. Verified: a
+  Library item persisted across a server restart.
+- **Authentication** (`auth.ts`, §69/§32): `AuthService` with PBKDF2 password
+  hashing (Web Crypto), sessions, scoped API keys and RBAC roles
+  (owner/admin/editor/contributor/viewer). Exposed via `/api/auth/*`.
+- **Web app integration** (additive, non-destructive): `apps/web/app/api/studio/[...slug]/route.ts`
+  mounts the same `createWebApp` handler inside Next.js, `apps/web/lib/studio-client.ts`
+  is a typed client, and `apps/web/app/studio/page.tsx` is a working surface page.
+  The whole `apps/web` project typechecks clean (`tsc --noEmit`, 0 errors).
+
+Run it:
+
+```bash
+# Standalone (real DB when flagged):
+NODE_OPTIONS=--experimental-sqlite STUDIO_DB=.studio.db npx tsx server.ts
+
+# Inside the Next.js app (mounts the core at /api/studio and /studio):
+cd apps/web && npm run dev
+```
+
 ## What this proves
 
 The platform is realised as **one core** with surfaces built on top: a single

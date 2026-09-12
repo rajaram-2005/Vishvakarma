@@ -11,6 +11,8 @@ import { I18n } from './i18n';
 import { runChaos } from './chaos';
 import { WORKFLOW_TEMPLATES } from './workflows';
 import { APIKeyManager } from './api';
+import { AuthService, type Role } from './auth';
+import { AdapterRegistry } from './adapters-real';
 import type { Storage } from './storage';
 
 export interface WebRequest {
@@ -37,10 +39,12 @@ export interface WebAppDeps {
   security?: SecurityCenter;
   i18n?: I18n;
   apiKeys?: APIKeyManager;
+  auth?: AuthService;
+  adapters?: AdapterRegistry;
 }
 
 export function createWebApp(deps: WebAppDeps) {
-  const { platform, storage, security = new SecurityCenter(), i18n = new I18n('en'), apiKeys = new APIKeyManager() } = deps;
+  const { platform, storage, security = new SecurityCenter(), i18n = new I18n('en'), apiKeys = new APIKeyManager(), auth = new AuthService(storage), adapters = new AdapterRegistry() } = deps;
 
   // Attach security center to the core event bus.
   security.attach(platform.core.bus);
@@ -62,7 +66,7 @@ export function createWebApp(deps: WebAppDeps) {
 
     // --- API ---
     if (path.startsWith('/api/')) {
-      const r = await handleApi(path, req, { platform, storage, security, i18n, apiKeys, requiresAuth });
+      const r = await handleApi(path, req, { platform, storage, security, i18n, apiKeys, auth, adapters, requiresAuth });
       return r;
     }
 
@@ -73,12 +77,28 @@ export function createWebApp(deps: WebAppDeps) {
 async function handleApi(
   path: string,
   req: WebRequest,
-  ctx: { platform: Platform; storage: Storage; security: SecurityCenter; i18n: I18n; apiKeys: APIKeyManager; requiresAuth: (r: WebRequest) => boolean },
+  ctx: { platform: Platform; storage: Storage; security: SecurityCenter; i18n: I18n; apiKeys: APIKeyManager; auth: AuthService; adapters: AdapterRegistry; requiresAuth: (r: WebRequest) => boolean },
 ): Promise<WebResponse> {
-  const { platform, storage, security, i18n } = ctx;
+  const { platform, storage, security, i18n, auth } = ctx;
   const url = new URL(path, 'http://localhost');
 
-  // Auth scaffold
+  // --- Auth (§69/§32) ---
+  if (url.pathname === '/api/auth/register' && req.method === 'POST') {
+    const b = req.body as { email: string; password: string; role?: Role };
+    const u = await auth.register(b.email, b.password, b.role ?? 'viewer');
+    return { status: 201, json: { id: u.id, email: u.email, role: u.role } };
+  }
+  if (url.pathname === '/api/auth/login' && req.method === 'POST') {
+    const b = req.body as { email: string; password: string };
+    const s = await auth.login(b.email, b.password);
+    return { status: 200, json: { token: s.token } };
+  }
+  if (url.pathname === '/api/auth/me' && req.method === 'GET') {
+    const token = req.auth?.replace(/^Bearer\s+/, '') ?? '';
+    const user = token ? auth.verifyToken(token) : null;
+    return { status: 200, json: user ? { id: user.id, email: user.email, role: user.role } : null };
+  }
+  // Legacy session scaffold
   if (url.pathname === '/api/login' && req.method === 'POST') {
     const key = ctx.apiKeys.create(['*']);
     const session = security.addSession(key.plaintext.slice(0, 8), 'web', ['*']);
