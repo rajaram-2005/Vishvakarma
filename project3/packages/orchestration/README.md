@@ -186,6 +186,48 @@ The server exposes `GET /api/matrix`, `GET /api/capabilities`,
 `/` that plans/validates/runs a request through the core and visualises the task
 graph, live trace and event/approval log.
 
+## Phase 3 — full-platform breadth
+
+The spec's remaining cross-cutting subsystems were built on top of the core and
+are fully unit-tested (the `extensions2.test.ts` suite covers all of them, plus a
+chaos/contract-testing harness that runs the §122 scenario under injected
+failures and asserts graceful recovery):
+
+| Subsystem | Module | Spec |
+| --- | --- | --- |
+| Scheduling: reliability, misfire, timezone | `scheduling.ts` | §57–§59 |
+| Notification Engine (in-app/push/email/webhook) | `notifications.ts` | §47 |
+| Unified Recent Activity | `activity.ts` | §49 |
+| Project Workspaces + Templates + Snapshots + Import/Export | `projects.ts` | §50–§53 |
+| API Platform + SDK + Webhooks (scoped keys, signature, retries) | `api.ts` | §54–§56 |
+| Workflow Builder + Templates + Debugger | `workflows.ts` | §42–§44 |
+| Security Center | `security-center.ts` | §69 |
+| Internationalization (10 locales, fallback) | `i18n.ts` | §72 |
+| Autonomy Levels + Internal Agent Roles | `autonomy.ts` | §79–§82 |
+| Marketplace Trust + Verified Publishers + Reporting | `marketplace.ts` | §104–§106 |
+| Safe Update System (backup→update→health→rollback) | `updates.ts` | §102–§103 |
+| Adaptive / Unified Home UI (beginner→expert) | `adaptive-ui.ts` | §115–§119 |
+| Chaos / Contract / Testing Matrix | `chaos.ts` | §95–§98 |
+
+## Running it
+
+```bash
+# Full end-to-end demo of the §122 scenario:
+npx tsx bin/cli.ts demo
+# Chaos testing — run the platform under injected failures:
+npx tsx bin/cli.ts chaos
+# Workflow builder — compile + run a workflow through the core:
+npx tsx bin/cli.ts workflow
+
+# API + single-page dashboard:
+npx tsx server.ts            # http://localhost:4789
+```
+
+The server additionally exposes `POST /api/chaos` and `POST /api/workflow`
+(besides `POST /api/plan`, `POST /api/run`, `GET /api/matrix`,
+`GET /api/capabilities`, `GET /api/health`), and the dashboard visualises
+scheduling, workflows and chaos results alongside the task graph, trace and events.
+
 ## What this proves
 
 The platform is realised as **one core** with surfaces built on top: a single

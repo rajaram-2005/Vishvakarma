@@ -19,6 +19,9 @@ import {
   CostEngine,
   searchSample,
   explainModelChoice,
+  runChaos,
+  WORKFLOW_TEMPLATES,
+  runWorkflow,
   CAPABILITY_MATRIX,
   sampleModels,
   buildSampleCore,
@@ -137,6 +140,23 @@ function runExplain(text: string): void {
   for (const r of ex.reasons) line(`    - ${r}`);
 }
 
+async function runChaosDemo(): Promise<void> {
+  const core = buildSampleCore();
+  header('CHAOS TESTING (§95-§98)');
+  for (const scenario of ['model-down', 'network-loss', 'invalid-credentials', 'rate-limit', 'db-restart'] as const) {
+    const out = await runChaos(core, SAMPLE_REQUEST, scenario, sampleContext);
+    line(`  • ${scenario.padEnd(22)} graceful=${out.graceful} completed=${out.completed.length} failed=${out.failed.length}`);
+  }
+}
+
+async function runWorkflowCmd(): Promise<void> {
+  const core = buildSampleCore();
+  const wf = WORKFLOW_TEMPLATES[0].build();
+  header('WORKFLOW BUILDER (§42-§44)');
+  const { debug } = await runWorkflow(core, wf, demoExecutor(), { context: sampleContext });
+  for (const d of debug) line(`  • ${d.name}: ${d.status}`);
+}
+
 async function main(): Promise<void> {
   const [cmd, ...rest] = process.argv.slice(2);
   switch (cmd) {
@@ -157,6 +177,12 @@ async function main(): Promise<void> {
       break;
     case 'explain':
       runExplain(rest.join(' ') || 'write a function to sort');
+      break;
+    case 'chaos':
+      await runChaosDemo();
+      break;
+    case 'workflow':
+      await runWorkflowCmd();
       break;
     case 'demo':
     case undefined:

@@ -7,7 +7,7 @@
 //   curl -X POST localhost:4789/api/run -d '{"text":"..."}'
 
 import { createServer } from 'node:http';
-import { OrchestrationCore, HealthRegistry, CostEngine, CAPABILITY_MATRIX, buildSampleCore, demoExecutor, sampleContext, SAMPLE_REQUEST } from './src/index';
+import { OrchestrationCore, HealthRegistry, CostEngine, CAPABILITY_MATRIX, buildSampleCore, demoExecutor, sampleContext, SAMPLE_REQUEST, runChaos, runWorkflow, WORKFLOW_TEMPLATES } from './src/index';
 
 const PORT = Number(process.env.PORT ?? 4789);
 
@@ -158,6 +158,17 @@ const server = createServer(async (req, res) => {
         cost: Number(cost.total().toFixed(4)),
         events,
       });
+    }
+    if (req.method === 'POST' && url.pathname === '/api/chaos') {
+      const body = JSON.parse(await readBody(req));
+      const out = await runChaos(core, body.text || SAMPLE_REQUEST, body.scenario || 'model-down', sampleContext);
+      return sendJson(res, 200, out);
+    }
+    if (req.method === 'POST' && url.pathname === '/api/workflow') {
+      const body = JSON.parse(await readBody(req));
+      const wf = (WORKFLOW_TEMPLATES.find((t) => t.id === body.template) ?? WORKFLOW_TEMPLATES[0]).build();
+      const { debug } = await runWorkflow(core, wf, demoExecutor(), { context: sampleContext });
+      return sendJson(res, 200, { name: wf.name, nodes: debug });
     }
     sendJson(res, 404, { error: 'not found' });
   } catch (e) {
