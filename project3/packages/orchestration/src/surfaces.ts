@@ -97,6 +97,11 @@ export class SchedulerService {
     return this.manager.list().length;
   }
 
+  /** List registered schedules (for the schedules UI). */
+  list() {
+    return this.manager.list();
+  }
+
   /** Run any schedules whose nextRun is due. Returns run results keyed by schedule id. */
   async tick(executor: NodeExecutor, ctx: CompatibilityContext, now = new Date()): Promise<Record<string, RunResult>> {
     const out: Record<string, RunResult> = {};

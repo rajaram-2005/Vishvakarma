@@ -252,6 +252,39 @@ wires the core + storage + all surfaces + adapters into one facade and is expose
 via the CLI (`tsx bin/cli.ts platform`) and the server
 (`GET /api/platform/status`, `POST /api/platform/chat`).
 
+## Phase 5 — the Unified AI Studio web application
+
+The substrate now has a real, runnable product UI. `src/web.ts` is a Node-free,
+fully-tested module of pure request handlers + page renderers; `server.ts` is a
+thin adapter (HTTP + file I/O) that wires it to the core. State persists to a
+JSON file via the `Storage` abstraction, so Library items, schedules and chats
+survive restarts.
+
+Run it:
+
+```bash
+npx tsx server.ts            # http://localhost:4789
+```
+
+Surfaces exposed as pages + JSON APIs:
+
+| Page | API | Spec |
+| --- | --- | --- |
+| Home / Dashboard | `GET /api/status` | §115, §120 |
+| Chat (universal entry) | `POST /api/chat` | §121/§122 |
+| Library | `GET/POST /api/library` | §48, §50 |
+| Models | `GET /api/models` | §11 |
+| Workflows | `GET /api/workflows/templates`, `POST /api/workflows/run` | §42–§44 |
+| Schedules | `GET/POST /api/schedules` | §57–§59 |
+| Security Center | `GET /api/security` | §69 |
+| Packages / Marketplace | `POST /api/plugins` | §104–§106 |
+| Settings (i18n preview) | `GET /api/i18n` | §72 |
+| Chaos | `POST /api/chaos` | §95–§98 |
+
+A minimal auth scaffold (`SecurityCenter` sessions + scoped `APIKeyManager`)
+gates the product; the default key is open for local/demo use and should be
+enforced by a reverse proxy in production.
+
 ## What this proves
 
 The platform is realised as **one core** with surfaces built on top: a single

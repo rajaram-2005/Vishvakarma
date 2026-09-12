@@ -42,5 +42,6 @@ export * from './storage';
 export * from './surfaces';
 export * from './adapters';
 export * from './platform';
+export * from './web';
 export * from './sample';
 export * from './core';
