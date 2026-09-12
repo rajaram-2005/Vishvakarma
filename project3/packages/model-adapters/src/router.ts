@@ -22,11 +22,14 @@ export function rankModels(
     if (opts.requireLocal && !m.local) continue;
     let score = 50;
     const reasons: string[] = [];
+    // Own models (aetherion-own) are purpose-built specialists: a matched
+    // intent is a stronger signal than for a general-purpose model.
+    const isOwn = m.runtime === 'aetherion-own';
     for (const intent of analysis.intents) {
       const cap = CAP_BY_INTENT[intent];
       if (cap && m.capabilities.includes(cap)) {
-        score += 12;
-        reasons.push(`matches ${intent}`);
+        score += isOwn ? 22 : 12;
+        reasons.push(isOwn ? `own-model specialist for ${intent}` : `matches ${intent}`);
       }
     }
     const lat = { low: 10, medium: 4, high: -4 }[m.latencyTier];

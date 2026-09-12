@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — the ecosystem: one central node, fourteen orbits,
+// Lumen — the ecosystem: one central node, fourteen orbits,
 // animated energy trails and travelling light packets.
 
 import React, { useState } from 'react';
@@ -37,7 +37,7 @@ export function EcosystemGraph({ onNodeClick }: { onNodeClick?: (id: string) => 
 
   return (
     <div className="relative w-full" style={{ aspectRatio: '1000/640' }}>
-      <svg viewBox="0 0 1000 640" className="w-full h-full" role="img" aria-label="SUTRA ecosystem map">
+      <svg viewBox="0 0 1000 640" className="w-full h-full" role="img" aria-label="Lumen ecosystem map">
         <defs>
           <radialGradient id="ec-core" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="rgba(235,230,255,0.95)" />
@@ -77,7 +77,7 @@ export function EcosystemGraph({ onNodeClick }: { onNodeClick?: (id: string) => 
           );
         })}
 
-        {/* central SUTRA node */}
+        {/* central Lumen node */}
         <g filter="url(#ec-glow)">
           <circle cx={CX} cy={CY} r="92" fill="url(#ec-core)" className={rm ? '' : 'animate-pulse-soft'} />
           <polygon
@@ -87,7 +87,7 @@ export function EcosystemGraph({ onNodeClick }: { onNodeClick?: (id: string) => 
             strokeWidth="1.4"
           />
           <text x={CX} y={CY + 6} textAnchor="middle" fontFamily="var(--font-mono), monospace" fontSize="15" letterSpacing="4" fill="#efeaff">
-            SUTRA
+            Lumen
           </text>
         </g>
 

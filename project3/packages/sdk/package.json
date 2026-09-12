@@ -2,7 +2,7 @@
   "name": "@sutra/sdk",
   "version": "0.1.0",
   "private": true,
-  "description": "SUTRA client SDK — the browser/desktop facade over all @sutra packages.",
+  "description": "Aetherion client SDK — the browser/desktop facade over all @sutra packages.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

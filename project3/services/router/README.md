@@ -1,4 +1,4 @@
-# SUTRA Router
+# Aetherion Router
 
 The routing boundary as its own service: **Request → Task Analysis → Model
 Ranking → Model**. Pure functions, no I/O — trivially unit-testable and

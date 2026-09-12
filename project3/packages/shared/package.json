@@ -2,7 +2,7 @@
   "name": "@sutra/shared",
   "version": "0.1.0",
   "private": true,
-  "description": "SUTRA shared domain types, local vector math, chunking, OTel export and security policy.",
+  "description": "Aetherion shared domain types, local vector math, chunking, OTel export and security policy.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

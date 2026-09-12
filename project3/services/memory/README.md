@@ -1,4 +1,4 @@
-# SUTRA Memory
+# Aetherion Memory
 
 The **WHAT** of the system: facts, preferences, episodes. Local JSON storage,
 scoped (`user` or `project:<id>`), semantically searchable with the same
@@ -11,5 +11,5 @@ deletable.
 - `POST /search` — `{q, k?, scope?}` → similarity hits
 - `GET /health`
 
-Privacy: memory lives in `SUTRA_DATA_DIR`; sync (if ever enabled) is
-explicit per `SUTRA_SYNC_SCOPE` and never silent.
+Privacy: memory lives in `Aetherion_DATA_DIR`; sync (if ever enabled) is
+explicit per `Aetherion_SYNC_SCOPE` and never silent.

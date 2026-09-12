@@ -4,7 +4,7 @@ import { runCommand, tree, type TermCtx } from '../apps/web/lib/terminal';
 const FS = {
   'src/app.ts': 'export const app = 1;\n',
   'src/utils.ts': 'export const u = 2;\n',
-  'README.md': '# SUTRA\n',
+  'README.md': '# Aetherion\n',
   'notes/.keep': '',
 };
 
@@ -28,7 +28,7 @@ describe('sandbox terminal', () => {
 
   it('prints file contents with cat', async () => {
     const r = await runCommand('cat README.md', ctx());
-    expect(r.output).toContain('# SUTRA');
+    expect(r.output).toContain('# Aetherion');
   });
 
   it('writes files with echo > (policy gate called)', async () => {

@@ -1,4 +1,4 @@
-# SUTRA evaluation service — benchmarks with full metrics.
+# Aetherion evaluation service — benchmarks with full metrics.
 # Runs a task suite against a provider (or the local scorer) and computes
 # accuracy, factuality, hallucination, latency, tokens, cost, reproducibility.
 from __future__ import annotations
@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException
 
 DATA = Path(__file__).parent / "data"
 DATA.mkdir(parents=True, exist_ok=True)
-app = FastAPI(title="SUTRA Evaluation", version="0.1.0")
+app = FastAPI(title="Aetherion Evaluation", version="0.1.0")
 
 TASKS = [
     {"id": "t-add", "name": "arithmetic", "category": "math", "prompt": "What is 17 * 23?", "expect": "391", "refusal": False},

@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Teams: orchestrator + members, live goal runs.
+// Lumen — Teams: orchestrator + members, live goal runs.
 
 import React, { useState } from 'react';
 import { Play, Users } from 'lucide-react';

@@ -2,7 +2,7 @@
   "id": "skill-data-pipeline",
   "name": "Data Pipeline",
   "version": "0.9.2",
-  "author": "SUTRA",
+  "author": "Aetherion",
   "license": "MIT",
   "kind": "skill",
   "description": "Source → normalize → validate → store, with idempotent, resumable steps.",

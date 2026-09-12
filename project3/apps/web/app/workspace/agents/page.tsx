@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Agents: registry + live loop runner.
+// Lumen — Agents: registry + live loop runner.
 
 import React, { useState } from 'react';
 import { Bot, Play } from 'lucide-react';

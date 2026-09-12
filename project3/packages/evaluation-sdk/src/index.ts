@@ -1,4 +1,4 @@
-// SUTRA evaluation SDK — measure accuracy, factuality, hallucination,
+// Aetherion evaluation SDK — measure accuracy, factuality, hallucination,
 // completion, latency, tokens, cost, safety and reproducibility.
 
 import type { ChatProvider } from '@sutra/model-adapters';

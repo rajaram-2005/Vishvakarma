@@ -1,4 +1,4 @@
-// SUTRA SDK — one facade over the whole stack.
+// Aetherion SDK — one facade over the whole stack.
 // Apps (web, desktop, mobile) call this; the adapters underneath stay
 // provider-neutral and local-first.
 
@@ -49,7 +49,7 @@ export function createSutra(
       const provider = decision.chosen ? providerFor(decision.chosen) : null;
       if (!provider) {
         return {
-          text: 'No model is currently reachable. SUTRA Local is always available — check Settings → Providers.',
+          text: 'No model is currently reachable. Aetherion Local is always available — check Settings → Providers.',
           model: 'none',
           decision,
         };

@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — trace waterfall (works for live and sample traces).
+// Lumen — trace waterfall (works for live and sample traces).
 
 import React from 'react';
 import type { Trace } from '@sutra/shared';

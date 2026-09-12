@@ -1,4 +1,4 @@
-# SUTRA Skills
+# Aetherion Skills
 
 A **skill** is the **HOW**: a reusable, versioned playbook for a task.
 It is *not* a model, *not* a prompt dump, and *not* memory — it's the

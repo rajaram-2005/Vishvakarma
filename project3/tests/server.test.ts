@@ -23,7 +23,7 @@ const withServer = (u: string, mode: Settings['privacyMode'] = 'hybrid'): Settin
 describe('server url handling', () => {
   it('normalizes: trims, strips slashes, rejects non-http', () => {
     expect(normalizeBaseUrl('  http://localhost:8000/  ')).toBe('http://localhost:8000');
-    expect(normalizeBaseUrl('https://api.sutra.dev///')).toBe('https://api.sutra.dev');
+    expect(normalizeBaseUrl('https://api.aetherion.dev///')).toBe('https://api.aetherion.dev');
     expect(normalizeBaseUrl('')).toBe('');
     expect(normalizeBaseUrl(undefined)).toBe('');
     expect(normalizeBaseUrl('localhost:8000')).toBe('');

@@ -1,4 +1,4 @@
-# SUTRA Architecture
+# Aetherion Architecture
 
 ## Principles
 
@@ -38,7 +38,7 @@
 │ SERVICE BOUNDARY (Python/FastAPI) — optional, same contracts     │
 │  api · auth · router · agent · registry · discovery ·            │
 │  evaluation · memory · rag · security · deployment · marketplace │
-│  ⇄ wired to web via apps/web/lib/server.ts (Settings → SUTRA API)│
+│  ⇄ wired to web via apps/web/lib/server.ts (Settings → Aetherion API)│
 ├──────────────────────────────────────────────────────────────────┤
 │ RUNTIMES & DATA (yours)                                          │
 │  Ollama · llama.cpp · vLLM · SGLang · any /chat/completions      │
@@ -104,7 +104,7 @@ Agent → Tool Gateway → Policy → Sandbox → Execution
 ## Data & sync
 
 - Web state: localStorage `sutra:app:v3` (versioned; `SEED_VERSION` migrates)
-- Service state: JSON files under `SUTRA_DATA_DIR` (atomic writes)
+- Service state: JSON files under `Aetherion_DATA_DIR` (atomic writes)
 - Tasks (Projects): Puter KV `sutra:tasks:<projectId>` when signed in,
   localStorage `sutra:kv:` fallback — debounced 250 ms, mirrored to the store
 - Sync scopes: none → metadata → selected projects → selected folders →

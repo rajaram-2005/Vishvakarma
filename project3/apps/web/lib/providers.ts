@@ -1,4 +1,4 @@
-// SUTRA — which models are actually reachable from this surface,
+// Lumen — which models are actually reachable from this surface,
 // and which adapter serves them.
 
 import type { ModelInfo, Settings } from '@sutra/shared';
@@ -13,13 +13,20 @@ export function modelReachable(m: ModelInfo, settings: Settings): boolean {
   switch (m.runtime) {
     case 'sutra-local':
       return true;
+    case 'aetherion-own':
+      // Own-model family — on-device, always reachable, zero network.
+      return true;
+    case 'puter-cloud':
+      // Reachable whenever Puter.js is loaded and the user is signed in —
+      // the gateway bills the user's own Puter account (no API keys).
+      return typeof window !== 'undefined' && !!(window as unknown as { puter?: unknown }).puter;
     case 'ollama':
       return !!settings.providers.ollamaUrl.trim();
     case 'openai-compat':
       return !!settings.providers.openaiBaseUrl.trim() && !!settings.providers.openaiApiKey.trim();
     default:
       // vLLM / SGLang / llama.cpp / Transformers / MLX / ONNX / TensorRT-LLM
-      // run as local runtimes addressed through the SUTRA API service
+      // run as local runtimes addressed through the Lumen API service
       // (services/api) or a direct adapter — not directly from the browser.
       return false;
   }
@@ -35,6 +42,10 @@ export function providerFor(m: ModelInfo | null | undefined, settings: Settings)
   switch (m.runtime) {
     case 'sutra-local':
       return new SutraLocalProvider();
+    case 'aetherion-own':
+      // Served by the own-model registry directly (see lib/chat.ts) —
+      // no network adapter exists or is needed.
+      return null;
     case 'ollama': {
       const url = settings.providers.ollamaUrl.trim();
       if (!url) return null;

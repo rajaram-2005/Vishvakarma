@@ -1,4 +1,4 @@
-# SUTRA Discovery
+# Aetherion Discovery
 
 Finds what is available **on this machine**: local model runtimes (Ollama,
 any OpenAI-compatible server), MCP servers, and their health.

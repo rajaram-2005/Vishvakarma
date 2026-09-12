@@ -1,4 +1,4 @@
-# SUTRA router service — Request → Task Analysis → Model Ranking → Model.
+# Aetherion router service — Request → Task Analysis → Model Ranking → Model.
 # Deterministic, offline. Split-out of the routing boundary used by api/agent.
 from __future__ import annotations
 
@@ -6,11 +6,11 @@ import re
 
 from fastapi import FastAPI, HTTPException
 
-app = FastAPI(title="SUTRA Router", version="0.1.0")
+app = FastAPI(title="Aetherion Router", version="0.1.0")
 
 # Canonical registry (mirrors services/api). In production this is fed by services/registry.
 MODELS = [
-    {"id": "sutra-local", "name": "SUTRA Local", "runtime": "sutra-local", "contextWindow": 16384, "costIn": 0, "latencyTier": "low", "capabilities": ["code", "structured", "long-context"], "available": True, "local": True},
+    {"id": "sutra-local", "name": "Aetherion Local", "runtime": "sutra-local", "contextWindow": 16384, "costIn": 0, "latencyTier": "low", "capabilities": ["code", "structured", "long-context"], "available": True, "local": True},
     {"id": "llama3.1-8b", "name": "Llama 3.1 8B", "runtime": "ollama", "contextWindow": 131072, "costIn": 0, "latencyTier": "medium", "capabilities": ["code", "creative", "structured"], "available": True, "local": True},
     {"id": "qwen2.5-coder-14b", "name": "Qwen 2.5 Coder 14B", "runtime": "ollama", "contextWindow": 32768, "costIn": 0, "latencyTier": "medium", "capabilities": ["code", "structured"], "available": True, "local": True},
     {"id": "gpt-4o", "name": "GPT-4o", "runtime": "openai-compat", "contextWindow": 128000, "costIn": 2.5, "latencyTier": "high", "capabilities": ["code", "creative", "structured", "long-context", "vision"], "available": True, "local": False},

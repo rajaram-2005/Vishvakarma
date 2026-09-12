@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — shared UI primitives. Spatial glass, glow, motion-aware.
+// Lumen — shared UI primitives. Spatial glass, glow, motion-aware.
 
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';

@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — cinematic intro. Skipped entirely under reduced motion.
+// Lumen — cinematic intro. Skipped entirely under reduced motion.
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -56,12 +56,12 @@ export function IntroOverlay() {
             </defs>
           </svg>
           <motion.div
-            className="font-display text-4xl font-semibold tracking-[0.5em] pl-[0.5em]"
-            initial={{ opacity: 0, letterSpacing: '1em' }}
-            animate={{ opacity: 1, letterSpacing: '0.5em' }}
+            className="font-display text-2xl sm:text-4xl font-semibold tracking-[0.35em] pl-[0.35em]"
+            initial={{ opacity: 0, letterSpacing: '0.9em' }}
+            animate={{ opacity: 1, letterSpacing: '0.35em' }}
             transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
           >
-            <span className="text-grad">SUTRA</span>
+            <span className="text-grad">Lumen</span>
           </motion.div>
           <motion.div
             className="overline mt-4"

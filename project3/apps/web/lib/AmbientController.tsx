@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — keeps the optional ambient soundscape in sync with settings.
+// Lumen — keeps the optional ambient soundscape in sync with settings.
 // OFF by default; starts only after a user interaction (browser policy).
 
 import { useEffect } from 'react';

@@ -1,4 +1,4 @@
-// SUTRA — deployment pipeline with real artifacts and honest status.
+// Lumen — deployment pipeline with real artifacts and honest status.
 // local: bundle written to the workspace records
 // docker: Dockerfile + compose generated
 // puter: real Puter cloud FS write when signed in (optional layer)
@@ -66,7 +66,7 @@ export async function runDeployment(
 
   if (target === 'local') {
     await push('install to local target', async () => {
-      url = `sutra://local/${hash}`;
+      url = `aetherion://local/${hash}`;
       return 'bundle installed to local runtime';
     });
   } else if (target === 'docker') {
@@ -86,13 +86,13 @@ USER node
 CMD ["npm", "start"]
 `;
     await push('render Dockerfile', async () => 'multi-stage node:22-alpine image');
-    await push('image build (simulated)', async () => `image sutra:${hash} ready (run docker build to materialize)`);
-    url = `docker://sutra/${hash}`;
+    await push('image build (simulated)', async () => `image aetherion:${hash} ready (run docker build to materialize)`);
+    url = `docker://aetherion/${hash}`;
   } else {
     await push('puter cloud target', async () => {
       if (!puterSignedIn()) throw new Error('Puter not signed in — bundle kept local (local mode is never forced to auth)');
       await puterFsWrite('deployments', `${hash}.json`, bundleText);
-      url = `puter:/sutra/deployments/${hash}.json`;
+      url = `puter:/aetherion/deployments/${hash}.json`;
       return 'bundle written to Puter cloud FS';
     });
   }

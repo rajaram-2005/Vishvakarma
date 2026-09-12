@@ -1,4 +1,4 @@
-# SUTRA service API — configuration (env-driven, provider-neutral).
+# Aetherion service API — configuration (env-driven, provider-neutral).
 from __future__ import annotations
 
 import os
@@ -9,11 +9,11 @@ from dataclasses import dataclass, field
 class Settings:
     service: str = "sutra-api"
     version: str = "0.1.0"
-    env: str = os.environ.get("SUTRA_ENV", "development")
+    env: str = os.environ.get("Aetherion_ENV", "development")
 
     # Privacy mode: local | hybrid | cloud. Local never phones home.
-    privacy_mode: str = os.environ.get("SUTRA_PRIVACY_MODE", "local")
-    sync_scope: str = os.environ.get("SUTRA_SYNC_SCOPE", "none")
+    privacy_mode: str = os.environ.get("Aetherion_PRIVACY_MODE", "local")
+    sync_scope: str = os.environ.get("Aetherion_SYNC_SCOPE", "none")
 
     # Local runtimes
     ollama_url: str = os.environ.get("OLLAMA_URL", "http://localhost:11434")
@@ -25,11 +25,11 @@ class Settings:
 
     # Observability
     otlp_endpoint: str = os.environ.get("OTLP_ENDPOINT", "")  # e.g. http://host:4318
-    trace_sample: float = float(os.environ.get("SUTRA_TRACE_SAMPLE", "1.0"))
+    trace_sample: float = float(os.environ.get("Aetherion_TRACE_SAMPLE", "1.0"))
 
     # Security
     cors_origins: list[str] = field(
-        default_factory=lambda: [o for o in os.environ.get("SUTRA_CORS_ORIGINS", "*").split(",") if o]
+        default_factory=lambda: [o for o in os.environ.get("Aetherion_CORS_ORIGINS", "*").split(",") if o]
     )
 
     @property

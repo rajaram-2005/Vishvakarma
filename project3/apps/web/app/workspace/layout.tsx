@@ -1,28 +1,33 @@
 'use client';
-// SUTRA workspace shell — spatial glass navigation.
-// Home · Chat · Projects · Agents · Teams · Models · Tools · Skills ·
-// Knowledge · Memory · Workflows · MCP · Plugins · Evaluation · Security ·
-// Activity · Deployments · Marketplace · Settings
+// Lumen Studio — the unified workspace shell.
+// Six primary areas: Chat · Studio · Coder · Library · Plugins · Schedules.
+// Everything else lives behind "More" — one studio, not a dashboard farm.
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Activity,
   Bot,
   Brain,
+  Calendar,
+  ChevronDown,
   Cpu,
   Database,
+  FileCode2,
   FolderKanban,
   Gauge,
-  Home,
+  Library,
   MessageSquare,
+  Orbit,
   Package,
+  Palette,
   Plug,
   Puzzle,
   Rocket,
   Settings,
   ShieldCheck,
+  Sparkles,
   Store,
   Users,
   Volume2,
@@ -32,28 +37,74 @@ import {
 } from 'lucide-react';
 import { useSutra } from '@/lib/store';
 import { usePuter } from '@/lib/puter';
+import { BRAND } from '@/lib/brand';
+import { CommandBar } from '@/components/CommandBar';
+import { Onboarding } from '@/components/Onboarding';
 
-const NAV: Array<{ href: string; label: string; icon: React.ComponentType<{ size?: number | string; className?: string; style?: React.CSSProperties }> }> = [
-  { href: '/workspace', label: 'Home', icon: Home },
+type NavItem = { href: string; label: string; icon: React.ComponentType<{ size?: number | string; className?: string; style?: React.CSSProperties }> };
+
+// The six primary areas — the whole product.
+const MAJOR: NavItem[] = [
   { href: '/workspace/chat', label: 'Chat', icon: MessageSquare },
+  { href: '/workspace/studio', label: 'Studio', icon: Palette },
+  { href: '/workspace/coder', label: 'Coder', icon: FileCode2 },
+  { href: '/workspace/library', label: 'Library', icon: Library },
+  { href: '/workspace/plugins', label: 'Plugins', icon: Package },
+  { href: '/workspace/schedule', label: 'Schedules', icon: Calendar },
+];
+
+// Contextual and power areas — one click away, not top-level noise.
+const MORE: NavItem[] = [
+  { href: '/workspace/models', label: 'Models', icon: Cpu },
+  { href: '/workspace/bots', label: 'Bots', icon: Bot },
+  { href: '/workspace/marketplace', label: 'Marketplace', icon: Store },
+  { href: '/workspace/memory', label: 'Memory', icon: Brain },
+  { href: '/workspace/knowledge', label: 'Knowledge', icon: Database },
+  { href: '/workspace/aetheris', label: 'Core', icon: Orbit },
   { href: '/workspace/projects', label: 'Projects', icon: FolderKanban },
   { href: '/workspace/agents', label: 'Agents', icon: Bot },
   { href: '/workspace/teams', label: 'Teams', icon: Users },
-  { href: '/workspace/models', label: 'Models', icon: Cpu },
   { href: '/workspace/tools', label: 'Tools', icon: Wrench },
   { href: '/workspace/skills', label: 'Skills', icon: Puzzle },
-  { href: '/workspace/knowledge', label: 'Knowledge', icon: Database },
-  { href: '/workspace/memory', label: 'Memory', icon: Brain },
   { href: '/workspace/workflows', label: 'Workflows', icon: Workflow },
   { href: '/workspace/mcp', label: 'MCP', icon: Plug },
-  { href: '/workspace/plugins', label: 'Plugins', icon: Package },
   { href: '/workspace/evaluation', label: 'Evaluation', icon: Gauge },
   { href: '/workspace/security', label: 'Security', icon: ShieldCheck },
   { href: '/workspace/activity', label: 'Activity', icon: Activity },
   { href: '/workspace/deployments', label: 'Deployments', icon: Rocket },
-  { href: '/workspace/marketplace', label: 'Marketplace', icon: Store },
   { href: '/workspace/settings', label: 'Settings', icon: Settings },
 ];
+
+const NAV: NavItem[] = [...MAJOR, ...MORE];
+
+function NavLink({ n, active, pending }: { n: NavItem; active: boolean; pending: number }) {
+  const Icon = n.icon;
+  return (
+    <Link
+      href={n.href}
+      title={n.label}
+      className="relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all"
+      style={{
+        background: active ? 'color-mix(in srgb, var(--acc) 14%, transparent)' : 'transparent',
+        border: `1px solid ${active ? 'color-mix(in srgb, var(--acc) 35%, transparent)' : 'transparent'}`,
+        boxShadow: active ? '0 0 22px -8px var(--glow-a)' : 'none',
+      }}
+    >
+      <Icon size={16} className="shrink-0" style={{ color: active ? 'var(--acc2)' : 'var(--dim)' }} />
+      <span className="text-xs hidden lg:inline" style={{ color: active ? 'var(--ink)' : 'var(--dim)' }}>
+        {n.label}
+      </span>
+      {n.href === '/workspace/security' && pending > 0 && (
+        <span
+          className="ml-auto hidden lg:flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-mono"
+          style={{ background: 'var(--bad)', color: '#fff', boxShadow: '0 0 12px var(--bad)' }}
+        >
+          {pending}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 function titleFor(pathname: string): string {
   const cur = NAV.find((n) => (n.href === '/workspace' ? pathname === '/workspace' : pathname.startsWith(n.href)));
@@ -63,6 +114,23 @@ function titleFor(pathname: string): string {
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? '/workspace';
   const { s, setSettings } = useSutra();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [online, setOnline] = useState(true);
+
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine !== false);
+    update();
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    const iv = window.setInterval(() => {
+      fetch('/api/status', { cache: 'no-store' }).then((r) => setOnline(r.ok)).catch(() => setOnline(false));
+    }, 30000);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+      window.clearInterval(iv);
+    };
+  }, []);
   const puter = usePuter();
   const pending = s.approvals.filter((a) => a.status === 'pending').length;
   const themes: Array<'dark' | 'light' | 'aurora'> = ['dark', 'light', 'aurora'];
@@ -95,39 +163,23 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
               </linearGradient>
             </defs>
           </svg>
-          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">SUTRA</span>
+          <span className="font-display font-semibold tracking-[0.3em] text-xs hidden lg:inline">{BRAND.name}</span>
         </Link>
         <nav className="flex flex-col gap-0.5">
-          {NAV.map((n) => {
-            const active = n.href === '/workspace' ? pathname === '/workspace' : pathname.startsWith(n.href);
-            const Icon = n.icon;
-            return (
-              <Link
-                key={n.href}
-                href={n.href}
-                title={n.label}
-                className="relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all"
-                style={{
-                  background: active ? 'color-mix(in srgb, var(--acc) 14%, transparent)' : 'transparent',
-                  border: `1px solid ${active ? 'color-mix(in srgb, var(--acc) 35%, transparent)' : 'transparent'}`,
-                  boxShadow: active ? '0 0 22px -8px var(--glow-a)' : 'none',
-                }}
-              >
-                <Icon size={16} className="shrink-0" style={{ color: active ? 'var(--acc2)' : 'var(--dim)' }} />
-                <span className="text-xs hidden lg:inline" style={{ color: active ? 'var(--ink)' : 'var(--dim)' }}>
-                  {n.label}
-                </span>
-                {n.href === '/workspace/security' && pending > 0 && (
-                  <span
-                    className="ml-auto hidden lg:flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-mono"
-                    style={{ background: 'var(--bad)', color: '#fff', boxShadow: '0 0 12px var(--bad)' }}
-                  >
-                    {pending}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+          {MAJOR.map((n) => (
+            <NavLink key={n.href} n={n} active={n.href === '/workspace' ? pathname === '/workspace' : pathname.startsWith(n.href)} pending={pending} />
+          ))}
+          <button
+            onClick={() => setMoreOpen((v) => !v)}
+            className="flex items-center gap-3 px-3 py-2 rounded-xl transition-all mt-1"
+            style={{ color: 'var(--dim)' }}
+          >
+            <ChevronDown size={14} className="shrink-0" style={{ transform: moreOpen ? 'rotate(180deg)' : 'none', transition: 'transform .25s ease' }} />
+            <span className="text-[10px] font-mono tracking-widest hidden lg:inline">{moreOpen ? 'LESS' : `MORE · ${MORE.length}`}</span>
+          </button>
+          {moreOpen && MORE.map((n) => (
+            <NavLink key={n.href} n={n} active={n.href === '/workspace' ? pathname === '/workspace' : pathname.startsWith(n.href)} pending={pending} />
+          ))}
         </nav>
         <div className="mt-auto px-2 py-3 hidden lg:block">
           <div className="font-mono text-[9px] tracking-widest" style={{ color: 'var(--dim)' }}>
@@ -148,8 +200,19 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <span className="chip hidden sm:inline-flex" style={{ color: 'var(--acc2)' }}>
             {s.settings.privacyMode}
           </span>
-          <span className="chip hidden sm:inline-flex" style={{ color: puter.signedIn ? 'var(--ok)' : 'var(--dim)' }}>
-            puter: {puter.signedIn ? puter.user ?? 'connected' : 'local mode'}
+          <span
+            className="chip hidden sm:inline-flex"
+            style={{ color: online ? 'var(--ok)' : 'var(--warn)' }}
+            title={online ? 'online — full platform' : 'offline — Chat and local advice remain available; Studio, cloud models and marketplace need a connection'}
+          >
+            {online ? '● online · full platform' : '○ offline · limited'}
+          </span>
+          <span
+            className="chip hidden sm:inline-flex"
+            style={{ color: puter.signedIn ? 'var(--ok)' : puter.scriptFailed ? 'var(--warn)' : 'var(--dim)' }}
+            title={puter.error ?? undefined}
+          >
+            puter: {puter.signedIn ? puter.user ?? 'connected' : puter.scriptFailed ? 'blocked · local mode' : 'local mode'}
           </span>
           <div className="flex-1" />
           {pending > 0 && (
@@ -165,6 +228,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           >
             {s.settings.ambientSound ? <Volume2 size={15} /> : <VolumeX size={15} />}
           </button>
+          <CommandBar />
           <button
             onClick={() => {
               const i = themes.indexOf(s.settings.theme);
@@ -207,6 +271,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
 
         <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1400px] w-full mx-auto">{children}</main>
       </div>
+      <Onboarding />
     </div>
   );
 }

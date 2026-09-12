@@ -1,4 +1,4 @@
-// SUTRA plugin SDK — manifest-first plugins with explicit scopes.
+// Aetherion plugin SDK — manifest-first plugins with explicit scopes.
 // A plugin only ever gets the scopes the user approves at install time.
 
 export const VALID_SCOPES = [

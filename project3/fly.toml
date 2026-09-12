@@ -1,0 +1,32 @@
+# Aetherion on Fly.io — `fly launch` (or copy this next to the Dockerfile
+# and run `fly deploy`). One machine runs the whole product.
+app = "aetherion"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "3000"
+  HOSTNAME = "0.0.0.0"
+  # Optional: provider keys for the embedded Aetheris mesh, e.g.
+  # GROQ_API_KEY = "gsk_…"
+  # GEMINI_API_KEY = "…"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/api/status"

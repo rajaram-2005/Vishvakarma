@@ -1,4 +1,4 @@
-// SUTRA — GitHub as a first-class citizen.
+// Lumen — GitHub as a first-class citizen.
 // Live, read-only, no token required for public repos (CORS-friendly API).
 
 export interface RepoInfo {

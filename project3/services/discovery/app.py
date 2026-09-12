@@ -1,4 +1,4 @@
-# SUTRA discovery service — finds local runtimes, MCP servers and peers.
+# Aetherion discovery service — finds local runtimes, MCP servers and peers.
 # Health checks are read-only and privacy-aware: local mode only probes private hosts.
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import httpx
 from fastapi import FastAPI
 
-app = FastAPI(title="SUTRA Discovery", version="0.1.0")
+app = FastAPI(title="Aetherion Discovery", version="0.1.0")
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")
@@ -54,7 +54,7 @@ async def runtimes():
     openai = await _probe(f"{OPENAI_BASE_URL.rstrip('/')}/models") if OPENAI_BASE_URL else {"ok": False, "latencyMs": 0, "detail": "not configured"}
     return {
         "runtimes": [
-            {"id": "sutra-local", "name": "SUTRA Local (in-process)", "ok": True, "latencyMs": 0, "detail": "always available"},
+            {"id": "sutra-local", "name": "Aetherion Local (in-process)", "ok": True, "latencyMs": 0, "detail": "always available"},
             {"id": "ollama", "name": "Ollama", "url": OLLAMA_URL, **ollama},
             {"id": "openai-compat", "name": "OpenAI-compatible (vLLM/LM Studio/SGLang)", "url": OPENAI_BASE_URL or None, **openai},
         ]

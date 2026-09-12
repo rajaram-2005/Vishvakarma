@@ -1,4 +1,4 @@
-# SUTRA marketplace service — catalog + scope-reviewed installs into the local registry.
+# Aetherion marketplace service — catalog + scope-reviewed installs into the local registry.
 from __future__ import annotations
 
 import json
@@ -9,14 +9,14 @@ from fastapi import FastAPI, HTTPException
 
 DATA = Path(__file__).parent / "data"
 DATA.mkdir(parents=True, exist_ok=True)
-app = FastAPI(title="SUTRA Marketplace", version="0.1.0")
+app = FastAPI(title="Aetherion Marketplace", version="0.1.0")
 
 CATALOG = [
-    {"id": "cat-rag-tuning", "kind": "skill", "name": "RAG Tuning", "version": "1.0.0", "author": "SUTRA", "license": "MIT", "scopes": ["fs.read"], "description": "Chunk sizes, overlap, rerank blends and citation formats for grounded answers."},
-    {"id": "cat-data-pipeline", "kind": "skill", "name": "Data Pipeline", "version": "0.9.2", "author": "SUTRA", "license": "MIT", "scopes": ["db", "network.request"], "description": "Source → normalize → validate → store, with idempotent steps."},
+    {"id": "cat-rag-tuning", "kind": "skill", "name": "RAG Tuning", "version": "1.0.0", "author": "Aetherion", "license": "MIT", "scopes": ["fs.read"], "description": "Chunk sizes, overlap, rerank blends and citation formats for grounded answers."},
+    {"id": "cat-data-pipeline", "kind": "skill", "name": "Data Pipeline", "version": "0.9.2", "author": "Aetherion", "license": "MIT", "scopes": ["db", "network.request"], "description": "Source → normalize → validate → store, with idempotent steps."},
     {"id": "cat-sentry-mcp", "kind": "mcp", "name": "Sentry MCP", "version": "0.5.1", "author": "sentry", "license": "MIT", "scopes": ["network.request"], "description": "Issues, alerts and release health over MCP."},
     {"id": "cat-github-mcp", "kind": "mcp", "name": "GitHub MCP", "version": "1.2.0", "author": "modelcontextprotocol", "license": "MIT", "scopes": ["network.request"], "description": "Repos, code search, issues and PRs over MCP."},
-    {"id": "cat-oncall-workflow", "kind": "workflow", "name": "On-call Digest", "version": "1.0.0", "author": "SUTRA", "license": "MIT", "scopes": ["network.request"], "description": "Daily 09:00: gather incidents → summarize → human review → post digest."},
+    {"id": "cat-oncall-workflow", "kind": "workflow", "name": "On-call Digest", "version": "1.0.0", "author": "Aetherion", "license": "MIT", "scopes": ["network.request"], "description": "Daily 09:00: gather incidents → summarize → human review → post digest."},
     {"id": "cat-linear-bridge", "kind": "plugin", "name": "Linear Bridge", "version": "0.3.0", "author": "sutra-community", "license": "MIT", "scopes": ["network.request", "memory.write"], "description": "Sync tasks with a Linear team via API."},
 ]
 

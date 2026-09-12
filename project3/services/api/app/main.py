@@ -1,4 +1,4 @@
-# SUTRA service API — FastAPI application.
+# Aetherion service API — FastAPI application.
 # Local-first, provider-neutral, OTel-compatible. Nothing phones home in local mode.
 from __future__ import annotations
 
@@ -107,7 +107,7 @@ async def lifespan(_: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="SUTRA Service API",
+        title="Aetherion Service API",
         version=__version__,
         description="Local-first AI operating workspace — backend surface. Provider-neutral, OTel-compatible.",
         lifespan=lifespan,
@@ -145,13 +145,13 @@ def create_app() -> FastAPI:
             "backends": reachable_local_backends(SETTINGS),
             "documents": len(state.get("documents", [])),
             "tasks": len(state.get("tasks", [])),
-            "uptimeNote": "state is local-first; files under SUTRA_DATA_DIR",
+            "uptimeNote": "state is local-first; files under Aetherion_DATA_DIR",
         }
 
     @app.get("/")
     async def root():
         return {
-            "service": "SUTRA Service API",
+            "service": "Aetherion Service API",
             "docs": "/docs",
             "health": "/health",
             "api": "/api/v1",

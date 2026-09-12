@@ -1,4 +1,4 @@
-# SUTRA Agents
+# Aetherion Agents
 
 Declarative agent definitions. The web workspace seeds from these same
 fields; `services/agent` runs them server-side.

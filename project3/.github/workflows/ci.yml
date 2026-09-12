@@ -1,4 +1,4 @@
-name: SUTRA CI
+name: Aetherion CI
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - 'project3/**'
 
 concurrency:
-  group: sutra-${{ github.ref }}
+  group: aetherion-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

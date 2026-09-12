@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Tools: registry, enable/disable, sandbox levels, live gateway samples.
+// Lumen — Tools: registry, enable/disable, sandbox levels, live gateway samples.
 
 import React, { useState } from 'react';
 import { useSutra } from '@/lib/store';
@@ -11,7 +11,7 @@ const SAMPLES: Record<string, ToolCall> = {
   'fs.read': { tool: 'fs.read', category: 'fs.read', detail: 'read src/core.ts' },
   'fs.write': { tool: 'fs.write', category: 'fs.write', detail: 'write src/utils.ts' },
   'terminal.exec': { tool: 'terminal.exec', category: 'terminal.exec', detail: 'npm test' },
-  'browser.nav': { tool: 'browser.nav', category: 'browser.action', detail: 'navigate sutra://local/preview' },
+  'browser.nav': { tool: 'browser.nav', category: 'browser.action', detail: 'navigate aetherion://local/preview' },
   'git.ops': { tool: 'git.ops', category: 'git.push', detail: 'git push origin main' },
   'api.fetch': { tool: 'api.fetch', category: 'network.request', detail: 'GET https://api.github.com' },
   'db.query': { tool: 'db.query', category: 'db.write', detail: 'UPDATE tasks SET status=done' },

@@ -1,4 +1,4 @@
-// SUTRA — small shared utilities (browser + node safe where noted).
+// Aetherion — small shared utilities (browser + node safe where noted).
 
 export function uid(prefix = ''): string {
   const c = typeof crypto !== 'undefined' ? (crypto as Crypto) : undefined;

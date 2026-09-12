@@ -1,4 +1,4 @@
-# SUTRA registry service — skills, plugins, workflows, MCP servers.
+# Aetherion registry service — skills, plugins, workflows, MCP servers.
 # Manifest-first: nothing installs without a validated manifest + declared scopes.
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from fastapi import FastAPI, HTTPException
 
 DATA = Path(__file__).parent / "data"
 DATA.mkdir(parents=True, exist_ok=True)
-app = FastAPI(title="SUTRA Registry", version="0.1.0")
+app = FastAPI(title="Aetherion Registry", version="0.1.0")
 
 VALID_SCOPES = {"fs.read", "fs.write", "fs.delete", "terminal.exec", "network.request", "db", "secrets", "deploy", "memory.write", "browser"}
 

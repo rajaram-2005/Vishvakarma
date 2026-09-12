@@ -1,4 +1,4 @@
-# SUTRA Auth
+# Aetherion Auth
 
 Local-first identity service. Stdlib-only (HMAC-SHA256 tokens, PBKDF2 password
 hashing with salt/pepper). No external IdP is required — cloud IdP adapters
@@ -10,5 +10,5 @@ hashing with salt/pepper). No external IdP is required — cloud IdP adapters
 - `DELETE /sessions/current` — revoke session (token becomes invalid immediately)
 - `GET /health`
 
-State: JSON under `SUTRA_DATA_DIR`. Split boundary from `services/api`:
+State: JSON under `Aetherion_DATA_DIR`. Split boundary from `services/api`:
 `api` performs capability gating; `auth` performs identity & sessions.

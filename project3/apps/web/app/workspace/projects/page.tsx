@@ -1,5 +1,5 @@
 'use client';
-// SUTRA — Projects: the AI-powered To-Do system (Puter KV or local),
+// Lumen — Projects: the AI-powered To-Do system (Puter KV or local),
 // AI planning, and the developer IDE entry.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -187,7 +187,7 @@ function TasksPanel({ projectId, projectName }: { projectId: string; projectName
     const res = await planFromGoal(goal, s.models, s.settings);
     tr.span('planner.run', Date.now() - t0, { source: res.source, tasks: String(res.tasks.length) });
     const id = tr.end();
-    setPlan({ tasks: res.tasks, source: res.source === 'llm' ? `LLM (${res.model})` : 'SUTRA Local (offline template)' });
+    setPlan({ tasks: res.tasks, source: res.source === 'llm' ? `LLM (${res.model})` : 'Lumen Local (offline template)' });
     setPlanning(false);
     act('plan', `plan generated · ${res.tasks.length} tasks`, `goal: ${goal.slice(0, 40)} · via ${res.source}`, id);
   };

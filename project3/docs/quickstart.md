@@ -1,4 +1,4 @@
-# SUTRA Quickstart
+# Aetherion Quickstart
 
 ## 0. Prereqs
 
@@ -6,7 +6,7 @@
 - **Python ≥ 3.11** (service API — optional but recommended)
 - Docker (full stack — optional)
 - Ollama or any OpenAI-compatible endpoint (a real model — optional;
-  SUTRA Local works offline without any of these)
+  Aetherion Local works offline without any of these)
 
 ## 1. Run the web workspace
 
@@ -26,7 +26,7 @@ Open **http://localhost:3000**.
 
 ## 2. Try the built-in loop (no model needed)
 
-1. **Chat** — ask anything; SUTRA Local answers offline, grounded on the
+1. **Chat** — ask anything; Aetherion Local answers offline, grounded on the
    knowledge base for "what is…" style questions, and says *so* — it shows
    the route decision and reasons.
 2. **Knowledge** — ingest a document (paste or upload), then ask the
@@ -60,7 +60,7 @@ cd project3
 python3 -m venv .venv
 ./.venv/bin/pip install -r services/api/requirements.txt
 cd services/api
-SUTRA_DATA_DIR=./data ../../.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+Aetherion_DATA_DIR=./data ../../.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 - **http://localhost:8000/docs** — interactive OpenAPI
@@ -108,7 +108,7 @@ cd apps/web && npx tsc --noEmit && npm run build   # 23 static routes
 
 | Symptom | Fix |
 |---|---|
-| "no reachable provider in local mode" | expected without Ollama/API configured — configure in Settings, or use SUTRA Local features |
+| "no reachable provider in local mode" | expected without Ollama/API configured — configure in Settings, or use Aetherion Local features |
 | Ollama test fails | `ollama serve` running? URL includes port 11434? |
 | Chat pins a cloud model but you want local | Settings → Privacy → mode `local`, or pin a local model in Chat |
 | Port 3000 busy | `npm run dev -- -p 3002` |
