@@ -47,5 +47,6 @@ export * from './adapters';
 export * from './adapters-real';
 export * from './auth';
 export * from './storage-backend';
+export * from './storage-sqlite';
 export * from './sample';
 export * from './core';

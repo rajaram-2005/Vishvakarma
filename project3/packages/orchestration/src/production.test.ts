@@ -8,6 +8,8 @@ import {
   adapterExecutor,
   contractTestModel,
   MockModelAdapter,
+  createSqliteStorage,
+  registryFromEnv,
   createWebApp,
   MemoryStorage,
   Platform,
@@ -84,6 +86,25 @@ describe('DB-backed storage (SQLite or file fallback)', () => {
     expect(s.get('c', 'k')).toEqual({ v: 1 });
     expect(s.list('c')).toHaveLength(1);
     expect(s.delete('c', 'k')).toBe(true);
+  });
+});
+
+describe('SQLite-backed storage factory', () => {
+  it('returns a working storage (fallback path in test env)', async () => {
+    const s = await createSqliteStorage(':memory:');
+    s.set('c', 'k', { v: 1 });
+    expect(s.get('c', 'k')).toEqual({ v: 1 });
+    expect(s.list('c')).toHaveLength(1);
+    expect(s.delete('c', 'k')).toBe(true);
+  });
+});
+
+describe('Live adapter wiring (§96)', () => {
+  it('registryFromEnv picks up OPENAI_API_KEY', () => {
+    process.env.OPENAI_API_KEY = 'sk-test';
+    const reg = registryFromEnv();
+    expect(reg.listModels().some((m) => m.id === 'openai')).toBe(true);
+    delete process.env.OPENAI_API_KEY;
   });
 });
 
