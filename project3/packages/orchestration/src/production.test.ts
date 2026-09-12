@@ -9,6 +9,7 @@ import {
   contractTestModel,
   MockModelAdapter,
   createSqliteStorage,
+  createStorageFromUrl,
   registryFromEnv,
   createWebApp,
   MemoryStorage,
@@ -79,13 +80,55 @@ describe('Real adapters (§96 contracts)', () => {
   });
 });
 
-describe('DB-backed storage (SQLite or file fallback)', () => {
+describe('DB-backed storage (SQLite/Postgres factory)', () => {
   it('persists via studioCreateStorageStore', async () => {
     const s = await studioCreateStorageStore(); // in-memory/file fallback
     s.set('c', 'k', { v: 1 });
     expect(s.get('c', 'k')).toEqual({ v: 1 });
     expect(s.list('c')).toHaveLength(1);
     expect(s.delete('c', 'k')).toBe(true);
+  });
+
+  it('sqlite factory returns a working storage', async () => {
+    const s = await createSqliteStorage(':memory:');
+    s.set('c', 'k', { v: 2 });
+    expect(s.get('c', 'k')).toEqual({ v: 2 });
+    expect(s.list('c')).toHaveLength(1);
+  });
+
+  it('Postgres write-through storage satisfies Storage and persists async', async () => {
+    // Fake Postgres: an in-memory backend the injected query talks to.
+    const backend = new Map<string, Map<string, string>>();
+    const q = async (text: string, params: unknown[]) => {
+      const [c, k] = params as string[];
+      if (text.startsWith('SELECT')) {
+        const row = backend.get(c)?.get(k);
+        return { rows: row ? [{ value: row }] : [] };
+      }
+      if (text.startsWith('INSERT')) {
+        if (!backend.has(c)) backend.set(c, new Map());
+        backend.get(c)!.set(k, params[2] as string);
+        return { rows: [] };
+      }
+      return { rows: [] };
+    };
+    const s = await createStorageFromUrl('postgres://user:pass@localhost/db', q);
+    s.set('c', 'k', { v: 3 });
+    expect(s.get('c', 'k')).toEqual({ v: 3 }); // served from in-memory mirror
+    await new Promise((r) => setTimeout(r, 10)); // let async persist flush
+    expect(backend.get('c')?.get('k')).toBe(JSON.stringify({ v: 3 })); // actually persisted
+  });
+});
+
+describe('Coder / Studio surfaces (§42/§120)', () => {
+  it('code and studio endpoints run through the core', async () => {
+    const app = createWebApp({ platform: new Platform({ seedSample: true }), storage: new MemoryStorage() });
+    const code = await app({ method: 'POST', path: '/api/code', query: new URLSearchParams(), body: { task: 'write a sort' } } as never);
+    expect(code.status).toBe(200);
+    expect((code.json as { completed: string[] }).completed.length).toBeGreaterThan(0);
+    const studio = await app({ method: 'POST', path: '/api/studio', query: new URLSearchParams(), body: { prompt: 'make art' } } as never);
+    expect(studio.status).toBe(200);
+    expect((studio.json as { completed: string[] }).completed.length).toBeGreaterThan(0);
   });
 });
 

@@ -13,7 +13,7 @@ import {
   registryFromEnv,
   adapterExecutor,
   createWebApp,
-  createSqliteStorage,
+  createStorageFromUrl,
   type Storage,
 } from '@sutra/orchestration';
 
@@ -27,7 +27,7 @@ let bundlePromise: Promise<AppBundle> | null = null;
 async function getBundle(): Promise<AppBundle> {
   if (!bundlePromise) {
     bundlePromise = (async () => {
-      const storage: Storage = await createSqliteStorage(process.env.STUDIO_DB ?? ':memory:');
+      const storage: Storage = await createStorageFromUrl(process.env.STUDIO_DB ?? ':memory:');
       const auth = new AuthService(storage);
       const adapters = registryFromEnv();
       const defaultModel = adapters.listModels()[0]?.id ?? 'openai';

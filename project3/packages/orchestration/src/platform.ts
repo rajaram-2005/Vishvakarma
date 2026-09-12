@@ -101,6 +101,16 @@ export class Platform {
     return this.scheduler.tick(this.executor, ctx);
   }
 
+  /** Run a code task through the core (Coder surface). */
+  async code(task: string, ctx: CompatibilityContext = sampleContext) {
+    return this.coder.code(task, this.executor, ctx);
+  }
+
+  /** Run a creative/generation task through the core (Studio surface). */
+  async studioRun(prompt: string, ctx: CompatibilityContext = sampleContext) {
+    return this.studio.generate(prompt, this.executor, ctx);
+  }
+
   searchLibrary(q: string) {
     return this.library.search(q);
   }

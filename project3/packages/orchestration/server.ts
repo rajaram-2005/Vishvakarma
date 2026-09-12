@@ -11,47 +11,14 @@
 //   NODE_OPTIONS=--experimental-sqlite tsx server.ts   # http://localhost:4789
 
 import { createServer } from 'node:http';
-import { Platform, PersistentStorage, AuthService, registryFromEnv, adapterExecutor, createWebApp } from './src/index';
-import type { Storage } from './src/storage';
+import { Platform, AuthService, registryFromEnv, adapterExecutor, createWebApp, createStorageFromUrl } from './src/index';
 import type { WebRequest } from './src/web';
 
 const PORT = Number(process.env.PORT ?? 4789);
-const DATA_DB = process.env.STUDIO_DB; // sqlite file path
-
-/** Build a real DB-backed store, falling back to in-memory if SQLite is absent. */
-async function makeStorage(dbPath?: string): Promise<Storage> {
-  if (dbPath && dbPath !== ':memory:') {
-    try {
-      const mod: any = await import('node:sqlite');
-      const db = new mod.DatabaseSync(dbPath);
-      db.exec('CREATE TABLE IF NOT EXISTS kv (collection TEXT, key TEXT, value TEXT, PRIMARY KEY (collection, key))');
-      return {
-        get<T>(c: string, k: string): T | undefined {
-          const r = db.prepare('SELECT value FROM kv WHERE collection=? AND key=?').get(c, k) as { value: string } | undefined;
-          return r ? (JSON.parse(r.value) as T) : undefined;
-        },
-        set<T>(c: string, k: string, v: T): void {
-          db.prepare('INSERT INTO kv (collection,key,value) VALUES (?,?,?) ON CONFLICT(collection,key) DO UPDATE SET value=excluded.value').run(c, k, JSON.stringify(v));
-        },
-        delete(c: string, k: string): boolean {
-          return (db.prepare('DELETE FROM kv WHERE collection=? AND key=?').run(c, k).changes ?? 0) > 0;
-        },
-        list<T>(c: string): T[] {
-          return (db.prepare('SELECT value FROM kv WHERE collection=?').all(c) as Array<{ value: string }>).map((r) => JSON.parse(r.value) as T);
-        },
-        keys(c: string): string[] {
-          return (db.prepare('SELECT key FROM kv WHERE collection=?').all(c) as Array<{ key: string }>).map((r) => r.key);
-        },
-      };
-    } catch {
-      // fall through
-    }
-  }
-  return new PersistentStorage();
-}
+const DATA_DB = process.env.STUDIO_DB; // sqlite file path, or postgres://... URL
 
 async function bootstrap() {
-  const storage = await makeStorage(DATA_DB);
+  const storage = await createStorageFromUrl(DATA_DB ?? ':memory:');
   const auth = new AuthService(storage);
   const adapters = registryFromEnv();
   const defaultModel = adapters.listModels()[0]?.id ?? 'openai';

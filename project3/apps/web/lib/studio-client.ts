@@ -28,4 +28,6 @@ export const studioClient = {
   register: (email: string, password: string) => api('POST', '/api/auth/register', { email, password }),
   login: (email: string, password: string) => api<{ token: string }>('POST', '/api/auth/login', { email, password }),
   me: (token: string) => api<{ id: string; email: string; role: string } | null>('GET', '/api/auth/me', undefined),
+  code: (task: string) => api<{ completed: string[]; failed: string[] }>('POST', '/api/code', { task }),
+  studio: (prompt: string) => api<{ completed: string[]; failed: string[] }>('POST', '/api/studio', { prompt }),
 };

@@ -143,6 +143,16 @@ async function handleApi(
     const results = await platform.tickNow();
     return { status: 200, json: { ran: Object.keys(results).length } };
   }
+  if (url.pathname === '/api/code' && req.method === 'POST') {
+    const task = (req.body as { task?: string })?.task ?? 'write a function to sort an array';
+    const r = await platform.code(task);
+    return { status: 200, json: { completed: r.completed, failed: r.failed, paused: r.paused } };
+  }
+  if (url.pathname === '/api/studio' && req.method === 'POST') {
+    const prompt = (req.body as { prompt?: string })?.prompt ?? 'create a logo concept';
+    const r = await platform.studioRun(prompt);
+    return { status: 200, json: { completed: r.completed, failed: r.failed, paused: r.paused } };
+  }
 
   if (url.pathname === '/api/schedules' && req.method === 'GET') return { status: 200, json: platform.scheduler.list() };
   if (url.pathname === '/api/schedules' && req.method === 'POST') {
