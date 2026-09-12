@@ -121,14 +121,16 @@ describe('DB-backed storage (SQLite/Postgres factory)', () => {
 });
 
 describe('Coder / Studio surfaces (§42/§120)', () => {
-  it('code and studio endpoints run through the core', async () => {
+  it('code and studio endpoints return a node execution trace', async () => {
     const app = createWebApp({ platform: new Platform({ seedSample: true }), storage: new MemoryStorage() });
     const code = await app({ method: 'POST', path: '/api/code', query: new URLSearchParams(), body: { task: 'write a sort' } } as never);
     expect(code.status).toBe(200);
-    expect((code.json as { completed: string[] }).completed.length).toBeGreaterThan(0);
+    const codeNodes = (code.json as { nodes: Array<{ status: string }> }).nodes;
+    expect(codeNodes.length).toBeGreaterThan(0);
+    expect(codeNodes.every((n) => n.status === 'completed')).toBe(true);
     const studio = await app({ method: 'POST', path: '/api/studio', query: new URLSearchParams(), body: { prompt: 'make art' } } as never);
     expect(studio.status).toBe(200);
-    expect((studio.json as { completed: string[] }).completed.length).toBeGreaterThan(0);
+    expect((studio.json as { nodes: unknown[] }).nodes.length).toBeGreaterThan(0);
   });
 });
 

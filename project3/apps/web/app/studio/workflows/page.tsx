@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { studioClient } from '@/lib/studio-client';
+import { studioClient, type StudioNode } from '@/lib/studio-client';
 
 interface WFNode {
   id: string;
@@ -12,7 +12,7 @@ interface WFNode {
 export default function WorkflowBuilderPage() {
   const [nodes, setNodes] = useState<WFNode[]>([{ id: 'a', name: 'Step A', dependsOn: [] }]);
   const [name, setName] = useState('');
-  const [result, setResult] = useState<Array<{ id: string; name: string; status: string }>>([]);
+  const [result, setResult] = useState<StudioNode[]>([]);
   const [ran, setRan] = useState(0);
 
   function addNode() {
@@ -26,7 +26,7 @@ export default function WorkflowBuilderPage() {
   }
   async function run() {
     const r = await studioClient.runCustomWorkflow(nodes);
-    setResult(r.nodes as Array<{ id: string; name: string; status: string }>);
+    setResult(r.nodes);
   }
   async function tick() {
     const r = await studioClient.tickSchedules();
@@ -55,8 +55,32 @@ export default function WorkflowBuilderPage() {
         <button onClick={run} style={{ padding: 6, marginLeft: 8 }}>Run workflow</button>{' '}
         <button onClick={tick} style={{ padding: 6, marginLeft: 8 }}>Tick schedules ({ran})</button>
       </section>
-      <h2>Run result</h2>
-      <pre>{result.length ? JSON.stringify(result, null, 2) : 'not run yet'}</pre>
+      <h2>Run result (execution trace)</h2>
+      {result.length ? (
+        <ul>
+          {result.map((n) => (
+            <li key={n.id} style={{ marginBottom: 8 }}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  minWidth: 90,
+                  padding: '2px 6px',
+                  borderRadius: 6,
+                  background: n.status === 'completed' ? '#16351f' : n.status === 'failed' ? '#3a1d1d' : '#2a2f3a',
+                  color: n.status === 'completed' ? '#7ee2a0' : n.status === 'failed' ? '#ff9b9b' : '#cdd6e0',
+                  marginRight: 8,
+                }}
+              >
+                {n.status}
+              </span>
+              <strong>{n.name}</strong>
+              {n.result != null && <pre style={{ margin: '4px 0 0 98px', fontSize: 12, color: '#9fb3c8' }}>{String(n.result)}</pre>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        'not run yet'
+      )}
     </main>
   );
 }

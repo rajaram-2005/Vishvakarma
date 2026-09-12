@@ -14,6 +14,7 @@ import { APIKeyManager } from './api';
 import { AuthService, type Role, type Permission } from './auth';
 import { AdapterRegistry } from './adapters-real';
 import type { Storage } from './storage';
+import type { TaskGraph } from './types';
 
 export interface WebRequest {
   method: string;
@@ -41,6 +42,11 @@ export interface WebAppDeps {
   apiKeys?: APIKeyManager;
   auth?: AuthService;
   adapters?: AdapterRegistry;
+}
+
+/** Flatten a run result into a UI-friendly node list (status + result + evidence). */
+function nodesOf(run: { graph: TaskGraph }): Array<{ id: string; name: string; status: string; result?: unknown; evidence?: unknown[] }> {
+  return Object.values(run.graph.nodes).map((n) => ({ id: n.id, name: n.name, status: n.status, result: n.result, evidence: n.evidence }));
 }
 
 /** Map a request to the permission required to perform it. GET and auth
@@ -149,12 +155,12 @@ async function handleApi(
     if (b.nodes && b.nodes.length) {
       const wf = { id: 'custom', name: b.name ?? 'Custom', nodes: b.nodes };
       const r = await platform.runWorkflowObject(wf as never);
-      return { status: 200, json: { name: wf.name, nodes: r.debug } };
+      return { status: 200, json: { name: wf.name, nodes: nodesOf(r) } };
     }
     const id = b.template ?? 'research-report';
     const r = await platform.runWorkflow(id);
     const name = WORKFLOW_TEMPLATES.find((t) => t.id === id)?.name ?? id;
-    return { status: 200, json: { name, nodes: r.debug } };
+    return { status: 200, json: { name, nodes: nodesOf(r) } };
   }
   if (url.pathname === '/api/schedules/tick' && req.method === 'POST') {
     const results = await platform.tickNow();
@@ -163,12 +169,12 @@ async function handleApi(
   if (url.pathname === '/api/code' && req.method === 'POST') {
     const task = (req.body as { task?: string })?.task ?? 'write a function to sort an array';
     const r = await platform.code(task);
-    return { status: 200, json: { completed: r.completed, failed: r.failed, paused: r.paused } };
+    return { status: 200, json: { nodes: nodesOf(r) } };
   }
   if (url.pathname === '/api/studio' && req.method === 'POST') {
     const prompt = (req.body as { prompt?: string })?.prompt ?? 'create a logo concept';
     const r = await platform.studioRun(prompt);
-    return { status: 200, json: { completed: r.completed, failed: r.failed, paused: r.paused } };
+    return { status: 200, json: { nodes: nodesOf(r) } };
   }
 
   if (url.pathname === '/api/schedules' && req.method === 'GET') return { status: 200, json: platform.scheduler.list() };

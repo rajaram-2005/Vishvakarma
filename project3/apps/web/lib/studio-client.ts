@@ -15,6 +15,8 @@ function clearToken() {
   if (typeof localStorage !== 'undefined') localStorage.removeItem('studio_token');
 }
 
+export type StudioNode = { id: string; name: string; status: string; result?: unknown; evidence?: unknown[] };
+
 async function api<T = unknown>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
   const headers: Record<string, string> = {};
   if (body) headers['content-type'] = 'application/json';
@@ -33,14 +35,14 @@ export const studioClient = {
   saveLibrary: (title: string, text: string) => api('POST', '/api/library', { title, text }),
   models: () => api<Array<{ id: string; name?: string; provider?: string; capabilities?: string[] }>>('GET', '/api/models'),
   workflowTemplates: () => api<Array<{ id: string; name: string }>>('GET', '/api/workflows/templates'),
-  runWorkflow: (template: string) => api<{ name: string; nodes: unknown[] }>('POST', '/api/workflows/run', { template }),
+  runWorkflow: (template: string) => api<{ name: string; nodes: StudioNode[] }>('POST', '/api/workflows/run', { template }),
   runCustomWorkflow: (nodes: Array<{ id: string; name: string; dependsOn?: string[] }>) =>
-    api<{ name: string; nodes: Array<{ id: string; name: string; status: string }> }>('POST', '/api/workflows/run', { nodes }),
+    api<{ name: string; nodes: StudioNode[] }>('POST', '/api/workflows/run', { nodes }),
   schedules: () => api<unknown[]>('GET', '/api/schedules'),
   addSchedule: (name: string, request: string, expr: string) => api('POST', '/api/schedules', { name, request, expr }),
   tickSchedules: () => api<{ ran: number }>('POST', '/api/schedules/tick'),
-  code: (task: string) => api<{ completed: string[]; failed: string[] }>('POST', '/api/code', { task }),
-  studio: (prompt: string) => api<{ completed: string[]; failed: string[] }>('POST', '/api/studio', { prompt }),
+  code: (task: string) => api<{ nodes: StudioNode[] }>('POST', '/api/code', { task }),
+  studio: (prompt: string) => api<{ nodes: StudioNode[] }>('POST', '/api/studio', { prompt }),
   security: () => api<Record<string, unknown>>('GET', '/api/security'),
   marketplace: () => api<Record<string, unknown>>('GET', '/api/marketplace'),
   register: (email: string, password: string) => api<{ id: string; email: string; role: string }>('POST', '/api/auth/register', { email, password }),
