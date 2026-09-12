@@ -36,3 +36,4 @@ local-bundle/
 coverage/
 playwright-report/
 test-results/
+.studio-data.json
